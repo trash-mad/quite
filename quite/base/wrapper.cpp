@@ -5,11 +5,12 @@ namespace Base {
 
 /*****************************************************************************/
 
-Wrapper::Wrapper(QObject* receiver, QString member)
+Wrapper::Wrapper(QObject* receiver, QString member, QObject* engine)
   : QObject(receiver) {
     qDebug() << "Wrapper ctor";
     _receiver = receiver;
     _member = member.toStdString().c_str();
+    _engine = engine;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -25,7 +26,7 @@ void Wrapper::invoke(QJSValueList args) {
     ObjectList list;
     foreach (QJSValue value, args) {
         QSharedPointer<Object> obj = QSharedPointer<Object>(
-            new Object(value, _receiver)
+            new Object(value, _receiver, _engine)
         );
         list.append(obj);
     }

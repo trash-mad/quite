@@ -3,10 +3,11 @@
 namespace Quite {
 namespace Base {
 
-Object::Object(QJSValue value, QObject* parent)
+Object::Object(QJSValue value, QObject* parent, QObject* engine)
   : QObject(parent) {
     qDebug() << "Object ctor";
     this->_value = value;
+    this->_engine = engine;
 }
 
 Object::~Object() {

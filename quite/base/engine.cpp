@@ -33,7 +33,7 @@ QJSValue Engine::fromQObject(QObject *obj) {
     while (it.hasNext()) {
         it.next();
         if(it.value().isCallable()){
-            Wrapper* wrapper = new Wrapper(obj, it.name());
+            Wrapper* wrapper = new Wrapper(obj, it.name(), this);
             QJSValue temp = _eval->newQObject(wrapper);
             QJSValue property = temp.property("invoke");
             result.setProperty(it.name(), property);

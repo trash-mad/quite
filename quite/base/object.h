@@ -14,8 +14,9 @@ class Object : public QObject{
   Q_OBJECT
   private:
     QJSValue _value;
+    QObject* _engine;
   public:
-    Object(QJSValue value, QObject* parent = nullptr);
+    Object(QJSValue value, QObject* parent, QObject* engine);
     virtual ~Object();
     /*call(const QJSValueList &args = ...)
     QJSValue	callAsConstructor(const QJSValueList &args = ...)
