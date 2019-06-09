@@ -9,10 +9,10 @@ Engine::Engine(QObject *parent)
   : QThread(parent) {
     qDebug() << "Engine ctor";
     installEventFilter(this);
-    initialThread = QThread::currentThread();
-    eval = new QJSEngine(this);
-    pool = new QThreadPool(this);
-    pool -> setMaxThreadCount(QThread::idealThreadCount());
+    _initialThread = QThread::currentThread();
+    _eval = new QJSEngine(this);
+    _pool = new QThreadPool(this);
+    _pool -> setMaxThreadCount(QThread::idealThreadCount());
     moveToThread(this);
 }
 
@@ -20,8 +20,26 @@ Engine::Engine(QObject *parent)
 
 Engine::~Engine() {
     qDebug() << "Engine dtor";
-    eval -> deleteLater();
-    pool -> deleteLater();
+    _eval -> deleteLater();
+    _pool -> deleteLater();
+}
+
+/*---------------------------------------------------------------------------*/
+
+QJSValue Engine::fromQObject(QObject *obj) {
+    QJSValue object = _eval->newQObject(obj);
+    QJSValue result = _eval->newObject();
+    QJSValueIterator it(object);
+    while (it.hasNext()) {
+        it.next();
+        if(it.value().isCallable()){
+            Wrapper* wrapper = new Wrapper(obj, it.name());
+            QJSValue temp = _eval->newQObject(wrapper);
+            QJSValue property = temp.property("invoke");
+            result.setProperty(it.name(), property);
+        }
+    }
+    return result;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -31,9 +49,9 @@ void Engine::run() {
     qDebug() << "Engine: event loop started";
     loop.processEvents(QEventLoop::AllEvents);
     qDebug() << "Engine: event loop exit";
-    moveToThread(initialThread);
-    eval->moveToThread(initialThread);
-    pool->moveToThread(initialThread);
+    moveToThread(_initialThread);
+    _eval->moveToThread(_initialThread);
+    _pool->moveToThread(_initialThread);
     emit done();
 }
 
