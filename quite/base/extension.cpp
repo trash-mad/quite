@@ -5,10 +5,9 @@ namespace Base {
 
 /*****************************************************************************/
 
-Extension::Extension(Engine* engine)
-  : QObject(engine) {
+Extension::Extension(QObject* parent)
+  : QObject(parent) {
     qDebug() << "Extension ctor";
-    _engine = engine;
 }
 
 /*---------------------------------------------------------------------------*/

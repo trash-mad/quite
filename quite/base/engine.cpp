@@ -9,10 +9,10 @@ Engine::Engine(QObject *parent)
   : QThread(parent) {
     qDebug() << "Engine ctor";
     installEventFilter(this);
-    _initialThread = QThread::currentThread();
-    _eval = new QJSEngine(this);
-    _pool = new QThreadPool(this);
-    _pool -> setMaxThreadCount(QThread::idealThreadCount());
+    initialThread = QThread::currentThread();
+    eval = new QJSEngine(this);
+    pool = new QThreadPool(this);
+    pool -> setMaxThreadCount(QThread::idealThreadCount());
     moveToThread(this);
 }
 
@@ -20,26 +20,8 @@ Engine::Engine(QObject *parent)
 
 Engine::~Engine() {
     qDebug() << "Engine dtor";
-    _eval -> deleteLater();
-    _pool -> deleteLater();
-}
-
-/*---------------------------------------------------------------------------*/
-
-QJSValue Engine::fromQObject(QObject *obj) {
-    QJSValue object = _eval->newQObject(obj);
-    QJSValue result = _eval->newObject();
-    QJSValueIterator it(object);
-    while (it.hasNext()) {
-        it.next();
-        if(it.value().isCallable()){
-            Wrapper* wrapper = new Wrapper(obj, it.name(), this);
-            QJSValue temp = _eval->newQObject(wrapper);
-            QJSValue property = temp.property("invoke");
-            result.setProperty(it.name(), property);
-        }
-    }
-    return result;
+    eval -> deleteLater();
+    pool -> deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -49,20 +31,23 @@ void Engine::run() {
     qDebug() << "Engine: event loop started";
     loop.processEvents(QEventLoop::AllEvents);
     qDebug() << "Engine: event loop exit";
-    moveToThread(_initialThread);
-    _eval->moveToThread(_initialThread);
-    _pool->moveToThread(_initialThread);
+    moveToThread(initialThread);
+    eval->moveToThread(initialThread);
+    pool->moveToThread(initialThread);
     emit done();
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool Engine::event(QEvent *event) {
-    /*qDebug()
-        << "Engine:"
-        << "event="  << event->type()
-        << "thread=" << QThread::currentThreadId();*/
-    return true;
+bool Engine::event(QEvent* e) {
+    Event* event = static_cast<Event*>(e);
+    if(event) {
+        event->process(this,eval,pool);
+        return true;
+    } else {
+        qCritical() << "Engine: invalid event" << e;
+        return false;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -78,5 +63,5 @@ bool Engine::eventFilter(QObject *obj, QEvent *event){
 
 /*****************************************************************************/
 
-}
-}
+} // namespace Base
+} // namespace Quite

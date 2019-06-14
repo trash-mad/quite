@@ -9,7 +9,6 @@ Application::Application()
     qDebug() << "Application ctor";
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
-    QCoreApplication::postEvent(&engine, new Event());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -23,9 +22,16 @@ Application::~Application() {
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     Application a;
+    a.installExtension(Extension::TimerExtension);
     return app.exec();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Application::installExtension(Extension ext) {
+    QCoreApplication::postEvent(&engine, new InstallExtension(ext));
 }
 
 /*****************************************************************************/
 
-}
+} // namespace Quite

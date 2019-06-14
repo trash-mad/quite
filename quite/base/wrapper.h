@@ -5,11 +5,7 @@
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
-#include <QMetaObject>
-#include <QSharedPointer>
-#include <QCoreApplication>
-
-#include "base/object.h"
+#include <QJSValueIterator>
 
 namespace Quite {
 namespace Base {
@@ -18,15 +14,21 @@ namespace Base {
 
 class Wrapper : public QObject {
   Q_OBJECT
+  protected:
+    QJSValue* object;
+    static QObject* engine;
   private:
-    QObject* _receiver;
-    QObject* _engine;
-    const char* _member;
-  public:
-    Wrapper(QObject *receiver, QString member, QObject* engine);
+    explicit Wrapper(const QJSValue& original);
     virtual ~Wrapper();
-  public slots:
-    void invoke(QJSValueList args);
+    static Wrapper* wrapObject(QObject* engine, const QJSValue object);
+  private slots:
+    QJSValue call(QJSValueList args);
+  public:
+    static QJSValue fromQObject(
+        QObject* engine,
+        QObject *obj,
+        QJSEngine* eval
+    );
 };
 
 /*****************************************************************************/
