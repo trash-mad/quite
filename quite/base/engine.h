@@ -9,6 +9,7 @@
 #include <QJSEngine>
 #include <QEventLoop>
 #include <QThreadPool>
+#include <QEventLoopLocker>
 #include <QJSValueIterator>
 
 #include "base/event.h"

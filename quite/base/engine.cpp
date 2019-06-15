@@ -14,7 +14,6 @@ Engine::Engine(QObject *parent)
     pool = new QThreadPool(this);
     pool -> setMaxThreadCount(QThread::idealThreadCount());
     moveToThread(this);
-
     eval->installExtensions(QJSEngine::Extension::ConsoleExtension);
 }
 
@@ -31,7 +30,11 @@ Engine::~Engine() {
 void Engine::run() {
     QEventLoop loop;
     qDebug() << "Engine: event loop started";
-    loop.processEvents(QEventLoop::AllEvents);
+    while(true) {
+        if(!loop.processEvents()){
+            break;
+        }
+    }
     qDebug() << "Engine: event loop exit";
     moveToThread(initialThread);
     eval->moveToThread(initialThread);

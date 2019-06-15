@@ -8,6 +8,7 @@
 #include <QJSValueIterator>
 
 #include "base/extension.h"
+#include "events/timerawait.h"
 
 using namespace Quite::Base;
 

@@ -5,6 +5,8 @@
 #include <QGuiApplication>
 #include <QObject>
 
+#include <iostream>
+
 #include "base/engine.h"
 #include "events/importmodule.h"
 #include "events/installextension.h"
