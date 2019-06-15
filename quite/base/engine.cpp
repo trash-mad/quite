@@ -9,37 +9,37 @@ Engine::Engine(QObject *parent)
   : QThread(parent) {
     qDebug() << "Engine ctor";
     installEventFilter(this);
-    initialThread = QThread::currentThread();
-    eval = new QJSEngine(this);
-    pool = new QThreadPool(this);
-    pool -> setMaxThreadCount(QThread::idealThreadCount());
     moveToThread(this);
-    eval->installExtensions(QJSEngine::Extension::ConsoleExtension);
 }
 
 /*---------------------------------------------------------------------------*/
 
 Engine::~Engine() {
     qDebug() << "Engine dtor";
-    eval -> deleteLater();
-    pool -> deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
 
 void Engine::run() {
+
+    eval = new QJSEngine(this);
+    eval->installExtensions(QJSEngine::Extension::ConsoleExtension);
+
+    pool = new QThreadPool(this);
+    pool -> setMaxThreadCount(QThread::idealThreadCount());
+
     QEventLoop loop;
-    qDebug() << "Engine: event loop started";
+    qDebug() << "Engine event loop started";
     while(true) {
         if(!loop.processEvents()){
             break;
         }
     }
-    qDebug() << "Engine: event loop exit";
-    moveToThread(initialThread);
-    eval->moveToThread(initialThread);
-    pool->moveToThread(initialThread);
+    qDebug() << "Engine event loop exit";
     emit done();
+
+    eval->deleteLater();
+    pool->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/

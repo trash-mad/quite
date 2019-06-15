@@ -22,7 +22,6 @@ namespace Base {
 class Engine : public QThread {
   Q_OBJECT
   private:
-    QThread* initialThread;
     QThreadPool* pool;
     QJSEngine* eval;
   public:

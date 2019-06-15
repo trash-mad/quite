@@ -6,6 +6,8 @@
 #include <QJSValue>
 #include <QJSEngine>
 
+#include "events/eval.h"
+
 namespace Quite {
 namespace Base {
 
@@ -17,6 +19,7 @@ class Emitter : public QObject {
     bool required = false;
     QJSValue func;
     QJSValueList args;
+    static QObject* engine;
   private:
     explicit Emitter(QJSValue func);
     virtual ~Emitter();
@@ -28,9 +31,9 @@ class Emitter : public QObject {
     QJSValueList getArgs() const;
     static QJSValue fromObject(
         QJSValue origin,
-        Emitter*& emitter,
         QJSEngine* eval
     );
+    friend class Wrapper;
 };
 
 /*****************************************************************************/

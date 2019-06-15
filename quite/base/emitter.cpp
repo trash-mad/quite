@@ -37,10 +37,9 @@ QJSValueList Emitter::getArgs() const {
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Emitter::fromObject(QJSValue origin, Emitter*& emitter, QJSEngine* eval) {
+QJSValue Emitter::fromObject(QJSValue origin, QJSEngine* eval) {
     if(origin.isCallable()) {
-        emitter = new Emitter(origin);
-        QJSValue managed = eval->newQObject(emitter);
+        QJSValue managed = eval->newQObject(new Emitter(origin));
         return managed.property("call");
     } else {
         return origin;
@@ -51,9 +50,12 @@ QJSValue Emitter::fromObject(QJSValue origin, Emitter*& emitter, QJSEngine* eval
 
 void Emitter::call(QJSValueList args) {
     qDebug() << "Emitter call";
-    this->args = args;
-    required = true;
+    QCoreApplication::postEvent(engine, new Events::Eval(func,args));
 }
+
+/*---------------------------------------------------------------------------*/
+
+QObject* Emitter::engine = nullptr;
 
 /*****************************************************************************/
 

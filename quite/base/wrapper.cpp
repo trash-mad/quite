@@ -13,20 +13,6 @@ void Wrapper::check(bool found) {
 
 /*---------------------------------------------------------------------------*/
 
-void Wrapper::execEmit(Emitter *e) {
-    if(e!=nullptr && e->isRequired()) {
-        QCoreApplication::postEvent(
-            engine,
-            new Events::Eval(
-                e->getFunc(),
-                e->getArgs()
-            )
-        );
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
 Wrapper::Wrapper(QObject* origin, QString property)
   : QObject(origin) {
     qDebug() << "Wrapper ctor";
@@ -49,12 +35,6 @@ QJSValue Wrapper::call(
 ) {
     qDebug() << "Wrapper call";
 
-    Emitter* e1 = nullptr;
-    Emitter* e2 = nullptr;
-    Emitter* e3 = nullptr;
-    Emitter* e4 = nullptr;
-    Emitter* e5 = nullptr;
-
     QJSValue result;
     if(p1.isUndefined()) {
         check(QMetaObject::invokeMethod(
@@ -69,7 +49,7 @@ QJSValue Wrapper::call(
             property.toStdString().c_str(),
             Qt::DirectConnection,
             Q_RETURN_ARG(QJSValue, result),
-            Q_ARG(QJSValue, Emitter::fromObject(p1,e1,eval))
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval))
         ));
     } else if(p3.isUndefined()) {
         check(QMetaObject::invokeMethod(
@@ -77,8 +57,8 @@ QJSValue Wrapper::call(
             property.toStdString().c_str(),
             Qt::DirectConnection,
             Q_RETURN_ARG(QJSValue, result),
-            Q_ARG(QJSValue, Emitter::fromObject(p1,e1,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p2,e2,eval))
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval))
         ));
     } else if(p4.isUndefined()) {
         check(QMetaObject::invokeMethod(
@@ -86,9 +66,9 @@ QJSValue Wrapper::call(
             property.toStdString().c_str(),
             Qt::DirectConnection,
             Q_RETURN_ARG(QJSValue, result),
-            Q_ARG(QJSValue, Emitter::fromObject(p1,e1,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p2,e2,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p3,e3,eval))
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval))
         ));
     } else if(p5.isUndefined()) {
         check(QMetaObject::invokeMethod(
@@ -96,10 +76,10 @@ QJSValue Wrapper::call(
             property.toStdString().c_str(),
             Qt::DirectConnection,
             Q_RETURN_ARG(QJSValue, result),
-            Q_ARG(QJSValue, Emitter::fromObject(p1,e1,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p2,e2,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p3,e3,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p4,e4,eval))
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval))
         ));
     } else {
         check(QMetaObject::invokeMethod(
@@ -107,19 +87,13 @@ QJSValue Wrapper::call(
             property.toStdString().c_str(),
             Qt::DirectConnection,
             Q_RETURN_ARG(QJSValue, result),
-            Q_ARG(QJSValue, Emitter::fromObject(p1,e1,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p2,e2,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p3,e3,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p4,e4,eval)),
-            Q_ARG(QJSValue, Emitter::fromObject(p5,e5,eval))
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval))
         ));
     }
-
-    execEmit(e1);
-    execEmit(e2);
-    execEmit(e3);
-    execEmit(e4);
-    execEmit(e5);
 
     return result;
 }
@@ -131,8 +105,8 @@ QJSValue Wrapper::fromQObject(
     QObject *obj,
     QJSEngine *eval
 ) {
-    if(Wrapper::engine==nullptr){
-        Wrapper::engine = engine;
+    if(Emitter::engine==nullptr){
+        Emitter::engine = engine;
     }
 
     if(Wrapper::eval==nullptr){
@@ -155,10 +129,6 @@ QJSValue Wrapper::fromQObject(
     }
     return result;
 }
-
-/*---------------------------------------------------------------------------*/
-
-QObject* Wrapper::engine = nullptr;
 
 /*---------------------------------------------------------------------------*/
 

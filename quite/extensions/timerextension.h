@@ -9,6 +9,7 @@
 
 #include "base/extension.h"
 #include "events/timerawait.h"
+#include "objects/timermonitor.h"
 
 using namespace Quite::Base;
 

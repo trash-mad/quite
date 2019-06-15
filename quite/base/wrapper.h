@@ -19,7 +19,6 @@ namespace Base {
 class Wrapper : public QObject {
   Q_OBJECT
   private:
-    static QObject* engine;
     static QJSEngine* eval;
     QObject* origin;
     QString property;

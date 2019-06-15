@@ -23,20 +23,24 @@ void TimerExtension::install(QJSValue global, QJSValue current) {
     global.setProperty("setTimeout",current.property("setTimeout"));
 }
 
+/*---------------------------------------------------------------------------*/
+
 QJSValue TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
 
     QTimer* timer = new QTimer();
     timer->setSingleShot(true);
     timer->setInterval(1);
 
-    connect(timer,&QTimer::timeout,[&handler,this](){
-        qDebug() << "call";
-        handler.call();
-    });
+    Objects::TimerMonitor *monitor = new Objects::TimerMonitor(
+        this,
+        timer,
+        handler,
+        777
+    );
 
     timer->start();
 
-    QCoreApplication::sendEvent(parent(), new Events::TimerAwait(timer));
+    QCoreApplication::sendEvent(parent(), new Events::TimerAwait(monitor));
 
     return QJSValue();
 }

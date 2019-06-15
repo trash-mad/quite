@@ -5,10 +5,10 @@ namespace Events {
 
 /*****************************************************************************/
 
-TimerAwait::TimerAwait(QTimer *timer)
+TimerAwait::TimerAwait(Objects::TimerMonitor *monitor)
   : Base::Event() {
     //qDebug() << "TimerAwait ctor";
-    this->timer = timer;
+    this->monitor = monitor;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -25,10 +25,10 @@ void TimerAwait::process(
     QThreadPool *pool
 ) {
     //qDebug() << "TimerAwait process";
-    if(timer->isActive()) {
-        QCoreApplication::postEvent(engine, new TimerAwait(timer));
+    if(monitor->isActive()) {
+        QCoreApplication::postEvent(engine, new TimerAwait(monitor));
     } else {
-        delete timer;
+        monitor->deleteLater();
     }
 }
 

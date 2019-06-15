@@ -10,7 +10,8 @@ equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Q
 SOURCES += main.cpp \
     events/eval.cpp \
     base/emitter.cpp \
-    events/timerawait.cpp
+    events/timerawait.cpp \
+    objects/timermonitor.cpp
 SOURCES += base/engine.cpp
 SOURCES += application.cpp
 SOURCES += base/event.cpp
@@ -24,7 +25,8 @@ SOURCES += events/throwerror.cpp
 HEADERS += base/engine.h \
     events/eval.h \
     base/emitter.h \
-    events/timerawait.h
+    events/timerawait.h \
+    objects/timermonitor.h
 HEADERS += application.h
 HEADERS += base/event.h
 HEADERS += base/extension.h

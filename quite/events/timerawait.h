@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 
 #include "base/event.h"
+#include "objects/timermonitor.h"
 
 namespace Quite {
 namespace Events {
@@ -15,9 +16,9 @@ namespace Events {
 
 class TimerAwait : public Base::Event {
   private:
-    QTimer* timer;
+    Objects::TimerMonitor *monitor;
   public:
-    TimerAwait(QTimer* timer);
+    TimerAwait(Objects::TimerMonitor *monitor);
     virtual ~TimerAwait();
     virtual void process(
         QObject* engine,
