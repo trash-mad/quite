@@ -8,7 +8,8 @@ lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
 SOURCES += main.cpp \
-    events/eval.cpp
+    events/eval.cpp \
+    base/emitter.cpp
 SOURCES += base/engine.cpp
 SOURCES += application.cpp
 SOURCES += base/event.cpp
@@ -20,7 +21,8 @@ SOURCES += events/importmodule.cpp
 SOURCES += events/throwerror.cpp
 
 HEADERS += base/engine.h \
-    events/eval.h
+    events/eval.h \
+    base/emitter.h
 HEADERS += application.h
 HEADERS += base/event.h
 HEADERS += base/extension.h

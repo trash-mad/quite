@@ -6,6 +6,10 @@
 #include <QJSValue>
 #include <QJSEngine>
 #include <QJSValueIterator>
+#include <QCoreApplication>
+
+#include "base/emitter.h"
+#include "events/eval.h"
 
 namespace Quite {
 namespace Base {
@@ -16,10 +20,12 @@ class Wrapper : public QObject {
   Q_OBJECT
   private:
     static QObject* engine;
+    static QJSEngine* eval;
     QObject* origin;
     QString property;
   private:
     void check(bool found);
+    void execEmit(Emitter* e);
   public:
     Wrapper(QObject* origin, QString property);
     virtual ~Wrapper();
@@ -35,7 +41,7 @@ class Wrapper : public QObject {
   public:
     static QJSValue fromQObject(
         QObject* engine,
-        QObject *obj,
+        QObject* obj,
         QJSEngine* eval
     );
 };

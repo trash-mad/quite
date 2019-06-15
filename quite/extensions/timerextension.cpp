@@ -24,7 +24,7 @@ void TimerExtension::install(QJSValue global, QJSValue current) {
 }
 
 QJSValue TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
-    qDebug() << ")))))))))))))))))))))))))))))))))))))))))))))))";
+    handler.call();
     return QJSValue();
 }
 
