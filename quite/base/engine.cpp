@@ -14,6 +14,8 @@ Engine::Engine(QObject *parent)
     pool = new QThreadPool(this);
     pool -> setMaxThreadCount(QThread::idealThreadCount());
     moveToThread(this);
+
+    eval->installExtensions(QJSEngine::Extension::ConsoleExtension);
 }
 
 /*---------------------------------------------------------------------------*/

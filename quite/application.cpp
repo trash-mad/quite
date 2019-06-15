@@ -23,6 +23,7 @@ int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     Application a;
     a.installExtension(Extension::TimerExtension);
+    a.importModule("main.js");
     return app.exec();
 }
 
@@ -30,6 +31,12 @@ int Application::exec(int argc, char *argv[]) {
 
 void Application::installExtension(Extension ext) {
     QCoreApplication::postEvent(&engine, new InstallExtension(ext));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Application::importModule(QString path) {
+    QCoreApplication::postEvent(&engine, new ImportModule(path));
 }
 
 /*****************************************************************************/

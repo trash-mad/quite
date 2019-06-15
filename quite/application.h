@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include "base/engine.h"
+#include "events/importmodule.h"
 #include "events/installextension.h"
 
 using namespace Quite::Events;
@@ -24,6 +25,7 @@ class Application : public QObject {
   public:
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);
+    void importModule(QString path);
 };
 
 /*****************************************************************************/

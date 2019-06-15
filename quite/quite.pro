@@ -1,21 +1,31 @@
-QT += core qml testlib
+QT += core qml
 TARGET = quite
 TEMPLATE = app
 CONFIG += c++17
 DEFINES += QT_DEPRECATED_WARNINGS
+
+lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
+equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
+
 SOURCES += main.cpp \
-    base/engine.cpp \
-    application.cpp \
-    base/event.cpp \
-    base/extension.cpp \
-    base/wrapper.cpp \
-    extensions/timerextension.cpp \
-    events/installextension.cpp
-HEADERS  += \
-    base/engine.h \
-    application.h \
-    base/event.h \
-    base/extension.h \
-    base/wrapper.h \
-    extensions/timerextension.h \
-    events/installextension.h
+    events/eval.cpp
+SOURCES += base/engine.cpp
+SOURCES += application.cpp
+SOURCES += base/event.cpp
+SOURCES += base/extension.cpp
+SOURCES += base/wrapper.cpp
+SOURCES += extensions/timerextension.cpp
+SOURCES += events/installextension.cpp
+SOURCES += events/importmodule.cpp
+SOURCES += events/throwerror.cpp
+
+HEADERS += base/engine.h \
+    events/eval.h
+HEADERS += application.h
+HEADERS += base/event.h
+HEADERS += base/extension.h
+HEADERS += base/wrapper.h
+HEADERS += extensions/timerextension.h
+HEADERS += events/installextension.h
+HEADERS += events/importmodule.h
+HEADERS += events/throwerror.h
