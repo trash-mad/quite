@@ -5,33 +5,95 @@ namespace Base {
 
 /*****************************************************************************/
 
-Wrapper::Wrapper(const QJSValue& original)
-  : QObject(nullptr) {
+void Wrapper::check(bool found) {
+    if(!found){
+        qCritical() << "Wrapper" << property << "invalid params";
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+Wrapper::Wrapper(QObject* origin, QString property)
+  : QObject(origin) {
     qDebug() << "Wrapper ctor";
-    object = new QJSValue(original);
+    this->origin = origin;
+    this->property = property;
 }
 
 /*---------------------------------------------------------------------------*/
 
 Wrapper::~Wrapper() {
     qDebug() << "Wrapper dtor";
-    delete object;
 }
 
-/*---------------------------------------------------------------------------*/
-
-QJSValue Wrapper::call(QJSValueList args) {
+QJSValue Wrapper::call(
+    QJSValue p1,
+    QJSValue p2,
+    QJSValue p3,
+    QJSValue p4,
+    QJSValue p5
+) {
     qDebug() << "Wrapper call";
-    return object->call(args);
-}
-
-/*---------------------------------------------------------------------------*/
-
-Wrapper *Wrapper::wrapObject(QObject *engine, const QJSValue object) {
-    if(Wrapper::engine == nullptr) {
-        Wrapper::engine = engine;
+    QJSValue result;
+    if(p1.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result)
+        ));
+    } else if(p2.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, p1)
+        ));
+    } else if(p3.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, p1),
+            Q_ARG(QJSValue, p2)
+        ));
+    } else if(p4.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, p1),
+            Q_ARG(QJSValue, p2),
+            Q_ARG(QJSValue, p3)
+        ));
+    } else if(p5.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, p1),
+            Q_ARG(QJSValue, p2),
+            Q_ARG(QJSValue, p3),
+            Q_ARG(QJSValue, p4)
+        ));
+    } else {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, p1),
+            Q_ARG(QJSValue, p2),
+            Q_ARG(QJSValue, p3),
+            Q_ARG(QJSValue, p4),
+            Q_ARG(QJSValue, p5)
+        ));
     }
-    return new Wrapper(object);
+    return result;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -41,17 +103,23 @@ QJSValue Wrapper::fromQObject(
     QObject *obj,
     QJSEngine *eval
 ) {
+    if(Wrapper::engine==nullptr){
+        Wrapper::engine = engine;
+    }
+
     QJSValue object = eval->newQObject(obj);
     QJSValue result = eval->newObject();
     QJSValueIterator it(object);
+
     while (it.hasNext()) {
         it.next();
-        if(it.value().isCallable()){
-            QJSValue wrapped = eval->newQObject(
-                wrapObject(engine, it.value())
-            );
-            result.setProperty(it.name(), wrapped.property("call"));
+
+        if(it.value().isCallable()) {
+            Wrapper* wrapped = new Wrapper(obj, it.name());
+            QJSValue managed = eval->newQObject(wrapped);
+            result.setProperty(it.name(),managed.property("call"));
         }
+
     }
     return result;
 }

@@ -17,7 +17,7 @@ class Extension : public QObject {
   public:
     explicit Extension(QObject* parent = nullptr);
     virtual ~Extension();
-    virtual void install(const QJSValue& global, const QJSValue& current) = 0;
+    virtual void install(QJSValue global, QJSValue current) = 0;
 };
 
 /*****************************************************************************/

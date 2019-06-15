@@ -18,21 +18,14 @@ TimerExtension::~TimerExtension() {
 
 /*---------------------------------------------------------------------------*/
 
-void TimerExtension::install(
-    const QJSValue &global,
-    const QJSValue &current
-) {
-    qDebug() << "install";
-
-    QJSValueIterator it(current);
-    while (it.hasNext()) {
-        it.next();
-        qInfo() << it.name();
-    }
+void TimerExtension::install(QJSValue global, QJSValue current) {
+    qDebug() << "TimerExtension install";
+    global.setProperty("setTimeout",current.property("setTimeout"));
 }
 
-void TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
+QJSValue TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
     qDebug() << ")))))))))))))))))))))))))))))))))))))))))))))))";
+    return QJSValue();
 }
 
 /*****************************************************************************/

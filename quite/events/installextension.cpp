@@ -23,6 +23,7 @@ void InstallExtension::process(
     QJSEngine *eval,
     QThreadPool *pool
 ) {
+    (void)(pool);
     Base::Extension* ext = nullptr;
 
     switch (extension) {

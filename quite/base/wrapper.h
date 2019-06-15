@@ -14,15 +14,24 @@ namespace Base {
 
 class Wrapper : public QObject {
   Q_OBJECT
-  protected:
-    QJSValue* object;
-    static QObject* engine;
   private:
-    explicit Wrapper(const QJSValue& original);
+    static QObject* engine;
+    QObject* origin;
+    QString property;
+  private:
+    void check(bool found);
+  public:
+    Wrapper(QObject* origin, QString property);
     virtual ~Wrapper();
-    static Wrapper* wrapObject(QObject* engine, const QJSValue object);
-  private slots:
-    QJSValue call(QJSValueList args);
+  public slots:
+    QJSValue call(
+        QJSValue p1=QJSValue(),
+        QJSValue p2=QJSValue(),
+        QJSValue p3=QJSValue(),
+        QJSValue p4=QJSValue(),
+        QJSValue p5=QJSValue()
+    );
+
   public:
     static QJSValue fromQObject(
         QObject* engine,

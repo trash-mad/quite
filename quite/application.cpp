@@ -23,7 +23,7 @@ int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     Application a;
     a.installExtension(Extension::TimerExtension);
-    a.importModule("main.js");
+    a.importModule("/home/tripolskypetr/test.js");
     return app.exec();
 }
 

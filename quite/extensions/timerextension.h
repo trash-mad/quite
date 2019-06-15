@@ -21,9 +21,9 @@ class TimerExtension : public Extension {
   public:
     explicit TimerExtension(QObject* parent = nullptr);
     virtual ~TimerExtension();
-    virtual void install(const QJSValue& global, const QJSValue& current);
+    virtual void install(QJSValue global, QJSValue current);
   public slots:
-    void setTimeout(QJSValue handler, QJSValue timeout);
+    QJSValue setTimeout(QJSValue handler, QJSValue timeout);
 };
 
 /*****************************************************************************/
