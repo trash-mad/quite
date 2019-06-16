@@ -1,6 +1,7 @@
 #ifndef IMPORTMODULE_H
 #define IMPORTMODULE_H
 
+#include <QDir>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>

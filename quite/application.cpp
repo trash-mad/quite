@@ -4,25 +4,6 @@ namespace Quite {
 
 /*****************************************************************************/
 
-static void log(
-    QtMsgType type,
-    const QMessageLogContext &context,
-    const QString &msg
-){
-    (void)(context);
-    if(type == QtMsgType::QtDebugMsg){
-        QFile outFile("/home/tripolskypetr/debug.txt");
-        outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-        QTextStream ts(&outFile);
-        ts << msg << endl;
-        outFile.close();
-    } else {
-        std::cout << msg.toStdString().c_str();
-    }
-}
-
-/*****************************************************************************/
-
 Application::Application()
   : QObject(nullptr) {
     qDebug() << "Application ctor";
@@ -38,12 +19,34 @@ Application::~Application() {
 
 /*---------------------------------------------------------------------------*/
 
+void Application::logHandler(
+    QtMsgType type,
+    const QMessageLogContext &context,
+    const QString &msg) {
+    if(type == QtMsgType::QtInfoMsg) {
+        std::cout << msg.toStdString() << "\n";
+    } else if(type == QtMsgType::QtCriticalMsg) {
+        std::cout << msg.toStdString() << "\n";
+        abort();
+    } else {
+        QFile f(QDir::current().filePath("debug.txt"));
+        if (f.open(QIODevice::WriteOnly | QIODevice::Append)) {
+            QTextStream(&f) << msg << "\n";
+        } else {
+            std::cout << "Can't append to debug.txt";
+            abort();
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
-    //qInstallMessageHandler(log);
+    qInstallMessageHandler(logHandler);
     Application a;
     a.installExtension(Extension::TimerExtension);
-    a.importModule("/home/tripolskypetr/test.js");
+    a.importModule("main.js");
     return app.exec();
 }
 

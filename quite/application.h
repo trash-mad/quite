@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QObject>
+#include <QDir>
 
 #include <iostream>
 
@@ -24,6 +25,12 @@ class Application : public QObject {
   protected:
     explicit Application();
     virtual ~Application();
+  private:
+    static void logHandler(
+        QtMsgType type,
+        const QMessageLogContext &context,
+        const QString &msg
+    );
   public:
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);

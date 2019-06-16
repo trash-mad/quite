@@ -26,14 +26,20 @@ void ImportModule::process(
 ) {
     (void)(engine);
     (void)(pool);
-    QJSValue module = eval->importModule(path);
+    QJSValue module = eval->importModule(QDir::current().filePath(path));
     if(module.isError()) {
-        qInfo() << "module" << path << "not found";
+
+        qInfo()
+            << "module"
+            << QDir::current().filePath(path)
+            << "not found";
+
         eval->throwError(
             QString("MODULE_ERROR %1").arg(
                 module.toString()
             )
         );
+
         eval->evaluate("");
     } else {
         QJSValue res = eval->evaluate("");
