@@ -7,9 +7,10 @@
 #include <QJSEngine>
 #include <QJSValueIterator>
 
+#include "monitors/timermonitor.h"
+#include "events/throwerror.h"
 #include "base/extension.h"
-#include "events/timerawait.h"
-#include "objects/timermonitor.h"
+#include "events/await.h"
 
 using namespace Quite::Base;
 

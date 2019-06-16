@@ -27,20 +27,23 @@ void TimerExtension::install(QJSValue global, QJSValue current) {
 
 QJSValue TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
 
-    QTimer* timer = new QTimer();
-    timer->setSingleShot(true);
-    timer->setInterval(1);
-
-    Objects::TimerMonitor *monitor = new Objects::TimerMonitor(
-        this,
-        timer,
-        handler,
-        777
-    );
-
-    timer->start();
-
-    QCoreApplication::sendEvent(parent(), new Events::TimerAwait(monitor));
+    if(!handler.isCallable()) {
+        qDebug() << "TimerExtension invalid handler";
+        QCoreApplication::sendEvent(parent(), new Events::ThrowError(
+            "setTimeout: invalid handler parameter"
+        ));
+    } else if (!timeout.isNumber()) {
+        qDebug() << "TimerExtension invalid timeout";
+        QCoreApplication::sendEvent(parent(), new Events::ThrowError(
+            "setTimeout: invalid timeout"
+        ));
+    } else {
+        Monitors::TimerMonitor* monitor = new Monitors::TimerMonitor(
+            handler,
+            timeout.toInt()
+        );
+        QCoreApplication::postEvent(parent(), new Events::Await(monitor));
+    }
 
     return QJSValue();
 }

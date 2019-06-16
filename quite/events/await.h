@@ -1,25 +1,26 @@
-#ifndef TIMERAWAIT_H
-#define TIMERAWAIT_H
+#ifndef AWAIT_H
+#define AWAIT_H
 
-#include <QTimer>
 #include <QtDebug>
 #include <QObject>
+#include <QJSEngine>
+#include <QThreadPool>
 #include <QCoreApplication>
 
 #include "base/event.h"
-#include "objects/timermonitor.h"
+#include "base/monitor.h"
 
 namespace Quite {
 namespace Events {
 
 /*****************************************************************************/
 
-class TimerAwait : public Base::Event {
+class Await : public Base::Event {
   private:
-    Objects::TimerMonitor *monitor;
+    Base::Monitor* monitor;
   public:
-    TimerAwait(Objects::TimerMonitor *monitor);
-    virtual ~TimerAwait();
+    Await(Base::Monitor* monitor);
+    virtual ~Await();
     virtual void process(
         QObject* engine,
         QJSEngine* eval,
@@ -32,4 +33,4 @@ class TimerAwait : public Base::Event {
 } // namespace Events
 } // namespace Quite
 
-#endif // TIMERAWAIT_H
+#endif // AWAIT_H
