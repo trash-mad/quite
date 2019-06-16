@@ -1,10 +1,12 @@
 #ifndef TIMEREXTENSION_H
 #define TIMEREXTENSION_H
 
+#include <QHash>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
+#include <QRandomGenerator>
 #include <QJSValueIterator>
 
 #include "monitors/timermonitor.h"
@@ -21,6 +23,11 @@ namespace Extensions {
 
 class TimerExtension : public Extension {
   Q_OBJECT
+  private:
+    QHash<int, Monitors::TimerMonitor*> timers;
+    int append(Monitors::TimerMonitor* timer);
+    const int MAXIMUM_TIMERS = 1000;
+    QRandomGenerator generator;
   public:
     explicit TimerExtension(QObject* parent = nullptr);
     virtual ~TimerExtension();

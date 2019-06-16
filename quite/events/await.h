@@ -10,18 +10,21 @@
 #include "base/event.h"
 #include "base/monitor.h"
 
+using namespace Quite::Base;
+
 namespace Quite {
 namespace Events {
 
 /*****************************************************************************/
 
-class Await : public Base::Event {
+class Await : public Event {
   private:
-    Base::Monitor* monitor;
+    Monitor* monitor;
   public:
-    Await(Base::Monitor* monitor);
+    Await(Monitor* monitor);
     virtual ~Await();
-    virtual void process(
+    Monitor* getMonitor() const;
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool

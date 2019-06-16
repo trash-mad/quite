@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     base/emitter.cpp \
     base/monitor.cpp \
     events/await.cpp \
-    monitors/timermonitor.cpp
+    monitors/timermonitor.cpp \
+    extensions/consoleextension.cpp
 SOURCES += base/engine.cpp
 SOURCES += application.cpp
 SOURCES += base/event.cpp
@@ -28,7 +29,8 @@ HEADERS += base/engine.h \
     base/emitter.h \
     base/monitor.h \
     events/await.h \
-    monitors/timermonitor.h
+    monitors/timermonitor.h \
+    extensions/consoleextension.h
 HEADERS += application.h
 HEADERS += base/event.h
 HEADERS += base/extension.h

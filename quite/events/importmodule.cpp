@@ -19,7 +19,7 @@ ImportModule::~ImportModule() {
 
 /*---------------------------------------------------------------------------*/
 
-void ImportModule::process(
+EventResult ImportModule::process(
     QObject *engine,
     QJSEngine *eval,
     QThreadPool *pool
@@ -52,6 +52,8 @@ void ImportModule::process(
             );
         }
     }
+
+    return EventResult::Ok;
 }
 
 /*****************************************************************************/

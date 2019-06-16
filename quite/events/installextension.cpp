@@ -18,7 +18,7 @@ InstallExtension::~InstallExtension() {
 
 /*---------------------------------------------------------------------------*/
 
-void InstallExtension::process(
+EventResult InstallExtension::process(
     QObject* engine,
     QJSEngine *eval,
     QThreadPool *pool
@@ -30,12 +30,17 @@ void InstallExtension::process(
         case Quite::Extension::TimerExtension:
             ext = new Quite::Extensions::TimerExtension(engine);
             break;
+        case Quite::Extension::ConsoleExtension:
+            ext = new Quite::Extensions::ConsoleExtension(engine);
+            break;
     }
 
     ext->install(
         eval->globalObject(),
         Base::Wrapper::fromQObject(engine, ext, eval)
     );
+
+    return EventResult::Ok;
 }
 
 /*****************************************************************************/

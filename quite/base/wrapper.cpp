@@ -33,7 +33,13 @@ QJSValue Wrapper::call(
     QJSValue p4,
     QJSValue p5
 ) {
-    qDebug() << "Wrapper call";
+    qDebug()
+        << "Wrapper call"
+        << p1.toString()
+        << p2.toString()
+        << p3.toString()
+        << p4.toString()
+        << p5.toString();
 
     QJSValue result;
     if(p1.isUndefined()) {

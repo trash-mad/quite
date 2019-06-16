@@ -23,35 +23,43 @@ Engine::~Engine() {
 void Engine::run() {
 
     eval = new QJSEngine(this);
-    eval->installExtensions(QJSEngine::Extension::ConsoleExtension);
-
     pool = new QThreadPool(this);
+    rethrow = new QStack<Monitor*>();
     pool -> setMaxThreadCount(QThread::idealThreadCount());
 
     QEventLoop loop;
     qDebug() << "Engine event loop started";
+
     while(true) {
         if(!loop.processEvents()){
-            break;
+            if(rethrow->isEmpty()) {
+                break;
+            } else {
+                qDebug() << "Engine event loop push monitor";
+                QCoreApplication::postEvent(this, new Await(rethrow->pop()));
+                continue;
+            }
         }
     }
+
     qDebug() << "Engine event loop exit";
     emit done();
 
     eval->deleteLater();
     pool->deleteLater();
+    delete rethrow;
 }
 
 /*---------------------------------------------------------------------------*/
 
 bool Engine::event(QEvent* e) {
     Event* event = static_cast<Event*>(e);
-    if(event) {
-        event->process(this,eval,pool);
-        return true;
-    } else {
-        qCritical() << "Engine: invalid event" << e;
-        return false;
+    switch(event->process(this,eval,pool)){
+        case EventResult::AwaiterRethrow:
+            rethrow->push(static_cast<Await*>(e)->getMonitor());
+            return true;
+        default:
+            return true;
     }
 }
 

@@ -19,7 +19,7 @@ ThrowError::~ThrowError() {
 
 /*---------------------------------------------------------------------------*/
 
-void ThrowError::process(
+EventResult ThrowError::process(
     QObject *engine,
     QJSEngine *eval,
     QThreadPool *pool
@@ -32,6 +32,7 @@ void ThrowError::process(
             message
         )
     );
+    return EventResult::Ok;
 }
 
 /*****************************************************************************/

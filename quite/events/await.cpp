@@ -19,22 +19,29 @@ Await::~Await() {
 
 /*---------------------------------------------------------------------------*/
 
-void Await::process(QObject *engine, QJSEngine *eval, QThreadPool *pool) {
+Monitor *Await::getMonitor() const {
+    return monitor;
+}
+
+/*---------------------------------------------------------------------------*/
+
+EventResult Await::process(
+    QObject *engine,
+    QJSEngine *eval,
+    QThreadPool *pool
+) {
     (void)(eval);
     if(monitor->isCanceled() || monitor->isFinished()) {
         qDebug() << "Awaiter monitor cleanup";
         delete monitor;
+        return EventResult::Ok;
     } else {
         if(!monitor->isStarted()){
             qDebug() << "Awaiter monitor init";
             monitor->start(pool, engine);
         }
         qDebug() << "Awaiter monitor skip";
-        QCoreApplication::postEvent(
-            engine,
-            new Await(monitor),
-            Qt::EventPriority::LowEventPriority
-        );
+        return EventResult::AwaiterRethrow;
     }
 }
 

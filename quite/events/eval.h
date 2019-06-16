@@ -10,6 +10,8 @@
 #include "base/event.h"
 #include "events/throwerror.h"
 
+using namespace Quite::Base;
+
 namespace Quite {
 namespace Events {
 
@@ -22,7 +24,7 @@ class Eval : public Base::Event{
   public:
     explicit Eval(QJSValue func, QJSValueList args);
     virtual ~Eval();
-    virtual void process(
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool

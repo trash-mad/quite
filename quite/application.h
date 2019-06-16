@@ -3,6 +3,7 @@
 
 #include <QCoreApplication>
 #include <QGuiApplication>
+#include <QDateTime>
 #include <QObject>
 #include <QDir>
 

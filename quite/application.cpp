@@ -6,7 +6,7 @@ namespace Quite {
 
 Application::Application()
   : QObject(nullptr) {
-    qDebug() << "Application ctor";
+    qDebug() << "Application ctor" << QDateTime::currentDateTime().toTime_t();
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
 }
@@ -23,6 +23,7 @@ void Application::logHandler(
     QtMsgType type,
     const QMessageLogContext &context,
     const QString &msg) {
+    (void)(context);
     if(type == QtMsgType::QtInfoMsg) {
         std::cout << msg.toStdString() << "\n";
     } else if(type == QtMsgType::QtCriticalMsg) {
@@ -46,6 +47,7 @@ int Application::exec(int argc, char *argv[]) {
     qInstallMessageHandler(logHandler);
     Application a;
     a.installExtension(Extension::TimerExtension);
+    a.installExtension(Extension::ConsoleExtension);
     a.importModule("main.js");
     return app.exec();
 }

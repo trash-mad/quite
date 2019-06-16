@@ -11,6 +11,8 @@
 #include "base/event.h"
 #include "events/eval.h"
 
+using namespace Quite::Base;
+
 namespace Quite {
 namespace Events {
 
@@ -22,7 +24,7 @@ class ImportModule : public Base::Event{
   public:
     explicit ImportModule(QString path="");
     virtual ~ImportModule();
-    virtual void process(
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool

@@ -8,6 +8,8 @@
 
 #include "base/event.h"
 
+using namespace Quite::Base;
+
 namespace Quite {
 namespace Events {
 
@@ -19,7 +21,7 @@ class ThrowError : public Base::Event {
   public:
     explicit ThrowError(QString message="");
     virtual ~ThrowError();
-    virtual void process(
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool

@@ -12,13 +12,17 @@
 #include "base/extension.h"
 
 #include "extensions/timerextension.h"
+#include "extensions/consoleextension.h"
+
+using namespace Quite::Base;
 
 namespace Quite {
 
 /*****************************************************************************/
 
 enum Extension {
-    TimerExtension
+    TimerExtension,
+    ConsoleExtension
 };
 
 /*****************************************************************************/
@@ -33,7 +37,7 @@ class InstallExtension : public Base::Event {
   public:
     explicit InstallExtension(Quite::Extension extension);
     virtual ~InstallExtension();
-    virtual void process(
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool

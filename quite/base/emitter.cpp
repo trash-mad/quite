@@ -49,7 +49,13 @@ QJSValue Emitter::fromObject(QJSValue origin, QJSEngine* eval) {
 /*---------------------------------------------------------------------------*/
 
 void Emitter::call(QJSValueList args) {
-    qDebug() << "Emitter call";
+
+    QStringList tmp;
+    for(int i=0; i!= args.length(); i++){
+        tmp << args.at(i).toString();
+    }
+    qDebug() << "Emitter call" << tmp;
+
     QCoreApplication::postEvent(engine, new Events::Eval(func,args));
 }
 

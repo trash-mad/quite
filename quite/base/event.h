@@ -12,11 +12,19 @@ namespace Base {
 
 /*****************************************************************************/
 
+enum EventResult {
+    Ok,
+    Bad,
+    AwaiterRethrow
+};
+
+/*****************************************************************************/
+
 class Event : public QEvent {
   public:
     explicit Event();
     virtual ~Event();
-    virtual void process(
+    virtual EventResult process(
         QObject* engine,
         QJSEngine* eval,
         QThreadPool* pool
