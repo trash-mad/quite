@@ -21,7 +21,11 @@ class ConsoleExtension : public Extension {
   public:
     explicit ConsoleExtension(QObject* parent = nullptr);
     virtual ~ConsoleExtension();
-    virtual void install(QJSValue global, QJSValue current);
+    virtual void install(
+        QJSValue global,
+        QJSValue current,
+        Factory* factory
+    );
   public slots:
     QJSValue log(QJSValue msg);
 };

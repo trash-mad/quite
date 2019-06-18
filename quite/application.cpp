@@ -47,6 +47,7 @@ int Application::exec(int argc, char *argv[]) {
     qInstallMessageHandler(logHandler);
     Application a;
     a.installExtension(Extension::TimerExtension);
+    a.installExtension(Extension::QuiteExtension);
     a.installExtension(Extension::ConsoleExtension);
     a.importModule("main.js");
     return app.exec();

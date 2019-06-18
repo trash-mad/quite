@@ -1,19 +1,24 @@
-QT += core qml
+QT += core qml quick quickcontrols2
 TARGET = quite
 TEMPLATE = app
 CONFIG += c++17
+CONFIG += console
 DEFINES += QT_DEPRECATED_WARNINGS
 
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
 SOURCES += main.cpp \
-    events/eval.cpp \
-    base/emitter.cpp \
-    base/monitor.cpp \
-    events/await.cpp \
-    monitors/timermonitor.cpp \
-    extensions/consoleextension.cpp
+    ui/node.cpp \
+    ui/components/window.cpp \
+    extensions/quiteextension.cpp \
+    base/factory.cpp
+SOURCES += events/eval.cpp
+SOURCES += base/emitter.cpp
+SOURCES += base/monitor.cpp
+SOURCES += events/await.cpp
+SOURCES += monitors/timermonitor.cpp
+SOURCES += extensions/consoleextension.cpp
 SOURCES += base/engine.cpp
 SOURCES += application.cpp
 SOURCES += base/event.cpp
@@ -25,12 +30,16 @@ SOURCES += events/importmodule.cpp
 SOURCES += events/throwerror.cpp
 
 HEADERS += base/engine.h \
-    events/eval.h \
-    base/emitter.h \
-    base/monitor.h \
-    events/await.h \
-    monitors/timermonitor.h \
-    extensions/consoleextension.h
+    ui/node.h \
+    ui/components/window.h \
+    extensions/quiteextension.h \
+    base/factory.h
+HEADERS += events/eval.h
+HEADERS += base/emitter.h
+HEADERS += base/monitor.h
+HEADERS += events/await.h
+HEADERS += monitors/timermonitor.h
+HEADERS += extensions/consoleextension.h
 HEADERS += application.h
 HEADERS += base/event.h
 HEADERS += base/extension.h

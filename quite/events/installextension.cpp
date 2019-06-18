@@ -33,11 +33,15 @@ EventResult InstallExtension::process(
         case Quite::Extension::ConsoleExtension:
             ext = new Quite::Extensions::ConsoleExtension(engine);
             break;
+        case Quite::Extension::QuiteExtension:
+            ext = new Quite::Extensions::QuiteExtension(engine);
+            break;
     }
 
     ext->install(
         eval->globalObject(),
-        Base::Wrapper::fromQObject(engine, ext, eval)
+        Base::Wrapper::fromQObject(engine, ext, eval),
+        new Factory(ext, eval)
     );
 
     return EventResult::Ok;

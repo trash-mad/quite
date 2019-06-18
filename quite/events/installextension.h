@@ -9,9 +9,11 @@
 
 #include "base/event.h"
 #include "base/wrapper.h"
+#include "base/factory.h"
 #include "base/extension.h"
 
 #include "extensions/timerextension.h"
+#include "extensions/quiteextension.h"
 #include "extensions/consoleextension.h"
 
 using namespace Quite::Base;
@@ -22,6 +24,7 @@ namespace Quite {
 
 enum Extension {
     TimerExtension,
+    QuiteExtension,
     ConsoleExtension
 };
 

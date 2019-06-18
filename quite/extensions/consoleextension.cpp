@@ -18,7 +18,11 @@ ConsoleExtension::~ConsoleExtension() {
 
 /*---------------------------------------------------------------------------*/
 
-void ConsoleExtension::install(QJSValue global, QJSValue current) {
+void ConsoleExtension::install(
+    QJSValue global,
+    QJSValue current,
+    Factory* factory) {
+    (void)(factory);
     qDebug() << "ConsoleExtension install";
     global.setProperty("console",current);
 }

@@ -26,6 +26,8 @@ Wrapper::~Wrapper() {
     qDebug() << "Wrapper dtor";
 }
 
+/*---------------------------------------------------------------------------*/
+
 QJSValue Wrapper::call(
     QJSValue p1,
     QJSValue p2,
@@ -130,6 +132,8 @@ QJSValue Wrapper::fromQObject(
             Wrapper* wrapped = new Wrapper(obj, it.name());
             QJSValue managed = eval->newQObject(wrapped);
             result.setProperty(it.name(),managed.property("call"));
+        } else {
+            result.setProperty(it.name(),it.value());
         }
 
     }

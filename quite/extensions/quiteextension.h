@@ -1,43 +1,43 @@
-#ifndef TIMEREXTENSION_H
-#define TIMEREXTENSION_H
+#ifndef QUITEEXTENSION_H
+#define QUITEEXTENSION_H
 
-#include <QHash>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
-#include <QRandomGenerator>
-#include <QJSValueIterator>
+#include <QQmlEngine>
 
-#include "monitors/timermonitor.h"
+#include "ui/components/window.h"
 #include "events/throwerror.h"
 #include "base/extension.h"
-#include "events/await.h"
+#include "ui/node.h"
 
+using namespace Quite::Ui::Components;
+using namespace Quite::Events;
 using namespace Quite::Base;
+using namespace Quite::Ui;
 
 namespace Quite {
 namespace Extensions {
 
 /*****************************************************************************/
 
-class TimerExtension : public Extension {
+class QuiteExtension : public Extension {
   Q_OBJECT
   private:
-    QHash<int, Monitors::TimerMonitor*> timers;
-    int append(Monitors::TimerMonitor* timer);
-    const int MAXIMUM_TIMERS = 1000;
-    QRandomGenerator generator;
+    QQmlEngine* engine;
+    Factory* factory;
   public:
-    explicit TimerExtension(QObject* parent = nullptr);
-    virtual ~TimerExtension();
+    explicit QuiteExtension(QObject* parent = nullptr);
+    virtual ~QuiteExtension();
     virtual void install(
         QJSValue global,
         QJSValue current,
         Factory* factory
     );
   public slots:
-    QJSValue setTimeout(QJSValue handler, QJSValue timeout);
+    QJSValue render(QJSValue windowComponent);
+    QJSValue createComponent(QJSValue name);
 };
 
 /*****************************************************************************/
@@ -45,4 +45,4 @@ class TimerExtension : public Extension {
 } // namespace Extensions
 } // namespace Quite
 
-#endif // TIMEREXTENSION_H
+#endif // QUITEEXTENSION_H
