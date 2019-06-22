@@ -7,14 +7,14 @@
 #include <QObject>
 #include <QEvent>
 
-#include "base/event.h"
-#include "base/wrapper.h"
-#include "base/factory.h"
-#include "base/extension.h"
+#include "src/base/event.h"
+#include "src/base/wrapper.h"
+#include "src/base/factory.h"
+#include "src/base/extension.h"
 
-#include "extensions/timerextension.h"
-#include "extensions/quiteextension.h"
-#include "extensions/consoleextension.h"
+#include "src/extensions/timerextension.h"
+#include "src/extensions/quiteextension.h"
+#include "src/extensions/consoleextension.h"
 
 using namespace Quite::Base;
 

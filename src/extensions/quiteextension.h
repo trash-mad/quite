@@ -7,10 +7,10 @@
 #include <QJSEngine>
 #include <QQmlEngine>
 
-#include "ui/components/window.h"
-#include "events/throwerror.h"
-#include "base/extension.h"
-#include "ui/node.h"
+#include "src/ui/components/window.h"
+#include "src/events/throwerror.h"
+#include "src/base/extension.h"
+#include "src/ui/node.h"
 
 using namespace Quite::Ui::Components;
 using namespace Quite::Events;

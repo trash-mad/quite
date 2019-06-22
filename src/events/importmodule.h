@@ -8,8 +8,8 @@
 #include <QJSEngine>
 #include <QCoreApplication>
 
-#include "base/event.h"
-#include "events/eval.h"
+#include "src/base/event.h"
+#include "src/events/eval.h"
 
 using namespace Quite::Base;
 

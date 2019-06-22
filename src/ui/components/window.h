@@ -7,7 +7,7 @@
 #include <QQuickView>
 #include <QQuickWindow>
 
-#include "ui/node.h"
+#include "src/ui/node.h"
 
 namespace Quite {
 namespace Ui {

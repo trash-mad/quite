@@ -7,7 +7,7 @@
 #include <QtDebug>
 #include <QList>
 
-#include "base/factory.h"
+#include "src/base/factory.h"
 
 namespace Quite {
 namespace Base {

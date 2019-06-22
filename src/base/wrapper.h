@@ -8,8 +8,8 @@
 #include <QJSValueIterator>
 #include <QCoreApplication>
 
-#include "base/emitter.h"
-#include "events/eval.h"
+#include "src/base/emitter.h"
+#include "src/events/eval.h"
 
 namespace Quite {
 namespace Base {

@@ -7,8 +7,8 @@
 #include <QJSEngine>
 #include <QCoreApplication>
 
-#include "base/event.h"
-#include "events/throwerror.h"
+#include "src/base/event.h"
+#include "src/events/throwerror.h"
 
 using namespace Quite::Base;
 

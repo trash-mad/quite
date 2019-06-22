@@ -9,10 +9,10 @@
 #include <QRandomGenerator>
 #include <QJSValueIterator>
 
-#include "monitors/timermonitor.h"
-#include "events/throwerror.h"
-#include "base/extension.h"
-#include "events/await.h"
+#include "src/monitors/timermonitor.h"
+#include "src/events/throwerror.h"
+#include "src/base/extension.h"
+#include "src/events/await.h"
 
 using namespace Quite::Base;
 

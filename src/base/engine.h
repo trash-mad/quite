@@ -12,9 +12,9 @@
 #include <QThreadPool>
 #include <QJSValueIterator>
 
-#include "base/event.h"
-#include "base/monitor.h"
-#include "events/await.h"
+#include "src/base/event.h"
+#include "src/base/monitor.h"
+#include "src/events/await.h"
 
 using namespace Quite::Events;
 

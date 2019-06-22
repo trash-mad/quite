@@ -7,8 +7,8 @@
 #include <QThreadPool>
 #include <QCoreApplication>
 
-#include "base/event.h"
-#include "base/monitor.h"
+#include "src/base/event.h"
+#include "src/base/monitor.h"
 
 using namespace Quite::Base;
 

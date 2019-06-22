@@ -6,7 +6,7 @@
 #include <QString>
 #include <QJSEngine>
 
-#include "base/event.h"
+#include "src/base/event.h"
 
 using namespace Quite::Base;
 

@@ -7,7 +7,7 @@
 #include <QJSEngine>
 #include <QStringList>
 
-#include "events/eval.h"
+#include "src/events/eval.h"
 
 namespace Quite {
 namespace Base {

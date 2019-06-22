@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QJSValue>
 
-#include "base/monitor.h"
+#include "src/base/monitor.h"
 
 namespace Quite {
 namespace Monitors {
