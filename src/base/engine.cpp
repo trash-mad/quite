@@ -32,12 +32,16 @@ void Engine::run() {
 
     while(true) {
         if(!loop.processEvents()){
-            if(rethrow->isEmpty()) {
+            bool wasEmpty = true;
+            while(!rethrow->isEmpty()) {
+                wasEmpty = false;
+                QCoreApplication::postEvent(this, new Await(rethrow->pop()));
+            }
+
+            if(wasEmpty) {
                 break;
             } else {
                 qDebug() << "Engine event loop push monitor";
-                QCoreApplication::postEvent(this, new Await(rethrow->pop()));
-                continue;
             }
         }
     }

@@ -7,12 +7,16 @@
 #include <QJSEngine>
 #include <QQmlEngine>
 
+#include "src/ui/components/rectangle.h"
+#include "src/monitors/windowmonitor.h"
 #include "src/ui/components/window.h"
 #include "src/events/throwerror.h"
 #include "src/base/extension.h"
+#include "src/events/await.h"
 #include "src/ui/node.h"
 
 using namespace Quite::Ui::Components;
+using namespace Quite::Monitors;
 using namespace Quite::Events;
 using namespace Quite::Base;
 using namespace Quite::Ui;
@@ -37,7 +41,13 @@ class QuiteExtension : public Extension {
     );
   public slots:
     QJSValue render(QJSValue windowComponent);
-    QJSValue createComponent(QJSValue name);
+    QJSValue createElement(
+        QJSValue name,
+        QJSValue props,
+        QJSValue child = QJSValue()
+    );
+  private:
+    static bool tryCastWindow(QJSValue src, Window*& dst);
 };
 
 /*****************************************************************************/

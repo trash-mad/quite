@@ -60,11 +60,14 @@ QJSValue TimerExtension::setTimeout(QJSValue handler, QJSValue timeout) {
             "setTimeout: invalid timeout"
         ));
     } else {
+        int id = -1;
         Monitors::TimerMonitor* monitor = new Monitors::TimerMonitor(
             handler,
             timeout.toInt()
         );
-        result = append(monitor);
+        id = append(monitor);
+        monitor->setId(id);
+        result = QJSValue(id);
         connect(monitor,SIGNAL(clear(int)),this,SLOT(clearPointer(int)));
         QCoreApplication::postEvent(parent(), new Events::Await(monitor));
     }

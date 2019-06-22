@@ -10,11 +10,7 @@ bool Node::tryCast(QJSValue src, Node *&dst) {
         return false;
     } else {
         dst = qobject_cast<Node*>(src.toQObject());
-        if( dst == nullptr ) {
-            return false;
-        } else {
-            return true;
-        }
+        return dst!=nullptr;
     }
 }
 
@@ -36,6 +32,12 @@ Node::~Node() {
         child->deleteLater();
         iter.operator++();
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+QQuickItem *Node::getNode() {
+    return node;
 }
 
 /*void Node::appendChild(FiberNode *child) {
@@ -98,34 +100,17 @@ QJSValue Node::insertBefore(QJSValue child, QJSValue beforeChild) {
 /*---------------------------------------------------------------------------*/
 
 QJSValue Node::commitUpdate(QJSValue props) {
-    if( !props.isArray() ){
-        qCritical() << "Node commitUpdate props is not array";
+    if( !props.isObject() ){
+        qCritical() << "Node commitUpdate props is not object";
     } else {
-        QVariant var = props.toVariant();
-        QSequentialIterable iterable = var.value<QSequentialIterable>();
         QMap<QString, QVariant> tmp;
-        for ( const QVariant &v : iterable ) {
-            if(v.canConvert<QVariantMap>()) {
-                QVariantMap map = qvariant_cast<QVariantMap>(v);
-                QVariantMap::const_iterator iter;
-                QString key = "";
-                QVariant value = QVariant();
-                for(iter = map.begin(); iter != map.end();++iter) {
-                    if(iter.key() == "key") {
-                        key = iter.value().toString();
-                    } else if(iter.key() == "value") {
-                        value = iter.value();
-                    }
-                }
-                if(key.isEmpty()||value.isNull()){
-                    qCritical() << "Node commitUpdate empty key or value";
-                } else {
-                    tmp.insert(key,value);
-                }
-            } else {
-                qCritical() << "Node commitUpdate invalid list";
-            }
+
+        QJSValueIterator it(props);
+        while (it.hasNext()) {
+            it.next();
+            tmp.insert(it.name(),it.value().toVariant());
         }
+
         commitUpdate(tmp);
     }
     return QJSValue();

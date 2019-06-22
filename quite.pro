@@ -8,7 +8,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp 
+SOURCES += src/main.cpp \ 
+    src/ui/components/rectangle.cpp \
+    src/monitors/windowmonitor.cpp
 SOURCES += src/ui/node.cpp 
 SOURCES += src/ui/components/window.cpp 
 SOURCES += src/extensions/quiteextension.cpp 
@@ -29,7 +31,9 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h
+HEADERS += src/base/engine.h \
+    src/ui/components/rectangle.h \
+    src/monitors/windowmonitor.h
 HEADERS += src/ui/node.h 
 HEADERS += src/ui/components/window.h 
 HEADERS += src/extensions/quiteextension.h 
@@ -48,3 +52,5 @@ HEADERS += src/extensions/timerextension.h
 HEADERS += src/events/installextension.h
 HEADERS += src/events/importmodule.h
 HEADERS += src/events/throwerror.h
+
+RESOURCES += res.qrc

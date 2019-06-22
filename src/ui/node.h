@@ -9,6 +9,7 @@
 #include <QQuickItem>
 #include <QQmlEngine>
 #include <QLinkedList>
+#include <QJSValueIterator>
 
 namespace Quite {
 namespace Ui {
@@ -25,6 +26,7 @@ class Node : public QObject {
   public:
     Node(QObject *parent, QQmlEngine* engine);
     virtual ~Node();
+    QQuickItem* getNode();
   protected:
     virtual void appendChild(Node* child) = 0;
     virtual void removeChild(Node* child) = 0;

@@ -32,7 +32,7 @@ class WindowPrivate : public QQuickWindow {
 
 class Window : public Node {
   private:
-    WindowPrivate window;
+    WindowPrivate *window;
   protected:
     virtual void appendChild(Node* child);
     virtual void removeChild(Node* child);
@@ -43,6 +43,7 @@ class Window : public Node {
     virtual ~Window();
     bool isClosed() const;
     bool isOpened() const;
+    void show();
 };
 
 /*****************************************************************************/
