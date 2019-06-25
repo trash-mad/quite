@@ -10,12 +10,11 @@ Component *WindowManager::renderComponent(Node *node) {
     Component* component = nullptr;
     switch (node->getType()) {
         case NodeType::Window:
-            component = new Components::Window(node);
+            component = new Components::Window(node, &engine);
             break;
         case NodeType::Rectangle:
-                //todo
-                component = new Components::Window(node);
-                break;
+            component = new Components::Rectangle(node, &engine);
+            break;
         default:
             qCritical() << "WindowManager renderComponent invalid type";
     }

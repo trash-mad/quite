@@ -4,6 +4,7 @@
 #include <QtDebug>
 #include <QObject>
 #include <QQuickItem>
+#include <QQmlEngine>
 
 #include "src/ui/base/node.h"
 
@@ -20,8 +21,9 @@ class Component : public QObject {
     QMap<QString, QVariant> props;
   protected:
     QQuickItem* item;
+    QQmlEngine* engine;
   public:
-    Component(Node* node);
+    Component(Node* node, QQmlEngine* engine);
     virtual ~Component();
     QLinkedList<Component*> getChilds() const;
     QMap<QString, QVariant> getProps() const;

@@ -6,7 +6,7 @@ namespace Base {
 
 /*****************************************************************************/
 
-Component::Component(Node* node)
+Component::Component(Node* node, QQmlEngine* engine)
   : QObject(nullptr) {
     qDebug() << "Component ctor";
 
@@ -23,6 +23,8 @@ Component::Component(Node* node)
         this,
         SLOT(propsChangedHandler(QMap<QString,QVariant>))
     );
+
+    this->engine = engine;
 }
 
 /*---------------------------------------------------------------------------*/

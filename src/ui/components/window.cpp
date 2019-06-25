@@ -30,8 +30,8 @@ WindowPrivate::~WindowPrivate() {
 
 /*****************************************************************************/
 
-Window::Window(Node *node)
-  : Component(node) {
+Window::Window(Node *node, QQmlEngine* engine)
+  : Component(node, engine) {
     qDebug() << "Window ctor";
     connect(&window,SIGNAL(closed()),this,SIGNAL(closed()));
     item = window.contentItem();
@@ -56,6 +56,11 @@ void Window::propsChanged(QMap<QString, QVariant> props) {
 void Window::childChanged(QLinkedList<Component*> child) {
     qDebug() << "Window childChanged";
     (void)(child);
+    QLinkedList<Component*>::iterator i;
+    for (i=child.begin(); i!=child.end();i++) {
+        Component* component = (*i);
+        component->getItem()->setParentItem(item);
+    }
 }
 
 /*---------------------------------------------------------------------------*/
