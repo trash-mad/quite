@@ -12,7 +12,8 @@ SOURCES += src/main.cpp \
     src/events/renderui.cpp \
     src/ui/base/component.cpp \
     src/ui/base/node.cpp \
-    src/ui/windowmanager.cpp
+    src/ui/windowmanager.cpp \
+    src/ui/components/window.cpp
 SOURCES += src/extensions/quiteextension.cpp 
 SOURCES += src/base/factory.cpp
 SOURCES += src/events/eval.cpp
@@ -35,7 +36,8 @@ HEADERS += src/base/engine.h \
     src/events/renderui.h \
     src/ui/base/component.h \
     src/ui/base/node.h \
-    src/ui/windowmanager.h
+    src/ui/windowmanager.h \
+    src/ui/components/window.h
 HEADERS += src/extensions/quiteextension.h 
 HEADERS += src/base/factory.h
 HEADERS += src/events/eval.h

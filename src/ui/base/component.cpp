@@ -59,8 +59,9 @@ void Component::childChangedHandler(QLinkedList<Node*> child) {
         Component* component = (*i);
         component->deleteLater();
     }
+    this->child.erase(this->child.begin(), this->child.end());
 
-    emit updateSubtree(child);
+    emit updateSubtree(this, child);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -68,7 +69,7 @@ void Component::childChangedHandler(QLinkedList<Node*> child) {
 void Component::propsChangedHandler(QMap<QString, QVariant> props) {
     qDebug() << "Component propsChangedHandler";
     this->props = props;
-    propsChanged();
+    propsChanged(props);
 }
 
 /*****************************************************************************/

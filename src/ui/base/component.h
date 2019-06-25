@@ -26,14 +26,14 @@ class Component : public QObject {
     QLinkedList<Component*> getChilds() const;
     QMap<QString, QVariant> getProps() const;
     QQuickItem* getItem() const;
-  protected:
-    virtual void propsChanged() = 0;
+  public:
     virtual void childChanged(QLinkedList<Component*> child) = 0;
+    virtual void propsChanged(QMap<QString, QVariant> props) = 0;
   private slots:
     void childChangedHandler(QLinkedList<Node*> child);
     void propsChangedHandler(QMap<QString, QVariant> props);
   signals:
-    void updateSubtree(QLinkedList<Node*> child);
+    void updateSubtree(Component* that, QLinkedList<Node*> child);
 };
 
 /*****************************************************************************/
