@@ -3,6 +3,7 @@
 
 #include <QtDebug>
 #include <QObject>
+#include <QQuickItem>
 
 #include "src/ui/base/node.h"
 
@@ -15,13 +16,24 @@ namespace Base {
 class Component : public QObject {
   Q_OBJECT
   private:
-    Node* node;
+    QLinkedList<Component*> child;
+    QMap<QString, QVariant> props;
+  protected:
+    QQuickItem* item;
   public:
-    explicit Component(Component* parent);
+    Component(Node* node);
     virtual ~Component();
+    QLinkedList<Component*> getChilds() const;
+    QMap<QString, QVariant> getProps() const;
+    QQuickItem* getItem() const;
+  protected:
+    virtual void propsChanged() = 0;
+    virtual void childChanged(QLinkedList<Component*> child) = 0;
   private slots:
     void childChangedHandler(QLinkedList<Node*> child);
     void propsChangedHandler(QMap<QString, QVariant> props);
+  signals:
+    void updateSubtree(QLinkedList<Node*> child);
 };
 
 /*****************************************************************************/

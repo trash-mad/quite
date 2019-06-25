@@ -35,6 +35,7 @@ class Node : public QObject{
         QJSValue child = QJSValue()
     );
     virtual ~Node();
+    NodeType getType() const;
     QLinkedList<Node*> getChild() const;
     QMap<QString, QVariant> getProps() const;
   public:
