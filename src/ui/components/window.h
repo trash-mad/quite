@@ -33,7 +33,7 @@ class Window : public Component{
   private:
     WindowPrivate window;
   public:
-    Window(Node* node);
+    Window(Node* node, QQmlEngine* engine);
     virtual ~Window();
     virtual void propsChanged(QMap<QString, QVariant> props);
     virtual void childChanged(QLinkedList<Component*> child);

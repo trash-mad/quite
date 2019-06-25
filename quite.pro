@@ -3,17 +3,19 @@ TARGET = quite
 TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
+CONFIG += rtti
 DEFINES += QT_DEPRECATED_WARNINGS
 
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp \
-    src/events/renderui.cpp \
-    src/ui/base/component.cpp \
-    src/ui/base/node.cpp \
-    src/ui/windowmanager.cpp \
-    src/ui/components/window.cpp
+SOURCES += src/main.cpp
+SOURCES += src/events/renderui.cpp
+SOURCES += src/ui/base/component.cpp
+SOURCES += src/ui/base/node.cpp
+SOURCES += src/ui/windowmanager.cpp
+SOURCES += src/ui/components/window.cpp
+SOURCES += src/ui/components/rectangle.cpp
 SOURCES += src/extensions/quiteextension.cpp 
 SOURCES += src/base/factory.cpp
 SOURCES += src/events/eval.cpp
@@ -32,12 +34,13 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h \
-    src/events/renderui.h \
-    src/ui/base/component.h \
-    src/ui/base/node.h \
-    src/ui/windowmanager.h \
-    src/ui/components/window.h
+HEADERS += src/base/engine.h
+HEADERS += src/events/renderui.h
+HEADERS += src/ui/base/component.h
+HEADERS += src/ui/base/node.h
+HEADERS += src/ui/windowmanager.h
+HEADERS += src/ui/components/window.h
+HEADERS += src/ui/components/rectangle.h
 HEADERS += src/extensions/quiteextension.h 
 HEADERS += src/base/factory.h
 HEADERS += src/events/eval.h

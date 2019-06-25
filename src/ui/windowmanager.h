@@ -9,6 +9,7 @@
 #include "src/ui/base/node.h"
 #include "src/ui/base/component.h"
 #include "src/ui/components/window.h"
+#include "src/ui/components/rectangle.h"
 
 using namespace Quite::Ui::Base;
 
@@ -21,6 +22,7 @@ class WindowManager : public QObject {
   Q_OBJECT
   private:
     QList<Components::Window*> wins;
+    QQmlEngine engine;
   public:
     explicit WindowManager(QObject* parent = nullptr);
     virtual ~WindowManager();
