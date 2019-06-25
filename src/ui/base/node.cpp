@@ -2,6 +2,7 @@
 
 namespace Quite {
 namespace Ui {
+namespace Base {
 
 /*****************************************************************************/
 
@@ -119,6 +120,11 @@ QJSValue Node::commitProps(QJSValue props) {
 
 QJSValue Node::commitChild(QJSValue child) {
     qDebug() << "Node" << type << "commitChild";
+    QLinkedList<Node*>::iterator i;
+    for (i = this->child.begin(); i != this->child.end(); i++){
+        Node* node = (*i);
+        node->deleteLater();
+    }
     this->child = castNodeList(child);
     emit childChanged(this->child);
     return QJSValue();
@@ -126,5 +132,6 @@ QJSValue Node::commitChild(QJSValue child) {
 
 /*****************************************************************************/
 
+} // namespace Base
 } // namespace Ui
 } // namespace Quite

@@ -7,6 +7,8 @@ namespace Quite {
 Application::Application()
   : QObject(nullptr) {
     qDebug() << "Application ctor" << QDateTime::currentDateTime().toTime_t();
+    connect(&engine, SIGNAL(renderUi(Node*)), &manager, SLOT(renderUi(Node*)));
+    connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
 }

@@ -5,15 +5,20 @@
 #include <QGuiApplication>
 #include <QDateTime>
 #include <QObject>
+#include <QDebug>
 #include <QDir>
 
 #include <iostream>
 
-#include "base/engine.h"
-#include "events/importmodule.h"
-#include "events/installextension.h"
+#include "src/base/engine.h"
+#include "src/ui/base/node.h"
+#include "src/ui/windowmanager.h"
+#include "src/events/importmodule.h"
+#include "src/events/installextension.h"
 
+using namespace Quite::Ui::Base;
 using namespace Quite::Events;
+using namespace Quite::Ui;
 
 namespace Quite {
 
@@ -22,7 +27,8 @@ namespace Quite {
 class Application : public QObject {
   Q_OBJECT
   private:
-    Base::Engine engine;
+    Engine engine;
+    WindowManager manager;
   protected:
     explicit Application();
     virtual ~Application();

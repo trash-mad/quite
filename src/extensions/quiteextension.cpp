@@ -35,11 +35,11 @@ QJSValue QuiteExtension::render(QJSValue root) {
     qDebug() << "QuiteExtension render";
     Node* node = nullptr;
     if(!Node::tryCastNode(root,node)){
-        QCoreApplication::sendEvent(parent(), new Events::ThrowError(
+        QCoreApplication::sendEvent(parent(), new ThrowError(
             "render: invalid parameter rootNode"
         ));
     } else {
-        qCritical() << "render not implemented";
+        QCoreApplication::postEvent(parent(), new RenderUi(node));
     }
     return QJSValue();
 }
@@ -52,7 +52,7 @@ QJSValue QuiteExtension::createElement(
     QJSValue child1,
     QJSValue child2,
     QJSValue child3
-){
+) {
     qDebug() << "QuiteExtension createElement";
     QJSValue child;
     if(child1.isUndefined()) {

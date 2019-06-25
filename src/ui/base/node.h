@@ -10,6 +10,7 @@
 
 namespace Quite {
 namespace Ui {
+namespace Base {
 
 /*****************************************************************************/
 
@@ -51,6 +52,7 @@ class Node : public QObject{
 
 /*****************************************************************************/
 
+} // namespace Base
 } // namespace Ui
 } // namespace Quite
 

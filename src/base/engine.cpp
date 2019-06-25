@@ -8,7 +8,7 @@ namespace Base {
 Engine::Engine(QObject *parent)
   : QThread(parent) {
     qDebug() << "Engine ctor";
-    installEventFilter(this);
+    //installEventFilter(this);
     moveToThread(this);
 }
 
@@ -31,17 +31,15 @@ void Engine::run() {
     qDebug() << "Engine event loop started";
 
     while(true) {
-        if(!loop.processEvents()){
-            bool wasEmpty = true;
+        if(!loop.processEvents()) {
+            bool continueLoop = uiexec;
             while(!rethrow->isEmpty()) {
-                wasEmpty = false;
+                continueLoop = continueLoop || false;
                 QCoreApplication::postEvent(this, new Await(rethrow->pop()));
             }
-
-            if(wasEmpty) {
+            if(!continueLoop) {
+                qDebug() << "Engine event loop free";
                 break;
-            } else {
-                qDebug() << "Engine event loop push monitor";
             }
         }
     }
@@ -57,25 +55,29 @@ void Engine::run() {
 /*---------------------------------------------------------------------------*/
 
 bool Engine::event(QEvent* e) {
-    Event* event = static_cast<Event*>(e);
-    switch(event->process(this,eval,pool)){
-        case EventResult::AwaiterRethrow:
-            rethrow->push(static_cast<Await*>(e)->getMonitor());
-            return true;
-        default:
-            return true;
+    if(e->type() == Event::staticType()) {
+        Event* event = static_cast<Event*>(e);
+        switch(event->process(this,eval,pool)){
+            case EventResult::AwaiterRethrow:
+                rethrow->push(static_cast<Await*>(e)->getMonitor());
+                return true;
+            case EventResult::EmitRenderUi:
+                uiexec = true;
+                emit renderUi(static_cast<RenderUi*>(e)->getRootNode());
+                return true;
+            default:
+                return true;
+        }
+    } else {
+        return QObject::event(e);
     }
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool Engine::eventFilter(QObject *obj, QEvent *event){
-    (void)(obj);
-    if (event->type() == Event::staticType()) {
-        return false;
-    } else {
-        return true;
-    }
+void Engine::windowClosed() {
+    qDebug() << "Engine windowClosed";
+    uiexec = false;
 }
 
 /*****************************************************************************/
