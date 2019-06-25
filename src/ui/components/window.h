@@ -1,13 +1,13 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <QEvent>
 #include <QtDebug>
 #include <QObject>
-#include <QQuickView>
 #include <QQuickWindow>
 
-#include "src/ui/node.h"
+#include "src/ui/base/component.h"
+
+using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {
@@ -16,34 +16,30 @@ namespace Components {
 /*****************************************************************************/
 
 class WindowPrivate : public QQuickWindow {
-  private:
-    bool opened = false;
-    bool closed = false;
+  Q_OBJECT
   protected:
     virtual bool event(QEvent* e) override;
   public:
     WindowPrivate();
     virtual ~WindowPrivate();
-    bool isClosed() const;
-    bool isOpened() const;
+  signals:
+    void closed();
 };
 
 /*****************************************************************************/
 
-class Window : public Node {
+class Window : public Component{
+  Q_OBJECT
   private:
-    WindowPrivate *window;
-  protected:
-    virtual void appendChild(Node* child);
-    virtual void removeChild(Node* child);
-    virtual void insertBefore(Node* child, Node* beforeChild);
-    virtual void commitUpdate(QMap<QString, QVariant> props);
+    WindowPrivate window;
   public:
-    Window(QObject *parent, QQmlEngine* engine);
+    Window(Node* node);
     virtual ~Window();
-    bool isClosed() const;
-    bool isOpened() const;
+    virtual void propsChanged(QMap<QString, QVariant> props);
+    virtual void childChanged(QLinkedList<Component*> child);
     void show();
+  signals:
+    void closed();
 };
 
 /*****************************************************************************/

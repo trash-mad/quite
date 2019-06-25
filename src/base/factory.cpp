@@ -23,6 +23,12 @@ QJSValue Factory::newQObject(QObject *object) {
     return eval->newQObject(object);
 }
 
+/*---------------------------------------------------------------------------*/
+
+QJSValue Factory::newArray(uint lenght) {
+    return eval->newArray(lenght);
+}
+
 /*****************************************************************************/
 
 } // namespace Base

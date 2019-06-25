@@ -8,11 +8,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp \ 
-    src/ui/components/rectangle.cpp \
-    src/monitors/windowmonitor.cpp
-SOURCES += src/ui/node.cpp 
-SOURCES += src/ui/components/window.cpp 
+SOURCES += src/main.cpp \
+    src/events/renderui.cpp \
+    src/ui/base/component.cpp \
+    src/ui/base/node.cpp \
+    src/ui/windowmanager.cpp \
+    src/ui/components/window.cpp
 SOURCES += src/extensions/quiteextension.cpp 
 SOURCES += src/base/factory.cpp
 SOURCES += src/events/eval.cpp
@@ -32,10 +33,11 @@ SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h \
-    src/ui/components/rectangle.h \
-    src/monitors/windowmonitor.h
-HEADERS += src/ui/node.h 
-HEADERS += src/ui/components/window.h 
+    src/events/renderui.h \
+    src/ui/base/component.h \
+    src/ui/base/node.h \
+    src/ui/windowmanager.h \
+    src/ui/components/window.h
 HEADERS += src/extensions/quiteextension.h 
 HEADERS += src/base/factory.h
 HEADERS += src/events/eval.h

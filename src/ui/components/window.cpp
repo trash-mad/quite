@@ -6,24 +6,10 @@ namespace Components {
 
 /*****************************************************************************/
 
-bool WindowPrivate::isClosed() const {
-    return closed;
-}
-
-/*---------------------------------------------------------------------------*/
-
-bool WindowPrivate::isOpened() const {
-    return opened;
-}
-
-/*---------------------------------------------------------------------------*/
-
 bool WindowPrivate::event(QEvent *e) {
-    if (e->type() == QEvent::Show) {
-        opened = true;
-        return QQuickWindow::event(e);
-    } else if (e->type() == QEvent::Close) {
-        closed = true;
+    if (e->type() == QEvent::Close) {
+        emit closed();
+        hide();
         return true;
     } else {
         return QQuickWindow::event(e);
@@ -38,73 +24,45 @@ WindowPrivate::WindowPrivate() {
 
 /*---------------------------------------------------------------------------*/
 
-WindowPrivate::~WindowPrivate(){
+WindowPrivate::~WindowPrivate() {
     qDebug() << "WindowPrivate dtor";
 }
 
 /*****************************************************************************/
 
-void Window::appendChild(Node *child) {
-    qDebug() << "Window appendchild";
-    child->getNode()->setParentItem(node);
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::removeChild(Node *child) {
-    qDebug() << "Window removeChild";
-    node->childItems().removeOne(child->getNode());
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::insertBefore(Node *child, Node *beforeChild) {
-    qDebug() << "Window insertBefore";
-    node->childItems().insert(
-        node->childItems().indexOf(beforeChild->getNode()),
-        child->getNode()
-    );
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::commitUpdate(QMap<QString, QVariant> props) {
-    qDebug() << "Rectangle commitUpdate";
-    (void)(props);
-}
-
-/*---------------------------------------------------------------------------*/
-
-Window::Window(QObject *parent, QQmlEngine* engine)
-  : Node(parent, engine) {
+Window::Window(Node *node)
+  : Component(node) {
     qDebug() << "Window ctor";
-    window = new WindowPrivate();
-    node = window->contentItem();
+    connect(&window,SIGNAL(closed()),this,SIGNAL(closed()));
+    item = window.contentItem();
+    window.show();
 }
 
 /*---------------------------------------------------------------------------*/
 
 Window::~Window() {
     qDebug() << "Window dtor";
-    window->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool Window::isClosed() const {
-    return window->isClosed();
+void Window::propsChanged(QMap<QString, QVariant> props) {
+    qDebug() << "Window propsChanged";
+    (void)(props);
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool Window::isOpened() const {
-    return window->isClosed();
+void Window::childChanged(QLinkedList<Component*> child) {
+    qDebug() << "Window childChanged";
+    (void)(child);
 }
 
 /*---------------------------------------------------------------------------*/
 
 void Window::show() {
-    window->show();
+    qDebug() << "Window show";
+    window.show();
 }
 
 /*****************************************************************************/

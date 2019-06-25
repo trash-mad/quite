@@ -8,7 +8,6 @@ namespace Extensions {
 QuiteExtension::QuiteExtension(QObject* parent)
   : Extension(parent) {
     qDebug() << "QuiteExtension ctor";
-    engine = new QQmlEngine(this);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -16,7 +15,6 @@ QuiteExtension::QuiteExtension(QObject* parent)
 QuiteExtension::~QuiteExtension() {
     qDebug() << "QuiteExtension dtor";
     factory->deleteLater();
-    engine->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -33,74 +31,58 @@ void QuiteExtension::install(
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue QuiteExtension::render(QJSValue windowComponent) {
+QJSValue QuiteExtension::render(QJSValue root) {
     qDebug() << "QuiteExtension render";
-
-    Window* window = nullptr;
-
-    if(!tryCastWindow(windowComponent, window)) {
-        QCoreApplication::sendEvent(parent(), new Events::ThrowError(
-            "render: argument not window"
+    Node* node = nullptr;
+    if(!Node::tryCastNode(root,node)){
+        QCoreApplication::sendEvent(parent(), new ThrowError(
+            "render: invalid parameter rootNode"
         ));
     } else {
-        QCoreApplication::sendEvent(parent(), new Events::Await(
-            new WindowMonitor(window)
-        ));
-        window->show();
+        QCoreApplication::postEvent(parent(), new RenderUi(node));
     }
-
     return QJSValue();
 }
 
 /*---------------------------------------------------------------------------*/
 
 QJSValue QuiteExtension::createElement(
-    QJSValue name,
+    QJSValue type,
     QJSValue props,
-    QJSValue child
+    QJSValue child1,
+    QJSValue child2,
+    QJSValue child3
 ) {
-    (void)(props);
-    (void)(child);
     qDebug() << "QuiteExtension createElement";
-
-    QString component = name.toString();
-    Node* node = nullptr;
-    QJSValue result = QJSValue(QJSValue::SpecialValue::NullValue);
-
-    if(component == "Window") {
-        node = new Window(nullptr, engine);
-    } else if(component == "Rectangle") {
-        node = new Rectangle(nullptr, engine);
+    QJSValue child;
+    if(child1.isUndefined()) {
+        child = QJSValue();
+    } else if(child2.isUndefined()) {
+        child = factory->newArray(1);
+        child.setProperty(0, child1);
+    } else if(child3.isUndefined()) {
+        child = factory->newArray(2);
+        child.setProperty(0, child1);
+        child.setProperty(1, child2);
     } else {
-        QCoreApplication::sendEvent(parent(), new Events::ThrowError(
-            "createComponent: invalid name parameter"
-        ));
+        child = factory->newArray(3);
+        child.setProperty(0, child1);
+        child.setProperty(1, child2);
+        child.setProperty(2, child3);
     }
-
-    if(node!=nullptr) {
-        result = factory->newQObject(node);
-
-        if(!child.isUndefined()){
-            node->appendChild(child);
-        }
-
-        if(!props.isNull()){
-            node->commitUpdate(props);
-        }
-    }
-
-    return result;
+    return createElementInternal(type, props, child);
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool QuiteExtension::tryCastWindow(QJSValue src, Window *&dst) {
-    if(!src.isObject()) {
-        return false;
-    } else {
-        dst = dynamic_cast<Window*>(src.toQObject());
-        return dst!=nullptr;
-    }
+QJSValue QuiteExtension::createElementInternal(
+    QJSValue type,
+    QJSValue props,
+    QJSValue child
+) {
+    qDebug() << "QuiteExtension createElementInternal";
+    Node* node  = new Node(type, props, child);
+    return factory->newQObject(node);
 }
 
 /*****************************************************************************/
