@@ -5,9 +5,6 @@
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
-#include <QVariant>
-#include <QQuickItem>
-#include <QQmlEngine>
 #include <QLinkedList>
 #include <QJSValueIterator>
 
@@ -16,29 +13,40 @@ namespace Ui {
 
 /*****************************************************************************/
 
-class Node : public QObject {
+enum NodeType {
+    Never,
+    Window,
+    Rectangle
+};
+
+/*****************************************************************************/
+
+class Node : public QObject{
   Q_OBJECT
-  protected:
-    QQuickItem* node;
-    QQmlEngine* engine;
-    QLinkedList<Node*> children;
-    QMap<QString, QVariant> currentProps;
-  public:
-    Node(QObject *parent, QQmlEngine* engine);
-    virtual ~Node();
-    QQuickItem* getNode();
-  protected:
-    virtual void appendChild(Node* child) = 0;
-    virtual void removeChild(Node* child) = 0;
-    virtual void insertBefore(Node* child, Node* beforeChild) = 0;
-    virtual void commitUpdate(QMap<QString, QVariant> props) = 0;
-  public slots:
-    QJSValue appendChild(QJSValue child);
-    QJSValue removeChild(QJSValue child);
-    QJSValue insertBefore(QJSValue child, QJSValue beforeChild);
-    QJSValue commitUpdate(QJSValue props);
   private:
-    static bool tryCast(QJSValue src, Node*& dst);
+    NodeType type;
+    QLinkedList<Node*> child;
+    QMap<QString, QVariant> props;
+  public:
+    explicit Node(
+        QJSValue type = QJSValue(),
+        QJSValue props = QJSValue(),
+        QJSValue child = QJSValue()
+    );
+    virtual ~Node();
+    QLinkedList<Node*> getChild() const;
+    QMap<QString, QVariant> getProps() const;
+  public:
+    static QMap<QString, QVariant> getNodeProps(QJSValue props);
+    static QLinkedList<Node*> castNodeList(QJSValue src);
+    static bool tryCastNode(QJSValue src, Node*& dst);
+    static NodeType getNodeType(QString type);
+  public slots:
+    QJSValue commitProps(QJSValue props);
+    QJSValue commitChild(QJSValue child);
+  signals:
+    void childChanged(QLinkedList<Node*> child);
+    void propsChanged(QMap<QString, QVariant> props);
 };
 
 /*****************************************************************************/

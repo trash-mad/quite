@@ -5,7 +5,38 @@ namespace Ui {
 
 /*****************************************************************************/
 
-bool Node::tryCast(QJSValue src, Node *&dst) {
+NodeType Node::getNodeType(QString type) {
+    if (type == "Window") {
+       return NodeType::Window;
+    } else if(type == "Rectangle") {
+        return NodeType::Rectangle;
+    } else {
+        qCritical() << "getNodeType invalid node type" << type;
+        return NodeType::Never;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+QMap<QString, QVariant> Node::getNodeProps(QJSValue props) {
+    QMap<QString, QVariant> tmp;
+    if(props.isNull()){
+            return tmp;
+    } else if(!props.isObject() ){
+        qCritical() << "getNodeProps props is not object";
+    } else {
+        QJSValueIterator it(props);
+        while (it.hasNext()) {
+            it.next();
+            tmp.insert(it.name(),it.value().toVariant());
+        }
+    }
+    return tmp;
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool Node::tryCastNode(QJSValue src, Node *&dst) {
     if(!src.isQObject()) {
         return false;
     } else {
@@ -16,103 +47,80 @@ bool Node::tryCast(QJSValue src, Node *&dst) {
 
 /*---------------------------------------------------------------------------*/
 
-Node::Node(QObject *parent, QQmlEngine *engine)
-  : QObject(parent) {
+QLinkedList<Node *> Node::castNodeList(QJSValue arr) {
+    QLinkedList<Node*> child;
+    if(arr.isUndefined()) {
+        return child;
+    } if(!arr.isArray()) {
+        qCritical() << "castNodeList arr is not array";
+    } else {
+        const int length = arr.property("length").toInt();
+        for (int i = 0; i != length; i++) {
+            Node* node = nullptr;
+            QJSValue item = arr.property(i);
+            if (!item.isQObject()) {
+                qCritical() << "castNodeList arr is not array of qobject";
+            } else if(!tryCastNode(item, node)) {
+                qCritical() << "castNodeList arr is not array of Node";
+            } else {
+                child.append(node);
+            }
+        }
+    }
+    return child;
+}
+
+/*---------------------------------------------------------------------------*/
+
+Node::Node(QJSValue type, QJSValue props, QJSValue child)
+  : QObject(nullptr) {
     qDebug() << "Node ctor";
-    this->engine = engine;
+    if (!type.isString()) {
+        qCritical() << "Node name is not string";
+    } else if(!props.isNull() && !props.isObject()) {
+        qCritical() << "Node props is not object";
+    } else if(!child.isUndefined() && !child.isArray()) {
+        qCritical() << "Child is not array";
+    } else {
+        this->type = getNodeType(type.toString());
+        this->props = getNodeProps(props);
+        this->child = castNodeList(child);
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 
 Node::~Node() {
     qDebug() << "Node dtor";
-    QLinkedList<Node*>::iterator iter = children.begin();
-    while (iter != children.end()) {
-        Node* child = *iter;
-        child->deleteLater();
-        iter.operator++();
-    }
 }
 
 /*---------------------------------------------------------------------------*/
 
-QQuickItem *Node::getNode() {
-    return node;
+QLinkedList<Node *> Node::getChild() const {
+    return child;
 }
-
-/*void Node::appendChild(FiberNode *child) {
-    qDebug() << "Node appendChild ";
-    children.append(child);
-    child->setParent(this);
-    child->node->setParentItem(node);
-}
-
-void Node::removeChild(FiberNode *child) {
-    qDebug() << "Node removeChild";
-    children.removeOne(child);
-    child->setParent(nullptr);
-    child->node->setParentItem(nullptr);
-}*/
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Node::appendChild(QJSValue child) {
-    Node* node = nullptr;
-    if(!tryCast(child, node)){
-        qCritical() << "Node appendChild invalid child";
-        qApp->exit(-1);
-    } else {
-        appendChild(node);
-    }
+QMap<QString, QVariant> Node::getProps() const {
+    return props;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QJSValue Node::commitProps(QJSValue props) {
+    qDebug() << "Node" << type << "commitProps";
+    this->props = getNodeProps(props);
+    emit propsChanged(this->props);
     return QJSValue();
 }
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Node::removeChild(QJSValue child) {
-    Node* node = nullptr;
-    if(!tryCast(child, node)){
-        qCritical() << "Node removeChild invalid child";
-        qApp->exit(-1);
-    } else {
-        removeChild(node);
-    }
-    return QJSValue();
-}
-
-/*---------------------------------------------------------------------------*/
-
-QJSValue Node::insertBefore(QJSValue child, QJSValue beforeChild) {
-    Node* node = nullptr;
-    Node* beforeNode = nullptr;
-    if(!tryCast(child, node)){
-        qCritical() << "Node insertBefore invalid child";
-        qApp->exit(-1);
-    } else if(!tryCast(beforeChild, beforeNode)) {
-        qCritical() << "Node insertBefore invalid before";
-        qApp->exit(-1);
-    } else {
-        insertBefore(node, beforeNode);
-    }
-    return QJSValue();
-}
-
-/*---------------------------------------------------------------------------*/
-
-QJSValue Node::commitUpdate(QJSValue props) {
-    if( !props.isObject() ){
-        qCritical() << "Node commitUpdate props is not object";
-    } else {
-        QMap<QString, QVariant> tmp;
-
-        QJSValueIterator it(props);
-        while (it.hasNext()) {
-            it.next();
-            tmp.insert(it.name(),it.value().toVariant());
-        }
-
-        commitUpdate(tmp);
-    }
+QJSValue Node::commitChild(QJSValue child) {
+    qDebug() << "Node" << type << "commitChild";
+    this->child = castNodeList(child);
+    emit childChanged(this->child);
     return QJSValue();
 }
 
