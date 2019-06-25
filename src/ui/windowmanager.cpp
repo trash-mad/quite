@@ -30,13 +30,6 @@ Component* WindowManager::renderComponentTree(
 ) {
     Component *component = nullptr;
     QLinkedList<Component*> child;
-
-    static int count = 0;
-    count++;
-    if(count==3){
-        count = 0;
-    }
-
     if(node->getChild().isEmpty()) {
         component = renderComponent(node);
     } else {
@@ -63,21 +56,29 @@ WindowManager::WindowManager(QObject* parent)
 
 WindowManager::~WindowManager() {
     qDebug() << "WindowManager dtor";
+    for(int i=0;i!=wins.length();i++){
+        wins.at(i)->deleteLater();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 
 void WindowManager::renderUi(Node *root) {
-    qDebug() << "WindowManager render";
+    qDebug() << "WindowManager render thread" <<QThread::currentThreadId();
 
     if(root->getType()!=NodeType::Window) {
         qCritical() << "WindowManager renderUi rootNode not window";
     } else {
-        window = dynamic_cast<Components::Window*>(renderComponentTree(root));
-        window->show();
+        Components::Window* w = dynamic_cast<Components::Window*>(
+            renderComponentTree(root)
+        );
+        if(wins.length() == 0) {
+            qDebug() << "WindowManager MainWindow created";
+            connect(w, SIGNAL(closed()), this, SIGNAL(closed()));
+        }
+        wins.append(w);
+        w->show();
     }
-
-    //emit closed();
 }
 
 /*****************************************************************************/

@@ -22,6 +22,8 @@ Engine::~Engine() {
 
 void Engine::run() {
 
+    qDebug() << "Engine thread" <<QThread::currentThreadId();
+
     eval = new QJSEngine(this);
     pool = new QThreadPool(this);
     rethrow = new QStack<Monitor*>();

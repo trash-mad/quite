@@ -3,6 +3,7 @@
 
 #include <QtDebug>
 #include <QObject>
+#include <QQuickWindow>
 
 #include "src/ui/base/component.h"
 
@@ -14,14 +15,31 @@ namespace Components {
 
 /*****************************************************************************/
 
+class WindowPrivate : public QQuickWindow {
+  Q_OBJECT
+  protected:
+    virtual bool event(QEvent* e) override;
+  public:
+    WindowPrivate();
+    virtual ~WindowPrivate();
+  signals:
+    void closed();
+};
+
+/*****************************************************************************/
+
 class Window : public Component{
   Q_OBJECT
+  private:
+    WindowPrivate window;
   public:
     Window(Node* node);
     virtual ~Window();
     virtual void propsChanged(QMap<QString, QVariant> props);
     virtual void childChanged(QLinkedList<Component*> child);
     void show();
+  signals:
+    void closed();
 };
 
 /*****************************************************************************/

@@ -3,6 +3,8 @@
 
 #include <QtDebug>
 #include <QObject>
+#include <QThread>
+#include <QList>
 
 #include "src/ui/base/node.h"
 #include "src/ui/base/component.h"
@@ -18,7 +20,7 @@ namespace Ui {
 class WindowManager : public QObject {
   Q_OBJECT
   private:
-    Components::Window* window = nullptr;
+    QList<Components::Window*> wins;
   public:
     explicit WindowManager(QObject* parent = nullptr);
     virtual ~WindowManager();
