@@ -18,6 +18,8 @@ namespace Components {
 
 class Button : public Component {
   Q_OBJECT
+  private:
+    QJSValue clickHandler;
   public:
     Button(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Button();

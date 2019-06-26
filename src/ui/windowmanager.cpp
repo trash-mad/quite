@@ -22,6 +22,12 @@ Component *WindowManager::renderComponent(Node *node, Component* parent) {
             qCritical() << "WindowManager renderComponent invalid type";
     }
     component->propsChanged(node->getProps());
+    connect(
+        component,
+        SIGNAL(eval(QJSValue,QJSValueList)),
+        this,
+        SIGNAL(eval(QJSValue,QJSValueList))
+    );
     return component;
 }
 

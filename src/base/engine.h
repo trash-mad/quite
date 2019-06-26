@@ -12,10 +12,11 @@
 #include <QThreadPool>
 #include <QJSValueIterator>
 
-#include "src/ui/base/node.h"
 #include "src/base/event.h"
+#include "src/events/eval.h"
 #include "src/base/monitor.h"
 #include "src/events/await.h"
+#include "src/ui/base/node.h"
 #include "src/events/renderui.h"
 
 using namespace Quite::Ui::Base;
@@ -41,6 +42,7 @@ class Engine : public QThread {
     virtual bool event(QEvent* event);
   public slots:
     void windowClosed();
+    void evalFunc(QJSValue func, QJSValueList args);
   signals:
     void done();
     void renderUi(Node* rootNode);

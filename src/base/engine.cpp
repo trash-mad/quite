@@ -82,6 +82,13 @@ void Engine::windowClosed() {
     uiexec = false;
 }
 
+/*---------------------------------------------------------------------------*/
+
+void Engine::evalFunc(QJSValue func, QJSValueList args) {
+    qDebug() << "Engine eval";
+    QCoreApplication::postEvent(this, new Events::Eval(func, args));
+}
+
 /*****************************************************************************/
 
 } // namespace Base

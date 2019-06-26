@@ -32,7 +32,7 @@ class Component : public QObject {
     QQuickItem* getItem() const;
   public:
     virtual void childChanged(QLinkedList<Component*> child);
-    virtual QMap<QString, QVariant> propsChanged(QMap<QString, QJSValue> props);
+    virtual QMap<QString,QVariant> propsChanged(QMap<QString,QJSValue> props);
     virtual void invoke(
         QString type,
         QVariant p1,
@@ -44,6 +44,7 @@ class Component : public QObject {
     void propsChangedHandler(QMap<QString, QJSValue> props);
   signals:
     void updateSubtree(Component* that, QLinkedList<Node*> child);
+    void eval(QJSValue obj, QJSValueList args = QJSValueList());
 };
 
 /*****************************************************************************/

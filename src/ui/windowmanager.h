@@ -36,6 +36,7 @@ class WindowManager : public QObject {
     Component* renderComponentTree(Node* node, Component* parent = nullptr);
   signals:
     void closed();
+    void eval(QJSValue func, QJSValueList args);
 };
 
 /*****************************************************************************/
