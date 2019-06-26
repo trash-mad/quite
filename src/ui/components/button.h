@@ -1,10 +1,11 @@
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
+#ifndef BUTTON_H
+#define BUTTON_H
 
 #include <QtDebug>
 #include <QObject>
-#include <QQuickWindow>
+#include <QVariant>
 
+#include "src/ui/base/node.h"
 #include "src/ui/base/component.h"
 
 using namespace Quite::Ui::Base;
@@ -15,10 +16,14 @@ namespace Components {
 
 /*****************************************************************************/
 
-class Rectangle : public Component {
+class Button : public Component {
+  Q_OBJECT
+  private:
+    QJSValue clickHandler;
   public:
-    Rectangle(Node* node, QQmlEngine* engine, Component* parent);
-    virtual ~Rectangle();
+    Button(Node* node, QQmlEngine* engine, Component* parent);
+    virtual ~Button();
+    virtual QMap<QString, QVariant> propsChanged(QMap<QString, QJSValue> props);
     virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 
@@ -28,4 +33,4 @@ class Rectangle : public Component {
 } // namespace Ui
 } // namespace Quite
 
-#endif // RECTANGLE_H
+#endif // BUTTON_H

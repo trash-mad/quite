@@ -9,6 +9,12 @@ Application::Application()
     qDebug() << "Application ctor" << QDateTime::currentDateTime().toTime_t();
     connect(&engine, SIGNAL(renderUi(Node*)), &manager, SLOT(renderUi(Node*)));
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
+    connect(
+        &manager,
+        SIGNAL(eval(QJSValue,QJSValueList)),
+        &engine,
+        SLOT(evalFunc(QJSValue,QJSValueList))
+    );
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
 }
@@ -47,6 +53,7 @@ void Application::logHandler(
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     qInstallMessageHandler(logHandler);
+    qRegisterMetaType<QJSValueList>("QJSValueList");
     Application a;
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);

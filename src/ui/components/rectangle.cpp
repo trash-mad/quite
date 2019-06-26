@@ -6,8 +6,8 @@ namespace Components {
 
 /*****************************************************************************/
 
-Rectangle::Rectangle(Node *node, QQmlEngine* engine)
-  : Component(node, engine) {
+Rectangle::Rectangle(Node *node, QQmlEngine* engine, Component* parent)
+  : Component(node, engine, parent) {
     qDebug() << "Rectangle ctor";
     QQmlComponent rect(engine, ":/qml/Rectangle.qml");
     item = qobject_cast<QQuickItem*>(rect.create());
@@ -20,23 +20,13 @@ Rectangle::~Rectangle() {
     delete item;
 }
 
-/*---------------------------------------------------------------------------*/
-
-void Rectangle::propsChanged(QMap<QString, QVariant> props) {
-    qDebug() << "Rectangle propsChanged";
-    QMap<QString, QVariant>::iterator i;
-    for(i = props.begin(); i!= props.end(); i++) {
-        item->setProperty(i.key().toStdString().c_str(),i.value());
-    }
+void Rectangle::invoke(QString type, QVariant p1, QVariant p2, QVariant p3) {
+    (void)(type);
+    (void)(p1);
+    (void)(p2);
+    (void)(p3);
+    qCritical() << "Rectangle invoke not implemented";
 }
-
-/*---------------------------------------------------------------------------*/
-
-void Rectangle::childChanged(QLinkedList<Component *> child) {
-    qDebug() << "Rectangle childChanged";
-    (void)(child);
-}
-
 /*****************************************************************************/
 
 } // namespace Components

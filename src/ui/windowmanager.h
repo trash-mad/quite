@@ -7,8 +7,10 @@
 #include <QList>
 
 #include "src/ui/base/node.h"
+#include "src/ui/base/invoker.h"
 #include "src/ui/base/component.h"
 #include "src/ui/components/window.h"
+#include "src/ui/components/button.h"
 #include "src/ui/components/rectangle.h"
 
 using namespace Quite::Ui::Base;
@@ -21,18 +23,20 @@ namespace Ui {
 class WindowManager : public QObject {
   Q_OBJECT
   private:
-    QList<Components::Window*> wins;
+    Components::Window* window = nullptr;
     QQmlEngine engine;
+    Invoker invoker;
   public:
     explicit WindowManager(QObject* parent = nullptr);
     virtual ~WindowManager();
   public slots:
     void renderUi(Node* rootNode);
   private:
-    Component* renderComponent(Node* node);
-    Component* renderComponentTree(Node* node);
+    Component* renderComponent(Node* node, Component* parent = nullptr);
+    Component* renderComponentTree(Node* node, Component* parent = nullptr);
   signals:
     void closed();
+    void eval(QJSValue func, QJSValueList args);
 };
 
 /*****************************************************************************/
