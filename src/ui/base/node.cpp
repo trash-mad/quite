@@ -11,6 +11,8 @@ NodeType Node::getNodeType(QString type) {
        return NodeType::Window;
     } else if(type == "Rectangle") {
         return NodeType::Rectangle;
+    } else if(type == "Button") {
+        return NodeType::Button;
     } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::Never;
@@ -19,8 +21,8 @@ NodeType Node::getNodeType(QString type) {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QVariant> Node::getNodeProps(QJSValue props) {
-    QMap<QString, QVariant> tmp;
+QMap<QString, QJSValue> Node::getNodeProps(QJSValue props) {
+    QMap<QString, QJSValue> tmp;
     if(props.isNull()){
             return tmp;
     } else if(!props.isObject() ){
@@ -29,7 +31,7 @@ QMap<QString, QVariant> Node::getNodeProps(QJSValue props) {
         QJSValueIterator it(props);
         while (it.hasNext()) {
             it.next();
-            tmp.insert(it.name(),it.value().toVariant());
+            tmp.insert(it.name(),it.value());
         }
     }
     return tmp;
@@ -109,7 +111,7 @@ QLinkedList<Node *> Node::getChild() const {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QVariant> Node::getProps() const {
+QMap<QString, QJSValue> Node::getProps() const {
     return props;
 }
 

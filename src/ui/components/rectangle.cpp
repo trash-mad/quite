@@ -20,6 +20,13 @@ Rectangle::~Rectangle() {
     delete item;
 }
 
+void Rectangle::invoke(QString type, QVariant p1, QVariant p2, QVariant p3) {
+    (void)(type);
+    (void)(p1);
+    (void)(p2);
+    (void)(p3);
+    qCritical() << "Rectangle invoke not implemented";
+}
 /*****************************************************************************/
 
 } // namespace Components

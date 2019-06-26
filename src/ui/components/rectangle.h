@@ -19,6 +19,7 @@ class Rectangle : public Component {
   public:
     Rectangle(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Rectangle();
+    virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 
 /*****************************************************************************/

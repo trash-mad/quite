@@ -3,6 +3,7 @@
 
 #include <QtDebug>
 #include <QObject>
+#include <QVariant>
 
 #include "src/ui/base/node.h"
 #include "src/ui/base/component.h"
@@ -20,6 +21,8 @@ class Button : public Component {
   public:
     Button(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Button();
+    virtual QMap<QString, QVariant> propsChanged(QMap<QString, QJSValue> props);
+    virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 
 /*****************************************************************************/

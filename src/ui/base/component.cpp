@@ -19,9 +19,9 @@ Component::Component(Node* node, QQmlEngine* engine, Component* parent)
 
     connect(
         node,
-        SIGNAL(propsChanged(QMap<QString,QVariant>)),
+        SIGNAL(propsChanged(QMap<QString,QJSValue>)),
         this,
-        SLOT(propsChangedHandler(QMap<QString,QVariant>))
+        SLOT(propsChangedHandler(QMap<QString,QJSValue>))
     );
 
     this->engine = engine;
@@ -47,7 +47,7 @@ QMap<QString, QVariant> Component::getProps() const {
 
 /*---------------------------------------------------------------------------*/
 
-QQuickItem *Component::getItem() const {
+QQuickItem* Component::getItem() const {
     return item;
 }
 
@@ -55,6 +55,7 @@ QQuickItem *Component::getItem() const {
 
 void Component::childChanged(QLinkedList<Component *> child) {
     qDebug() << "Component default childChanged";
+    this->child = child;
     QLinkedList<Component*>::iterator i;
     for (i=child.begin(); i!=child.end();i++) {
         Component* component = (*i);
@@ -64,12 +65,17 @@ void Component::childChanged(QLinkedList<Component *> child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::propsChanged(QMap<QString, QVariant> props) {
+QMap<QString, QVariant> Component::propsChanged(QMap<QString, QJSValue> props) {
     qDebug() << "Component default propsChanged";
-    QMap<QString, QVariant>::iterator i;
+    QMap<QString, QVariant> tmp;
+    QMap<QString, QJSValue>::iterator i;
     for(i = props.begin(); i!= props.end(); i++) {
-        item->setProperty(i.key().toStdString().c_str(),i.value());
+        QString name = i.key();
+        QVariant value = i.value().toVariant();
+        item->setProperty(name.toStdString().c_str(),value);
+        tmp.insert(name, value);
     }
+    return tmp;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -89,10 +95,9 @@ void Component::childChangedHandler(QLinkedList<Node*> child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::propsChangedHandler(QMap<QString, QVariant> props) {
+void Component::propsChangedHandler(QMap<QString, QJSValue> props) {
     qDebug() << "Component propsChangedHandler";
-    this->props = props;
-    propsChanged(props);
+    this->props = propsChanged(props);
 }
 
 /*****************************************************************************/

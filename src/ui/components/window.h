@@ -33,9 +33,10 @@ class Window : public Component{
   private:
     WindowPrivate window;
   public:
-    Window(Node* node, QQmlEngine* engine);
+    Window(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Window();
     void show();
+    virtual void invoke(QString type,QVariant p1,QVariant p2,QVariant p3);
   signals:
     void closed();
 };

@@ -5,6 +5,7 @@
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
+#include <QVariant>
 #include <QLinkedList>
 #include <QJSValueIterator>
 
@@ -16,6 +17,7 @@ namespace Base {
 
 enum NodeType {
     Never,
+    Button,
     Window,
     Rectangle
 };
@@ -27,7 +29,7 @@ class Node : public QObject{
   private:
     NodeType type;
     QLinkedList<Node*> child;
-    QMap<QString, QVariant> props;
+    QMap<QString, QJSValue> props;
   public:
     explicit Node(
         QJSValue type = QJSValue(),
@@ -37,9 +39,9 @@ class Node : public QObject{
     virtual ~Node();
     NodeType getType() const;
     QLinkedList<Node*> getChild() const;
-    QMap<QString, QVariant> getProps() const;
+    QMap<QString, QJSValue> getProps() const;
   public:
-    static QMap<QString, QVariant> getNodeProps(QJSValue props);
+    static QMap<QString, QJSValue> getNodeProps(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
     static NodeType getNodeType(QString type);
@@ -48,7 +50,7 @@ class Node : public QObject{
     QJSValue commitChild(QJSValue child);
   signals:
     void childChanged(QLinkedList<Node*> child);
-    void propsChanged(QMap<QString, QVariant> props);
+    void propsChanged(QMap<QString, QJSValue> props);
 };
 
 /*****************************************************************************/

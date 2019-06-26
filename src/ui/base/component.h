@@ -3,6 +3,8 @@
 
 #include <QtDebug>
 #include <QObject>
+#include <QJSValue>
+#include <QVariant>
 #include <QQuickItem>
 #include <QQmlEngine>
 
@@ -30,10 +32,16 @@ class Component : public QObject {
     QQuickItem* getItem() const;
   public:
     virtual void childChanged(QLinkedList<Component*> child);
-    virtual void propsChanged(QMap<QString, QVariant> props);
+    virtual QMap<QString, QVariant> propsChanged(QMap<QString, QJSValue> props);
+    virtual void invoke(
+        QString type,
+        QVariant p1,
+        QVariant p2,
+        QVariant p3
+    ) = 0;
   private slots:
     void childChangedHandler(QLinkedList<Node*> child);
-    void propsChangedHandler(QMap<QString, QVariant> props);
+    void propsChangedHandler(QMap<QString, QJSValue> props);
   signals:
     void updateSubtree(Component* that, QLinkedList<Node*> child);
 };

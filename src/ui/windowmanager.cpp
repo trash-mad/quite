@@ -10,10 +10,13 @@ Component *WindowManager::renderComponent(Node *node, Component* parent) {
     Component* component = nullptr;
     switch (node->getType()) {
         case NodeType::Window:
-            component = new Components::Window(node, &engine);
+            component = new Components::Window(node, &engine, parent);
             break;
         case NodeType::Rectangle:
             component = new Components::Rectangle(node, &engine, parent);
+            break;
+        case NodeType::Button:
+            component = new Components::Button(node, &engine, parent);
             break;
         default:
             qCritical() << "WindowManager renderComponent invalid type";
@@ -45,46 +48,36 @@ Component* WindowManager::renderComponentTree(
     return component;
 }
 
-void WindowManager::beforeClose() {
-    qDebug() << "WindowManager beforeClose";
-    for(int i=wins.length()-1;i!=-1;i--){
-        Components::Window* win = wins.at(i);
-        wins.removeAt(i);
-        delete win;
-    }
-    emit closed();
-}
-
 /*---------------------------------------------------------------------------*/
 
 WindowManager::WindowManager(QObject* parent)
   : QObject(parent) {
     qDebug() << "WindowManager ctor";
+    invoker.install(&engine);
 }
 
 /*---------------------------------------------------------------------------*/
 
 WindowManager::~WindowManager() {
     qDebug() << "WindowManager dtor";
+    delete window;
 }
 
 /*---------------------------------------------------------------------------*/
 
 void WindowManager::renderUi(Node *root) {
     qDebug() << "WindowManager render thread" <<QThread::currentThreadId();
-
     if(root->getType()!=NodeType::Window) {
         qCritical() << "WindowManager renderUi rootNode not window";
+    } else if(window != nullptr) {
+        qCritical() << "WindowManager render dublicate";
     } else {
-        Components::Window* w = dynamic_cast<Components::Window*>(
+        window = dynamic_cast<Components::Window*>(
             renderComponentTree(root)
         );
-        if(wins.length() == 0) {
-            qDebug() << "WindowManager MainWindow created";
-            connect(w, SIGNAL(closed()), this, SLOT(beforeClose()));
-        }
-        wins.append(w);
-        w->show();
+        connect(window, SIGNAL(closed()), this, SIGNAL(closed()));
+        invoker.setRoot(window);
+        window->show();
     }
 }
 

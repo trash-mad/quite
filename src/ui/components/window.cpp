@@ -29,12 +29,16 @@ WindowPrivate::~WindowPrivate() {
 
 /*****************************************************************************/
 
-Window::Window(Node *node, QQmlEngine* engine)
+Window::Window(Node *node, QQmlEngine* engine, Component* parent)
   : Component(node, engine, nullptr) {
     qDebug() << "Window ctor";
-    connect(&window, SIGNAL(closed()), this, SIGNAL(closed()));
-    item = window.contentItem();
-    window.show();
+    if(parent!=nullptr) {
+        qCritical() << "Window parent must be nullptr";
+    } else {
+        connect(&window, SIGNAL(closed()), this, SIGNAL(closed()));
+        item = window.contentItem();
+        window.show();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -48,6 +52,16 @@ Window::~Window() {
 void Window::show() {
     qDebug() << "Window show";
     window.show();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Window::invoke(QString type, QVariant p1, QVariant p2, QVariant p3) {
+    (void)(type);
+    (void)(p1);
+    (void)(p2);
+    (void)(p3);
+    qCritical() << "Window invoke not implemented";
 }
 
 /*****************************************************************************/
