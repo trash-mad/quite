@@ -9,7 +9,6 @@ namespace Components {
 bool WindowPrivate::event(QEvent *e) {
     if (e->type() == QEvent::Close) {
         emit closed();
-        hide();
         return true;
     } else {
         return QQuickWindow::event(e);
@@ -31,9 +30,9 @@ WindowPrivate::~WindowPrivate() {
 /*****************************************************************************/
 
 Window::Window(Node *node, QQmlEngine* engine)
-  : Component(node, engine) {
+  : Component(node, engine, nullptr) {
     qDebug() << "Window ctor";
-    connect(&window,SIGNAL(closed()),this,SIGNAL(closed()));
+    connect(&window, SIGNAL(closed()), this, SIGNAL(closed()));
     item = window.contentItem();
     window.show();
 }
@@ -42,25 +41,6 @@ Window::Window(Node *node, QQmlEngine* engine)
 
 Window::~Window() {
     qDebug() << "Window dtor";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::propsChanged(QMap<QString, QVariant> props) {
-    qDebug() << "Window propsChanged";
-    (void)(props);
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::childChanged(QLinkedList<Component*> child) {
-    qDebug() << "Window childChanged";
-    (void)(child);
-    QLinkedList<Component*>::iterator i;
-    for (i=child.begin(); i!=child.end();i++) {
-        Component* component = (*i);
-        component->getItem()->setParentItem(item);
-    }
 }
 
 /*---------------------------------------------------------------------------*/

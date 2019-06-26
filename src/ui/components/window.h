@@ -35,8 +35,6 @@ class Window : public Component{
   public:
     Window(Node* node, QQmlEngine* engine);
     virtual ~Window();
-    virtual void propsChanged(QMap<QString, QVariant> props);
-    virtual void childChanged(QLinkedList<Component*> child);
     void show();
   signals:
     void closed();

@@ -23,14 +23,14 @@ class Component : public QObject {
     QQuickItem* item;
     QQmlEngine* engine;
   public:
-    Component(Node* node, QQmlEngine* engine);
+    Component(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Component();
     QLinkedList<Component*> getChilds() const;
     QMap<QString, QVariant> getProps() const;
     QQuickItem* getItem() const;
   public:
-    virtual void childChanged(QLinkedList<Component*> child) = 0;
-    virtual void propsChanged(QMap<QString, QVariant> props) = 0;
+    virtual void childChanged(QLinkedList<Component*> child);
+    virtual void propsChanged(QMap<QString, QVariant> props);
   private slots:
     void childChangedHandler(QLinkedList<Node*> child);
     void propsChangedHandler(QMap<QString, QVariant> props);

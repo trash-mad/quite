@@ -1,4 +1,4 @@
-#include "rectangle.h"
+#include "button.h"
 
 namespace Quite {
 namespace Ui {
@@ -6,18 +6,15 @@ namespace Components {
 
 /*****************************************************************************/
 
-Rectangle::Rectangle(Node *node, QQmlEngine* engine, Component* parent)
+Button::Button(Node* node, QQmlEngine* engine, Component* parent)
   : Component(node, engine, parent) {
-    qDebug() << "Rectangle ctor";
-    QQmlComponent rect(engine, ":/qml/Rectangle.qml");
-    item = qobject_cast<QQuickItem*>(rect.create());
+    qDebug() << "Button ctor";
 }
 
 /*---------------------------------------------------------------------------*/
 
-Rectangle::~Rectangle() {
-    qDebug() << "Rectangle dtor";
-    delete item;
+Button::~Button() {
+    qDebug() << "Button dtor";
 }
 
 /*****************************************************************************/

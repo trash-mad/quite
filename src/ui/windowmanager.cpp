@@ -5,7 +5,7 @@ namespace Ui {
 
 /*****************************************************************************/
 
-Component *WindowManager::renderComponent(Node *node) {
+Component *WindowManager::renderComponent(Node *node, Component* parent) {
     qDebug() << "WindowManager renderComponent";
     Component* component = nullptr;
     switch (node->getType()) {
@@ -13,7 +13,7 @@ Component *WindowManager::renderComponent(Node *node) {
             component = new Components::Window(node, &engine);
             break;
         case NodeType::Rectangle:
-            component = new Components::Rectangle(node, &engine);
+            component = new Components::Rectangle(node, &engine, parent);
             break;
         default:
             qCritical() << "WindowManager renderComponent invalid type";
@@ -25,23 +25,34 @@ Component *WindowManager::renderComponent(Node *node) {
 /*---------------------------------------------------------------------------*/
 
 Component* WindowManager::renderComponentTree(
-    Node *node
+    Node* node,
+    Component* parent
 ) {
     Component *component = nullptr;
     QLinkedList<Component*> child;
     if(node->getChild().isEmpty()) {
-        component = renderComponent(node);
+        component = renderComponent(node, parent);
     } else {
-        component = renderComponent(node);
+        component = renderComponent(node, parent);
         QLinkedList<Node*> nodes = node->getChild();
         QLinkedList<Node*>::iterator i;
         for (i=nodes.begin(); i!=nodes.end();i++) {
             Node* current = (*i);
-            child.append(renderComponentTree(current));
+            child.append(renderComponentTree(current, component));
         }
         component->childChanged(child);
     }
     return component;
+}
+
+void WindowManager::beforeClose() {
+    qDebug() << "WindowManager beforeClose";
+    for(int i=wins.length()-1;i!=-1;i--){
+        Components::Window* win = wins.at(i);
+        wins.removeAt(i);
+        delete win;
+    }
+    emit closed();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -55,9 +66,6 @@ WindowManager::WindowManager(QObject* parent)
 
 WindowManager::~WindowManager() {
     qDebug() << "WindowManager dtor";
-    for(int i=0;i!=wins.length();i++){
-        wins.at(i)->deleteLater();
-    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -73,7 +81,7 @@ void WindowManager::renderUi(Node *root) {
         );
         if(wins.length() == 0) {
             qDebug() << "WindowManager MainWindow created";
-            connect(w, SIGNAL(closed()), this, SIGNAL(closed()));
+            connect(w, SIGNAL(closed()), this, SLOT(beforeClose()));
         }
         wins.append(w);
         w->show();

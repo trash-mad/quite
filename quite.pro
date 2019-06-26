@@ -9,7 +9,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp
+SOURCES += src/main.cpp \
+    src/ui/components/button.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/ui/base/component.cpp
 SOURCES += src/ui/base/node.cpp
@@ -34,7 +35,8 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h
+HEADERS += src/base/engine.h \
+    src/ui/components/button.h
 HEADERS += src/events/renderui.h
 HEADERS += src/ui/base/component.h
 HEADERS += src/ui/base/node.h

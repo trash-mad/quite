@@ -29,8 +29,10 @@ class WindowManager : public QObject {
   public slots:
     void renderUi(Node* rootNode);
   private:
-    Component* renderComponent(Node* node);
-    Component* renderComponentTree(Node* node);
+    Component* renderComponent(Node* node, Component* parent = nullptr);
+    Component* renderComponentTree(Node* node, Component* parent = nullptr);
+  private slots:
+    void beforeClose();
   signals:
     void closed();
 };

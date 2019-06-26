@@ -6,8 +6,8 @@ namespace Base {
 
 /*****************************************************************************/
 
-Component::Component(Node* node, QQmlEngine* engine)
-  : QObject(nullptr) {
+Component::Component(Node* node, QQmlEngine* engine, Component* parent)
+  : QObject(parent) {
     qDebug() << "Component ctor";
 
     connect(
@@ -49,6 +49,27 @@ QMap<QString, QVariant> Component::getProps() const {
 
 QQuickItem *Component::getItem() const {
     return item;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Component::childChanged(QLinkedList<Component *> child) {
+    qDebug() << "Component default childChanged";
+    QLinkedList<Component*>::iterator i;
+    for (i=child.begin(); i!=child.end();i++) {
+        Component* component = (*i);
+        component->getItem()->setParentItem(item);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Component::propsChanged(QMap<QString, QVariant> props) {
+    qDebug() << "Component default propsChanged";
+    QMap<QString, QVariant>::iterator i;
+    for(i = props.begin(); i!= props.end(); i++) {
+        item->setProperty(i.key().toStdString().c_str(),i.value());
+    }
 }
 
 /*---------------------------------------------------------------------------*/
