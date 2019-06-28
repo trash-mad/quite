@@ -39,8 +39,11 @@ QJSValueList Emitter::getArgs() const {
 
 QJSValue Emitter::fromObject(QJSValue origin, QJSEngine* eval) {
     if(origin.isCallable()) {
-        QJSValue managed = eval->newQObject(new Emitter(origin));
-        return managed.property("call");
+        QJSValue managed = eval->newQObject(
+            new Emitter(origin)
+        ).property("call");
+        managed.prototype().setProperty("_emitterOrigin", origin);
+        return managed;
     } else {
         return origin;
     }

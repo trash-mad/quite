@@ -20,6 +20,7 @@ class Factory : public QObject {
     virtual ~Factory();
     QJSValue newQObject(QObject* object);
     QJSValue newArray(uint lenght);
+    QJSValue newObject();
 };
 
 /*****************************************************************************/
