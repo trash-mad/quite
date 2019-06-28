@@ -21,6 +21,7 @@ class ElementWrapper : public Component {
   public:
     ElementWrapper(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~ElementWrapper();
+    virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 
 /*****************************************************************************/

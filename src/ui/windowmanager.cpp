@@ -18,6 +18,9 @@ Component *WindowManager::renderComponent(Node *node, Component* parent) {
         case NodeType::ButtonType:
             component = new Components::Button(node, &engine, parent);
             break;
+        case NodeType::ElementType:
+            component = new Components::ElementWrapper(node, &engine, parent);
+            break;
         default:
             qCritical() << "WindowManager renderComponent invalid type";
     }
@@ -94,13 +97,13 @@ void WindowManager::updateSubtree(
     QLinkedList<Node*> nodes
 ) {
     qDebug() << "WindowManager updateSubtree";
-    QLinkedList<Component*> child;
+    /*QLinkedList<Component*> child;
     QLinkedList<Node*>::iterator i;
     for (i=nodes.begin(); i!=nodes.end();i++) {
         Node* current = (*i);
         child.append(renderComponentTree(current, component));
     }
-    component->childChanged(child);
+    component->childChanged(child);*/
 }
 
 /*****************************************************************************/

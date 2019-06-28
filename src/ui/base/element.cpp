@@ -37,7 +37,10 @@ QJSValue Element::renderSubtree(
     QJSValue render,
     Factory *factory) {
     qDebug() << "Node renderSubtree";
-    return factory->newQObject(renderSubtree(props,state,render));
+    QJSValue result = factory->newArray(1);
+    QJSValue child = factory->newQObject(renderSubtree(props,state,render));
+    result.setProperty(0, child);
+    return result;
 }
 
 /*---------------------------------------------------------------------------*/

@@ -21,6 +21,21 @@ ElementWrapper::~ElementWrapper() {
     qDebug() << "Element dtor";
 }
 
+/*---------------------------------------------------------------------------*/
+
+void ElementWrapper::invoke(
+    QString type,
+    QVariant p1,
+    QVariant p2,
+    QVariant p3
+){
+    qDebug() << "ElementWrapper invoke";
+    (void)(type);
+    (void)(p1);
+    (void)(p2);
+    (void)(p3);
+}
+
 /*****************************************************************************/
 
 } // namespace Components

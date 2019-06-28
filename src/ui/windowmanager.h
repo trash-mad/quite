@@ -12,6 +12,7 @@
 #include "src/ui/components/window.h"
 #include "src/ui/components/button.h"
 #include "src/ui/components/rectangle.h"
+#include "src/ui/components/elementwrapper.h"
 
 using namespace Quite::Ui::Base;
 
