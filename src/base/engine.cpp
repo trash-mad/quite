@@ -42,6 +42,8 @@ void Engine::run() {
             if(!continueLoop) {
                 qDebug() << "Engine event loop free";
                 break;
+            } else {
+                QThread::msleep(25);
             }
         }
     }

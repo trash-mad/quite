@@ -17,13 +17,6 @@ Component::Component(Node* node, QQmlEngine* engine, Component* parent)
         SLOT(childChangedHandler(QLinkedList<Node*>))
     );
 
-    connect(
-        node,
-        SIGNAL(propsChanged(QMap<QString,QJSValue>)),
-        this,
-        SLOT(propsChangedHandler(QMap<QString,QJSValue>))
-    );
-
     this->engine = engine;
 }
 
@@ -65,7 +58,9 @@ void Component::childChanged(QLinkedList<Component *> child) {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QVariant> Component::propsChanged(QMap<QString, QJSValue> props) {
+QMap<QString, QVariant> Component::propsChanged(
+    QMap<QString, QJSValue> props
+) {
     qDebug() << "Component default propsChanged";
     QMap<QString, QVariant> tmp;
     QMap<QString, QJSValue>::iterator i;
@@ -91,13 +86,6 @@ void Component::childChangedHandler(QLinkedList<Node*> child) {
     this->child.erase(this->child.begin(), this->child.end());
 
     emit updateSubtree(this, child);
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Component::propsChangedHandler(QMap<QString, QJSValue> props) {
-    qDebug() << "Component propsChangedHandler";
-    this->props = propsChanged(props);
 }
 
 /*****************************************************************************/

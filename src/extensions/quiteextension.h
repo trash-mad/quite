@@ -8,6 +8,7 @@
 #include <QQmlEngine>
 
 #include "src/events/throwerror.h"
+#include "src/ui/base/element.h"
 #include "src/events/renderui.h"
 #include "src/base/extension.h"
 #include "src/events/await.h"

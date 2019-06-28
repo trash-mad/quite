@@ -80,8 +80,17 @@ QJSValue QuiteExtension::createElementInternal(
     QJSValue props,
     QJSValue child
 ) {
+    Node* node = nullptr;
     qDebug() << "QuiteExtension createElementInternal";
-    Node* node  = new Node(type, props, child);
+    if (type.isCallable()) {
+        QJSValue instance = type.call({props});
+        QJSValue render = instance.property("render");
+        QJSValue state = instance.property("state");
+        //node = new Quite::Ui::Base::Element(factory, props, state, render);
+    } else {
+        node = new Node(type, props, child);
+    }
+
     return factory->newQObject(node);
 }
 

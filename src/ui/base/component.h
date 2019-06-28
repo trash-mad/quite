@@ -41,7 +41,6 @@ class Component : public QObject {
     ) = 0;
   private slots:
     void childChangedHandler(QLinkedList<Node*> child);
-    void propsChangedHandler(QMap<QString, QJSValue> props);
   signals:
     void updateSubtree(Component* that, QLinkedList<Node*> child);
     void eval(QJSValue obj, QJSValueList args = QJSValueList());

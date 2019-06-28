@@ -27,7 +27,7 @@ class ConsoleExtension : public Extension {
         Factory* factory
     );
   public slots:
-    QJSValue log(QJSValue msg);
+    QJSValue log(QJSValue msg = QJSValue());
 };
 
 /*****************************************************************************/

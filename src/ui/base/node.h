@@ -17,6 +17,7 @@ namespace Base {
 
 enum NodeType {
     Never,
+    Element,
     Button,
     Window,
     Rectangle
@@ -41,16 +42,14 @@ class Node : public QObject{
     QLinkedList<Node*> getChild() const;
     QMap<QString, QJSValue> getProps() const;
   public:
-    static QMap<QString, QJSValue> getNodeProps(QJSValue props);
+    static QMap<QString, QJSValue> getNodeParams(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
     static NodeType getNodeType(QString type);
-  public slots:
-    QJSValue commitProps(QJSValue props);
+  protected slots:
     QJSValue commitChild(QJSValue child);
   signals:
     void childChanged(QLinkedList<Node*> child);
-    void propsChanged(QMap<QString, QJSValue> props);
 };
 
 /*****************************************************************************/
