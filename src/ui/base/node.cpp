@@ -8,16 +8,16 @@ namespace Base {
 
 NodeType Node::getNodeType(QString type) {
     if (type == "Element") {
-        return NodeType::Element;
+        return NodeType::ElementType;
     } else if(type == "Rectangle") {
-        return NodeType::Rectangle;
+        return NodeType::RectangleType;
     } else if(type == "Button") {
-        return NodeType::Button;
+        return NodeType::ButtonType;
     } else if (type == "Window") {
-        return NodeType::Window;
+        return NodeType::WindowType;
      } else {
         qCritical() << "getNodeType invalid node type" << type;
-        return NodeType::Never;
+        return NodeType::NeverType;
     }
 }
 

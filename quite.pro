@@ -12,7 +12,8 @@ equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Q
 SOURCES += src/main.cpp \
     src/ui/components/button.cpp \
     src/ui/base/invoker.cpp \
-    src/ui/base/element.cpp
+    src/ui/base/element.cpp \
+    src/ui/components/elementwrapper.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/ui/base/component.cpp
 SOURCES += src/ui/base/node.cpp
@@ -40,7 +41,8 @@ SOURCES += src/events/throwerror.cpp
 HEADERS += src/base/engine.h \
     src/ui/components/button.h \
     src/ui/base/invoker.h \
-    src/ui/base/element.h
+    src/ui/base/element.h \
+    src/ui/components/elementwrapper.h
 HEADERS += src/events/renderui.h
 HEADERS += src/ui/base/component.h
 HEADERS += src/ui/base/node.h

@@ -31,6 +31,8 @@ class WindowManager : public QObject {
     virtual ~WindowManager();
   public slots:
     void renderUi(Node* rootNode);
+  private slots:
+    void updateSubtree(Component* that, QLinkedList<Node*> child);
   private:
     Component* renderComponent(Node* node, Component* parent = nullptr);
     Component* renderComponentTree(Node* node, Component* parent = nullptr);

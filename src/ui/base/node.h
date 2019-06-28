@@ -16,11 +16,11 @@ namespace Base {
 /*****************************************************************************/
 
 enum NodeType {
-    Never,
-    Element,
-    Button,
-    Window,
-    Rectangle
+    NeverType,
+    ElementType,
+    ButtonType,
+    WindowType,
+    RectangleType
 };
 
 /*****************************************************************************/
