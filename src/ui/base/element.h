@@ -38,15 +38,13 @@ class Element : public Node {
     QJSValue getInstance() const;
   private:
     static QJSValue renderSubtree(
-        QJSValue props,
-        QJSValue state,
         QJSValue render,
+        QJSValue instance,
         QJSEngine* engine
     );
     static QLinkedList<Node*> renderSubtree(
-        QJSValue props,
-        QJSValue state,
-        QJSValue render
+        QJSValue render,
+        QJSValue instance
     );
   public slots:
     QJSValue setState(QJSValue state);
