@@ -7,8 +7,6 @@
 #include <QtDebug>
 #include <QList>
 
-#include "src/base/factory.h"
-
 namespace Quite {
 namespace Base {
 
@@ -22,7 +20,7 @@ class Extension : public QObject {
     virtual void install(
         QJSValue global,
         QJSValue current,
-        Factory* factory
+        QJSEngine* eval
     ) = 0;
 };
 

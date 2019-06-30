@@ -21,7 +21,7 @@ ThrowError::~ThrowError() {
 
 EventResult ThrowError::process(
     QObject *engine,
-    QJSEngine *eval,
+    QJSEngine* eval,
     QThreadPool *pool
 ) {
     qCritical() << "ThrowError: " << message;

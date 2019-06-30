@@ -7,26 +7,28 @@ namespace Base {
 /*****************************************************************************/
 
 NodeType Node::getNodeType(QString type) {
-    if (type == "Window") {
-       return NodeType::Window;
+    if (type == "Element") {
+        return NodeType::ElementType;
     } else if(type == "Rectangle") {
-        return NodeType::Rectangle;
+        return NodeType::RectangleType;
     } else if(type == "Button") {
-        return NodeType::Button;
-    } else {
+        return NodeType::ButtonType;
+    } else if (type == "Window") {
+        return NodeType::WindowType;
+     } else {
         qCritical() << "getNodeType invalid node type" << type;
-        return NodeType::Never;
+        return NodeType::NeverType;
     }
 }
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QJSValue> Node::getNodeProps(QJSValue props) {
+QMap<QString, QJSValue> Node::getNodeParams(QJSValue props) {
     QMap<QString, QJSValue> tmp;
     if(props.isNull()){
-            return tmp;
+        return tmp;
     } else if(!props.isObject() ){
-        qCritical() << "getNodeProps props is not object";
+        qCritical() << "getNodeParams props is not object";
     } else {
         QJSValueIterator it(props);
         while (it.hasNext()) {
@@ -79,15 +81,15 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
   : QObject(nullptr) {
     qDebug() << "Node ctor";
     if (!type.isString()) {
-        qCritical() << "Node name is not string";
+        qCritical() << "Node name not string not func";
     } else if(!props.isNull() && !props.isObject()) {
         qCritical() << "Node props is not object";
     } else if(!child.isUndefined() && !child.isArray()) {
         qCritical() << "Child is not array";
     } else {
-        this->type = getNodeType(type.toString());
-        this->props = getNodeProps(props);
+        this->props = getNodeParams(props);
         this->child = castNodeList(child);
+        this->type = getNodeType(type.toString());
     }
 }
 
@@ -117,24 +119,24 @@ QMap<QString, QJSValue> Node::getProps() const {
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Node::commitProps(QJSValue props) {
-    qDebug() << "Node" << type << "commitProps";
-    this->props = getNodeProps(props);
-    emit propsChanged(this->props);
-    return QJSValue();
-}
-
-/*---------------------------------------------------------------------------*/
-
 QJSValue Node::commitChild(QJSValue child) {
-    qDebug() << "Node" << type << "commitChild";
+    qDebug() << "Node commitChild";
     QLinkedList<Node*>::iterator i;
-    for (i = this->child.begin(); i != this->child.end(); i++){
+    for (i=this->child.begin();i!=this->child.end();i++) {
         Node* node = (*i);
         node->deleteLater();
     }
     this->child = castNodeList(child);
     emit childChanged(this->child);
+    return QJSValue();
+}
+
+/*---------------------------------------------------------------------------*/
+
+QJSValue Node::commitProps(QJSValue props) {
+    qDebug() << "Node commitProps";
+    this->props = getNodeParams(props);
+    emit propsChanged(this->props);
     return QJSValue();
 }
 

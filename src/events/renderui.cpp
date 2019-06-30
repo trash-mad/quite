@@ -26,13 +26,13 @@ Node *RenderUi::getRootNode() const {
 
 EventResult RenderUi::process(
     QObject *engine,
-    QJSEngine *eval,
+    QJSEngine* eval,
     QThreadPool *pool
 ) {
     qDebug() << "RenderUi process";
     (void)(engine);
-    (void)(pool);
     (void)(eval);
+    (void)(pool);
     return EventResult::EmitRenderUi;
 }
 

@@ -9,7 +9,6 @@
 
 #include "src/base/event.h"
 #include "src/base/wrapper.h"
-#include "src/base/factory.h"
 #include "src/base/extension.h"
 
 #include "src/extensions/timerextension.h"

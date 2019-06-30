@@ -11,9 +11,12 @@
 #include "src/ui/base/component.h"
 #include "src/ui/components/window.h"
 #include "src/ui/components/button.h"
+#include "src/monitors/bindmonitor.h"
 #include "src/ui/components/rectangle.h"
+#include "src/ui/components/elementwrapper.h"
 
 using namespace Quite::Ui::Base;
+using namespace Quite::Monitors;
 
 namespace Quite {
 namespace Ui {
@@ -31,11 +34,14 @@ class WindowManager : public QObject {
     virtual ~WindowManager();
   public slots:
     void renderUi(Node* rootNode);
+  private slots:
+    void updateSubtree(Component* that, QLinkedList<Node*> child);
   private:
     Component* renderComponent(Node* node, Component* parent = nullptr);
     Component* renderComponentTree(Node* node, Component* parent = nullptr);
   signals:
     void closed();
+    void bindMethod(BindMonitor* monitor);
     void eval(QJSValue func, QJSValueList args);
 };
 

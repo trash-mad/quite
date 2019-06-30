@@ -8,6 +8,7 @@
 #include <QQmlEngine>
 
 #include "src/events/throwerror.h"
+#include "src/ui/base/element.h"
 #include "src/events/renderui.h"
 #include "src/base/extension.h"
 #include "src/events/await.h"
@@ -25,14 +26,14 @@ namespace Extensions {
 class QuiteExtension : public Extension {
   Q_OBJECT
   private:
-    Factory* factory;
+    QJSEngine* eval;
   public:
     explicit QuiteExtension(QObject* parent = nullptr);
     virtual ~QuiteExtension();
     virtual void install(
         QJSValue global,
         QJSValue current,
-        Factory* factory
+        QJSEngine* eval
     );
   private:
     QJSValue createElementInternal(

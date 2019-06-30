@@ -19,10 +19,10 @@ class Emitter : public QObject {
   private:
     bool required = false;
     QJSValue func;
+    QObject* engine;
     QJSValueList args;
-    static QObject* engine;
   private:
-    explicit Emitter(QJSValue func);
+    explicit Emitter(QJSValue func, QObject* engine);
     virtual ~Emitter();
   public slots:
     void call(QJSValueList args = QJSValueList());
@@ -32,7 +32,8 @@ class Emitter : public QObject {
     QJSValueList getArgs() const;
     static QJSValue fromObject(
         QJSValue origin,
-        QJSEngine* eval
+        QJSEngine* eval,
+        QObject* engine
     );
     friend class Wrapper;
 };

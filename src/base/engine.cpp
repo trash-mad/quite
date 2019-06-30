@@ -29,6 +29,11 @@ void Engine::run() {
     rethrow = new QStack<Monitor*>();
     pool -> setMaxThreadCount(QThread::idealThreadCount());
 
+    eval->globalObject().setProperty(
+        "global",
+        eval->globalObject().prototype()
+    );
+
     QEventLoop loop;
     qDebug() << "Engine event loop started";
 
@@ -42,6 +47,8 @@ void Engine::run() {
             if(!continueLoop) {
                 qDebug() << "Engine event loop free";
                 break;
+            } else {
+                QThread::msleep(25);
             }
         }
     }
@@ -51,6 +58,7 @@ void Engine::run() {
 
     eval->deleteLater();
     pool->deleteLater();
+
     delete rethrow;
 }
 
@@ -80,6 +88,23 @@ bool Engine::event(QEvent* e) {
 void Engine::windowClosed() {
     qDebug() << "Engine windowClosed";
     uiexec = false;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Engine::bindMethod(QJSValue func, QJSValue inst) {
+    qDebug() << "Engine bindMethod";
+    QJSValue result = func.prototype().property("bind").callWithInstance(func, {inst.prototype()});
+    if (result.isError()) {
+        qCritical() << "Engine bindMethod" << result.toString();
+    } else if(result.isCallable()) {
+        //func = result;
+        func.callWithInstance({inst});
+    } else {
+        qCritical() << "Engine bindMethod" << result.toString();
+    }
+    //Binder* binder = new Binder(func, inst);
+    //return eval->newQObject(binder).property("call");
 }
 
 /*---------------------------------------------------------------------------*/

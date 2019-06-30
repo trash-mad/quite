@@ -24,10 +24,10 @@ class ConsoleExtension : public Extension {
     virtual void install(
         QJSValue global,
         QJSValue current,
-        Factory* factory
+        QJSEngine* eval
     );
   public slots:
-    QJSValue log(QJSValue msg);
+    QJSValue log(QJSValue msg = QJSValue());
 };
 
 /*****************************************************************************/

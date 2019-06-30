@@ -8,20 +8,44 @@ namespace Ui {
 Component *WindowManager::renderComponent(Node *node, Component* parent) {
     qDebug() << "WindowManager renderComponent";
     Component* component = nullptr;
+    Components::ElementWrapper* wrapper = nullptr;
     switch (node->getType()) {
-        case NodeType::Window:
+        case NodeType::WindowType:
             component = new Components::Window(node, &engine, parent);
             break;
-        case NodeType::Rectangle:
+        case NodeType::RectangleType:
             component = new Components::Rectangle(node, &engine, parent);
             break;
-        case NodeType::Button:
+        case NodeType::ButtonType:
             component = new Components::Button(node, &engine, parent);
+            break;
+        case NodeType::ElementType:
+            wrapper = new Components::ElementWrapper(
+                node,
+                &engine,
+                parent
+            );
+            connect(
+                wrapper,
+                SIGNAL(bindMethod(BindMonitor*)),
+                this,
+                SIGNAL(bindMethod(BindMonitor*))
+            );
+            connect(
+                wrapper,
+                SIGNAL(updateSubtree(Component*,QLinkedList<Node*>)),
+                this,
+                SLOT(updateSubtree(Component*,QLinkedList<Node*>))
+            );
+            component = wrapper;
+            break;
+        case NodeType::NeverType:
+            qCritical() << "WindowManager renderComponent NeverType";
             break;
         default:
             qCritical() << "WindowManager renderComponent invalid type";
     }
-    component->propsChanged(node->getProps());
+    component->propsChangedHandler(node->getProps());
     connect(
         component,
         SIGNAL(eval(QJSValue,QJSValueList)),
@@ -49,7 +73,7 @@ Component* WindowManager::renderComponentTree(
             Node* current = (*i);
             child.append(renderComponentTree(current, component));
         }
-        component->childChanged(child);
+        component->receiveSubtree(child);
     }
     return component;
 }
@@ -73,9 +97,9 @@ WindowManager::~WindowManager() {
 
 void WindowManager::renderUi(Node *root) {
     qDebug() << "WindowManager render thread" <<QThread::currentThreadId();
-    if(root->getType()!=NodeType::Window) {
+    if(root->getType()!=NodeType::WindowType) {
         qCritical() << "WindowManager renderUi rootNode not window";
-    } else if(window != nullptr) {
+    } else if (window != nullptr) {
         qCritical() << "WindowManager render dublicate";
     } else {
         window = dynamic_cast<Components::Window*>(
@@ -85,6 +109,22 @@ void WindowManager::renderUi(Node *root) {
         invoker.setRoot(window);
         window->show();
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void WindowManager::updateSubtree(
+    Component *component,
+    QLinkedList<Node*> nodes
+) {
+    qDebug() << "WindowManager updateSubtree";
+    QLinkedList<Component*> child;
+    QLinkedList<Node*>::iterator i;
+    for (i=nodes.begin(); i!=nodes.end();i++) {
+        Node* current = (*i);
+        child.append(renderComponentTree(current, component));
+    }
+    component->receiveSubtree(child);
 }
 
 /*****************************************************************************/

@@ -5,9 +5,10 @@ namespace Base {
 
 /*****************************************************************************/
 
-Emitter::Emitter(QJSValue func)
+Emitter::Emitter(QJSValue func, QObject* engine)
   : QObject(nullptr) {
     qDebug() << "Emitter ctor";
+    this->engine = engine;
     this->func = func;
 }
 
@@ -37,10 +38,17 @@ QJSValueList Emitter::getArgs() const {
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Emitter::fromObject(QJSValue origin, QJSEngine* eval) {
+QJSValue Emitter::fromObject(
+    QJSValue origin,
+    QJSEngine* eval,
+    QObject* engine
+) {
     if(origin.isCallable()) {
-        QJSValue managed = eval->newQObject(new Emitter(origin));
-        return managed.property("call");
+        QJSValue managed = eval->newQObject(
+            new Emitter(origin, engine)
+        ).property("call");
+        managed.prototype().setProperty("_emitterOrigin", origin);
+        return managed;
     } else {
         return origin;
     }
@@ -58,10 +66,6 @@ void Emitter::call(QJSValueList args) {
 
     QCoreApplication::postEvent(engine, new Events::Eval(func,args));
 }
-
-/*---------------------------------------------------------------------------*/
-
-QObject* Emitter::engine = nullptr;
 
 /*****************************************************************************/
 

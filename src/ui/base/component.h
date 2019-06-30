@@ -20,31 +20,39 @@ class Component : public QObject {
   Q_OBJECT
   private:
     QLinkedList<Component*> child;
-    QMap<QString, QVariant> props;
+    QMap<QString, QJSValue> props;
+    Node* node;
   protected:
     QQuickItem* item;
     QQmlEngine* engine;
   public:
     Component(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Component();
-    QLinkedList<Component*> getChilds() const;
-    QMap<QString, QVariant> getProps() const;
+    QLinkedList<Component*> getChild() const;
+    QMap<QString, QJSValue> getProps() const;
     QQuickItem* getItem() const;
+    Node* getNode() const;
+    void silentPropUpdate(QString key, QJSValue value);
+  protected:
+    virtual void childChanged();
+    virtual void propsChanged();
   public:
-    virtual void childChanged(QLinkedList<Component*> child);
-    virtual QMap<QString,QVariant> propsChanged(QMap<QString,QJSValue> props);
     virtual void invoke(
         QString type,
         QVariant p1,
         QVariant p2,
         QVariant p3
     ) = 0;
-  private slots:
+  public slots:
     void childChangedHandler(QLinkedList<Node*> child);
     void propsChangedHandler(QMap<QString, QJSValue> props);
+  public slots:
+    void receiveSubtree(QLinkedList<Component*> child);
   signals:
     void updateSubtree(Component* that, QLinkedList<Node*> child);
     void eval(QJSValue obj, QJSValueList args = QJSValueList());
+    void propsChangedInvoked();
+    void childChangedInvoked();
 };
 
 /*****************************************************************************/

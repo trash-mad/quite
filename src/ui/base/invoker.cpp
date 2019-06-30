@@ -28,6 +28,13 @@ void Invoker::install(QQmlEngine *engine) {
 
 void Invoker::setRoot(Component *root) {
     qDebug() << "Invoker setRoot";
+    /*
+     * TODO: Invoker::setRoot() может проводить инициализацию для быстой
+     * навигации по древу объектов. Текущая реализация, основанная на
+     * рекурсивной функции, имеет не постоянную сложность - увеличивается с
+     * разрастанием древа компонентов. Мы можем генерировать хеш-таблицу
+     * для моментальной адресации заранее.
+     */
     this->root = root;
 }
 
@@ -39,7 +46,7 @@ Component *Invoker::findComponentByItem(Component *root, QQuickItem *item) {
         return root;
     } else {
         QLinkedList<Component*>::iterator i;
-        QLinkedList<Component*> child = root->getChilds();
+        QLinkedList<Component*> child = root->getChild();
         for (i=child.begin(); i!=child.end();i++) {
             Component* result = findComponentByItem((*i), item);
             if(result!=nullptr) {

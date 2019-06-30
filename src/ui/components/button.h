@@ -18,12 +18,9 @@ namespace Components {
 
 class Button : public Component {
   Q_OBJECT
-  private:
-    QJSValue clickHandler;
   public:
     Button(Node* node, QQmlEngine* engine, Component* parent);
     virtual ~Button();
-    virtual QMap<QString, QVariant> propsChanged(QMap<QString, QJSValue> props);
     virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 

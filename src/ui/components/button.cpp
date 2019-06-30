@@ -22,32 +22,19 @@ Button::~Button() {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QVariant> Button::propsChanged(QMap<QString, QJSValue> props) {
-    qDebug() << "Button propsChanged";
-    QMap<QString, QVariant> tmp;
-    QMap<QString, QJSValue>::iterator i;
-    for(i = props.begin(); i!= props.end(); i++) {
-        QString name = i.key();
-        QJSValue value = i.value();
-        if (name == "onClicked") {
-            clickHandler = value;
-        } else {
-            item->setProperty(name.toStdString().c_str(),value.toVariant());
-            tmp.insert(name, value.toVariant());
-        }
-    }
-    return tmp;
-}
-
-/*---------------------------------------------------------------------------*/
-
 void Button::invoke(QString type, QVariant p1, QVariant p2, QVariant p3) {
     qDebug() << "Button invoke";
     (void)(p1);
     (void)(p2);
     (void)(p3);
     if (type == "clicked") {
-        emit eval(clickHandler);
+        QMap<QString, QJSValue> props = getProps();
+        QMap<QString, QJSValue>::iterator i;
+        for(i = props.begin(); i!= props.end(); i++) {
+            if (i.key()=="onClicked") {
+                emit eval(i.value());
+            }
+        }
     } else {
         qCritical() << "Button invoke"<<type<<"not found";
     }

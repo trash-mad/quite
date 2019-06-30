@@ -17,11 +17,15 @@ class Monitor : public QObject {
     explicit Monitor();
     virtual ~Monitor();
 
-    virtual bool isStarted() const = 0;
-    virtual bool isCanceled() const = 0;
-    virtual bool isFinished() const = 0;
+    virtual bool isStarted() = 0;
+    virtual bool isCanceled() = 0;
+    virtual bool isFinished() = 0;
 
-    virtual void start(QThreadPool* pool, QObject* engine) = 0;
+    virtual void start(
+        QThreadPool* pool,
+        QJSEngine* eval,
+        QObject* engine
+    ) = 0;
 };
 
 /*****************************************************************************/

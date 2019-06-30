@@ -20,9 +20,10 @@ InstallExtension::~InstallExtension() {
 
 EventResult InstallExtension::process(
     QObject* engine,
-    QJSEngine *eval,
+    QJSEngine* eval,
     QThreadPool *pool
 ) {
+    (void)(eval);
     (void)(pool);
     Base::Extension* ext = nullptr;
 
@@ -41,7 +42,7 @@ EventResult InstallExtension::process(
     ext->install(
         eval->globalObject(),
         Base::Wrapper::fromQObject(engine, ext, eval),
-        new Factory(ext, eval)
+        eval
     );
 
     return EventResult::Ok;

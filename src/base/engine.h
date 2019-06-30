@@ -42,6 +42,7 @@ class Engine : public QThread {
     virtual bool event(QEvent* event);
   public slots:
     void windowClosed();
+    void bindMethod(QJSValue func, QJSValue inst);
     void evalFunc(QJSValue func, QJSValueList args);
   signals:
     void done();

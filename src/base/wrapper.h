@@ -19,14 +19,20 @@ namespace Base {
 class Wrapper : public QObject {
   Q_OBJECT
   private:
-    static QJSEngine* eval;
     QObject* origin;
     QString property;
+    QObject* engine;
+    QJSEngine* eval;
   private:
     void check(bool found);
     void execEmit(Emitter* e);
   public:
-    Wrapper(QObject* origin, QString property);
+    Wrapper(
+        QObject* origin,
+        QString property,
+        QJSEngine* eval,
+        QObject* engine
+    );
     virtual ~Wrapper();
   public slots:
     QJSValue call(
