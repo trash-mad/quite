@@ -7,14 +7,22 @@ namespace Base {
 /*****************************************************************************/
 
 Element::Element(
-    Factory* factory,
+    QJSEngine* eval,
+    QJSValue instance,
     QJSValue props,
     QJSValue state,
     QJSValue render
-) : Node(QJSValue("Element"), props, renderSubtree(props, state, render, factory)) {
+) : Node(QJSValue("Element"), props, renderSubtree(props, state, render, eval)) {
     qDebug() << "Element ctor";
+    this->instance = instance;
     this->render = render;
     this->props = props;
+    this->eval = eval;
+
+    instance.prototype().setProperty(
+        "setState",
+        eval->newQObject(this).property("setState")
+    );
 }
 
 /*---------------------------------------------------------------------------*/
@@ -31,33 +39,42 @@ QMap<QString, QJSValue> Element::getState() const {
 
 /*---------------------------------------------------------------------------*/
 
+QJSValue Element::getInstance() const {
+    return instance;
+}
+
+/*---------------------------------------------------------------------------*/
+
 QJSValue Element::renderSubtree(
     QJSValue props,
     QJSValue state,
     QJSValue render,
-    Factory *factory) {
+    QJSEngine *eval) {
     qDebug() << "Node renderSubtree";
-    QJSValue result = factory->newArray(1);
-    QJSValue child = factory->newQObject(renderSubtree(props,state,render));
+    QJSValue result = eval->newArray(1);
+    QJSValue child = eval->newQObject(
+        renderSubtree(props,state,render).first()
+    );
     result.setProperty(0, child);
     return result;
 }
 
 /*---------------------------------------------------------------------------*/
 
-Node* Element::renderSubtree(
+QLinkedList<Node*> Element::renderSubtree(
     QJSValue props,
     QJSValue state,
     QJSValue render) {
-    Node* result = nullptr;
+    QLinkedList<Node*> result;
     if (!render.isCallable()) {
         qCritical() << "Node renderSubtree render is not callable";
     } else {
         QJSValue root = render.call({props, state});
-        if (!tryCastNode(root, result)) {
+        Node* node = nullptr;
+        if (!tryCastNode(root, node)) {
             qCritical() << "Node renderSubtree render result is not Node*";
         } else {
-            return result;
+            result.append(node);
         }
     }
     return result;
@@ -66,10 +83,9 @@ Node* Element::renderSubtree(
 /*---------------------------------------------------------------------------*/
 
 QJSValue Element::setState(QJSValue state) {
+    qDebug() << "Element setState";
     this->state = getNodeParams(state);
-    emit childChanged(
-        QLinkedList<Node*>() << renderSubtree(props, state, render)
-    );
+    commitChild(renderSubtree(props, state,render,eval));
     return QJSValue();
 }
 

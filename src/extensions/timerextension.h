@@ -34,7 +34,7 @@ class TimerExtension : public Extension {
     virtual void install(
         QJSValue global,
         QJSValue current,
-        Factory* factory
+        QJSEngine* eval
     );
   public slots:
     QJSValue setTimeout(QJSValue handler, QJSValue timeout);

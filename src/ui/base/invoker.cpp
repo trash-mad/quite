@@ -46,7 +46,7 @@ Component *Invoker::findComponentByItem(Component *root, QQuickItem *item) {
         return root;
     } else {
         QLinkedList<Component*>::iterator i;
-        QLinkedList<Component*> child = root->getChilds();
+        QLinkedList<Component*> child = root->getChild();
         for (i=child.begin(); i!=child.end();i++) {
             Component* result = findComponentByItem((*i), item);
             if(result!=nullptr) {

@@ -8,6 +8,12 @@ Application::Application()
   : QObject(nullptr) {
     qDebug() << "Application ctor" << QDateTime::currentDateTime().toTime_t();
     connect(&engine, SIGNAL(renderUi(Node*)), &manager, SLOT(renderUi(Node*)));
+    connect(
+        &manager,
+        SIGNAL(bindMethod(BindMonitor*)),
+        this,
+        SLOT(bindMethod(BindMonitor*))
+    );
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(
         &manager,
@@ -72,6 +78,13 @@ void Application::installExtension(Extension ext) {
 
 void Application::importModule(QString path) {
     QCoreApplication::postEvent(&engine, new ImportModule(path));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Application::bindMethod(BindMonitor* monitor) {
+    qDebug() << "Application bindMethod";
+    QCoreApplication::postEvent(&engine, new Await(monitor));
 }
 
 /*****************************************************************************/

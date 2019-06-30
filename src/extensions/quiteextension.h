@@ -26,14 +26,14 @@ namespace Extensions {
 class QuiteExtension : public Extension {
   Q_OBJECT
   private:
-    Factory* factory;
+    QJSEngine* eval;
   public:
     explicit QuiteExtension(QObject* parent = nullptr);
     virtual ~QuiteExtension();
     virtual void install(
         QJSValue global,
         QJSValue current,
-        Factory* factory
+        QJSEngine* eval
     );
   private:
     QJSValue createElementInternal(

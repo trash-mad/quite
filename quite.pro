@@ -13,7 +13,9 @@ SOURCES += src/main.cpp \
     src/ui/components/button.cpp \
     src/ui/base/invoker.cpp \
     src/ui/base/element.cpp \
-    src/ui/components/elementwrapper.cpp
+    src/ui/components/elementwrapper.cpp \  
+    src/monitors/bindmonitor.cpp \
+    src/objects/binder.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/ui/base/component.cpp
 SOURCES += src/ui/base/node.cpp
@@ -21,7 +23,7 @@ SOURCES += src/ui/windowmanager.cpp
 SOURCES += src/ui/components/window.cpp
 SOURCES += src/ui/components/rectangle.cpp
 SOURCES += src/extensions/quiteextension.cpp 
-SOURCES += src/base/factory.cpp
+SOURCES +=
 SOURCES += src/events/eval.cpp
 SOURCES += src/base/emitter.cpp
 SOURCES += src/base/monitor.cpp
@@ -42,7 +44,9 @@ HEADERS += src/base/engine.h \
     src/ui/components/button.h \
     src/ui/base/invoker.h \
     src/ui/base/element.h \
-    src/ui/components/elementwrapper.h
+    src/ui/components/elementwrapper.h \  
+    src/monitors/bindmonitor.h \
+    src/objects/binder.h
 HEADERS += src/events/renderui.h
 HEADERS += src/ui/base/component.h
 HEADERS += src/ui/base/node.h
@@ -50,7 +54,7 @@ HEADERS += src/ui/windowmanager.h
 HEADERS += src/ui/components/window.h
 HEADERS += src/ui/components/rectangle.h
 HEADERS += src/extensions/quiteextension.h 
-HEADERS += src/base/factory.h
+HEADERS +=
 HEADERS += src/events/eval.h
 HEADERS += src/base/emitter.h
 HEADERS += src/base/monitor.h

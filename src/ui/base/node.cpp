@@ -131,6 +131,15 @@ QJSValue Node::commitChild(QJSValue child) {
     return QJSValue();
 }
 
+/*---------------------------------------------------------------------------*/
+
+QJSValue Node::commitProps(QJSValue props) {
+    qDebug() << "Node commitProps";
+    this->props = getNodeParams(props);
+    emit propsChanged(this->props);
+    return QJSValue();
+}
+
 /*****************************************************************************/
 
 } // namespace Base

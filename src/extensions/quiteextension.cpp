@@ -14,7 +14,6 @@ QuiteExtension::QuiteExtension(QObject* parent)
 
 QuiteExtension::~QuiteExtension() {
     qDebug() << "QuiteExtension dtor";
-    factory->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -22,11 +21,11 @@ QuiteExtension::~QuiteExtension() {
 void QuiteExtension::install(
     QJSValue global,
     QJSValue current,
-    Factory* factory
+    QJSEngine* eval
 ) {
     qDebug() << "QuiteExtension install";
     global.setProperty("Quite", current);
-    this->factory = factory;
+    this->eval = eval;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -58,14 +57,14 @@ QJSValue QuiteExtension::createElement(
     if(child1.isUndefined()) {
         child = QJSValue();
     } else if(child2.isUndefined()) {
-        child = factory->newArray(1);
+        child = eval->newArray(1);
         child.setProperty(0, child1);
     } else if(child3.isUndefined()) {
-        child = factory->newArray(2);
+        child = eval->newArray(2);
         child.setProperty(0, child1);
         child.setProperty(1, child2);
     } else {
-        child = factory->newArray(3);
+        child = eval->newArray(3);
         child.setProperty(0, child1);
         child.setProperty(1, child2);
         child.setProperty(2, child3);
@@ -87,12 +86,12 @@ QJSValue QuiteExtension::createElementInternal(
         QJSValue instance = origin.callAsConstructor({props});
         QJSValue render = instance.property("render");
         QJSValue state = instance.property("state");
-        node = new Element(factory, props, state, render);
+        node = new Element(eval, instance, props, state, render);
     } else {
         node = new Node(type, props, child);
     }
 
-    return factory->newQObject(node);
+    return eval->newQObject(node);
 }
 
 /*****************************************************************************/

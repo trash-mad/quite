@@ -28,26 +28,31 @@ TimerMonitor::~TimerMonitor() {
 
 /*---------------------------------------------------------------------------*/
 
-bool TimerMonitor::isStarted() const {
+bool TimerMonitor::isStarted() {
     return started;
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool TimerMonitor::isCanceled() const {
+bool TimerMonitor::isCanceled() {
     return canceled;
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool TimerMonitor::isFinished() const {
+bool TimerMonitor::isFinished() {
     return finished;
 }
 
 /*---------------------------------------------------------------------------*/
 
-void TimerMonitor::start(QThreadPool *pool, QObject *engine) {
+void TimerMonitor::start(
+    QThreadPool *pool,
+    QJSEngine* eval,
+    QObject *engine
+) {
     (void)(pool);
+    (void)(eval);
     (void)(engine);
     timer = new QTimer(this);
     timer->setSingleShot(true);

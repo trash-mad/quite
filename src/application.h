@@ -14,9 +14,11 @@
 #include "src/ui/base/node.h"
 #include "src/ui/windowmanager.h"
 #include "src/events/importmodule.h"
+#include "src/monitors/bindmonitor.h"
 #include "src/events/installextension.h"
 
 using namespace Quite::Ui::Base;
+using namespace Quite::Monitors;
 using namespace Quite::Events;
 using namespace Quite::Ui;
 
@@ -42,6 +44,8 @@ class Application : public QObject {
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);
     void importModule(QString path);
+  public slots:
+    void bindMethod(BindMonitor* monitor);
 };
 
 /*****************************************************************************/

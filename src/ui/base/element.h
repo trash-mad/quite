@@ -6,12 +6,10 @@
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
+#include <QJSEngine>
 #include <QLinkedList>
 
 #include "src/ui/base/node.h"
-#include "src/base/factory.h"
-
-using namespace Quite::Base;
 
 namespace Quite {
 namespace Ui {
@@ -23,25 +21,29 @@ class Element : public Node {
   Q_OBJECT
   private:
     QMap<QString, QJSValue> state;
+    QJSValue instance;
+    QJSEngine* eval;
     QJSValue render;
     QJSValue props;
   public:
     Element(
-        Factory* factory,
-        QJSValue props = QJSValue(),
-        QJSValue state = QJSValue(),
-        QJSValue render = QJSValue()
+        QJSEngine* eval,
+        QJSValue instance,
+        QJSValue props,
+        QJSValue state,
+        QJSValue render
     );
     virtual ~Element();
     QMap<QString, QJSValue> getState() const;
+    QJSValue getInstance() const;
   private:
     static QJSValue renderSubtree(
         QJSValue props,
         QJSValue state,
         QJSValue render,
-        Factory* factory
+        QJSEngine* engine
     );
-    static Node* renderSubtree(
+    static QLinkedList<Node*> renderSubtree(
         QJSValue props,
         QJSValue state,
         QJSValue render

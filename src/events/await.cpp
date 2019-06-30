@@ -27,10 +27,9 @@ Monitor *Await::getMonitor() const {
 
 EventResult Await::process(
     QObject *engine,
-    QJSEngine *eval,
+    QJSEngine* eval,
     QThreadPool *pool
 ) {
-    (void)(eval);
     if(monitor->isCanceled() || monitor->isFinished()) {
         qDebug() << "Awaiter monitor cleanup";
         delete monitor;
@@ -38,7 +37,7 @@ EventResult Await::process(
     } else {
         if(!monitor->isStarted()){
             qDebug() << "Awaiter monitor init";
-            monitor->start(pool, engine);
+            monitor->start(pool, eval, engine);
         }
         qDebug() << "Awaiter monitor skip";
         return EventResult::AwaiterRethrow;

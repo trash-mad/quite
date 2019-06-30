@@ -37,9 +37,9 @@ TimerExtension::~TimerExtension() {
 void TimerExtension::install(
     QJSValue global,
     QJSValue current,
-    Factory* factory
+    QJSEngine* eval
 ) {
-    (void)(factory);
+    (void)(eval);
     qDebug() << "TimerExtension install";
     global.setProperty("setTimeout",current.property("setTimeout"));
     global.setProperty("clearTimeout",current.property("clearTimeout"));

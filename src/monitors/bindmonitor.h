@@ -1,48 +1,39 @@
-#ifndef TIMERMONITOR_H
-#define TIMERMONITOR_H
+#ifndef BINDMONITOR_H
+#define BINDMONITOR_H
 
-#include <QTimer>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
+#include <QJSEngine>
+#include <QReadWriteLock>
 
 #include "src/base/monitor.h"
+#include "src/objects/binder.h"
 
 using namespace Quite::Base;
+using namespace Quite::Objects;
 
 namespace Quite {
 namespace Monitors {
 
 /*****************************************************************************/
 
-class TimerMonitor : public Base::Monitor{
-  Q_OBJECT
+class BindMonitor : public Monitor {
   private:
-    QJSValue handler;
-    QTimer* timer = nullptr;
+    QJSValue func;
+    QJSValue result;
+    QJSValue instance;
     bool started = false;
-    bool canceled = false;
     bool finished = false;
-    bool singleshot = false;
-    int msec = 0;
-    int id = -1;
+    QReadWriteLock locker;
   public:
-    void setId(int id);
-    TimerMonitor(
-        QJSValue handler,
-        int msec,
-        bool singleshot = true
-    );
-    virtual ~TimerMonitor();
+    BindMonitor(QJSValue func, QJSValue instance);
+    virtual ~BindMonitor();
     virtual bool isStarted();
     virtual bool isCanceled();
     virtual bool isFinished();
+    QJSValue getResult();
     virtual void start(QThreadPool* pool, QJSEngine* eval, QObject* engine);
-    void cancel();
-  private slots:
-    void tick();
-  signals:
-    void clear(int id);
 };
 
 /*****************************************************************************/
@@ -50,4 +41,4 @@ class TimerMonitor : public Base::Monitor{
 } // namespace Monitors
 } // namespace Quite
 
-#endif // TIMERMONITOR_H
+#endif // BINDMONITOR_H
