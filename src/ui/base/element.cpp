@@ -50,7 +50,7 @@ QJSValue Element::renderSubtree(
     QJSValue state,
     QJSValue render,
     QJSEngine *eval) {
-    qDebug() << "Node renderSubtree";
+    qDebug() << "Element renderSubtree";
     QJSValue result = eval->newArray(1);
     QJSValue child = eval->newQObject(
         renderSubtree(props,state,render).first()
@@ -67,12 +67,12 @@ QLinkedList<Node*> Element::renderSubtree(
     QJSValue render) {
     QLinkedList<Node*> result;
     if (!render.isCallable()) {
-        qCritical() << "Node renderSubtree render is not callable";
+        qCritical() << "Element renderSubtree render is not callable";
     } else {
         QJSValue root = render.call({props, state});
         Node* node = nullptr;
         if (!tryCastNode(root, node)) {
-            qCritical() << "Node renderSubtree render result is not Node*";
+            qCritical() << "Element renderSubtree render result is not Node*";
         } else {
             result.append(node);
         }

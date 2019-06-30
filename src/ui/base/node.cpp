@@ -120,9 +120,9 @@ QMap<QString, QJSValue> Node::getProps() const {
 /*---------------------------------------------------------------------------*/
 
 QJSValue Node::commitChild(QJSValue child) {
-    qDebug() << "Node" << type << "commitChild";
+    qDebug() << "Node commitChild";
     QLinkedList<Node*>::iterator i;
-    for (i = this->child.begin(); i != this->child.end(); i++){
+    for (i=this->child.begin();i!=this->child.end();i++) {
         Node* node = (*i);
         node->deleteLater();
     }

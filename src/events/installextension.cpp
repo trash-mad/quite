@@ -24,6 +24,7 @@ EventResult InstallExtension::process(
     QThreadPool *pool
 ) {
     (void)(eval);
+    (void)(pool);
     Base::Extension* ext = nullptr;
 
     switch (extension) {

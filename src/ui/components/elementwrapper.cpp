@@ -95,7 +95,6 @@ void ElementWrapper::bindComponentChildProps(Component* component) {
         QMap<QString, QJSValue>::iterator i;
         for(i = props.begin(); i!= props.end(); i++) {
             if (i.value().isCallable()) {
-                qDebug() << "TODO";
                 BindMonitor* monitor = new BindMonitor(i.value(),instance);
                 emit bindMethod(monitor);
                 while(!monitor->isStarted()) {

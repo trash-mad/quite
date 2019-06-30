@@ -31,6 +31,12 @@ Component *WindowManager::renderComponent(Node *node, Component* parent) {
                 this,
                 SIGNAL(bindMethod(BindMonitor*))
             );
+            connect(
+                wrapper,
+                SIGNAL(updateSubtree(Component*,QLinkedList<Node*>)),
+                this,
+                SLOT(updateSubtree(Component*,QLinkedList<Node*>))
+            );
             component = wrapper;
             break;
         case NodeType::NeverType:

@@ -60,6 +60,7 @@ int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
+    qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
     Application a;
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);
