@@ -92,7 +92,6 @@ QJSValue QuiteExtension::createElementInternal(
     } else {
         node = new Node(type, props, child);
     }
-
     return eval->newQObject(node);
 }
 

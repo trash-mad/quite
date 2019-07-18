@@ -84,10 +84,19 @@ Node::Node(QObject* parent)
 
 Node::Node(QJSValue type, QJSValue props, QJSValue child)
   : Node() {
-    qDebug() << "Node ctor";
+    qDebug() << "Node dtor";
+
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     this->type = getNodeType(type.toString());
     this->props = getNodeParams(props);
     this->child = castNodeList(child);
+
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        Node* item = (*iter);
+        item->setParent(this);
+    }
 }
 
 /*---------------------------------------------------------------------------*/

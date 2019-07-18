@@ -44,7 +44,18 @@ void Component::bindChildElementCallbacks(Element* root) {
                 BindMonitor* monitor = new BindMonitor(i.value(),instance);
                 emit bindMethod(monitor);
                 while(!monitor->isStarted()) {
-                    QCoreApplication::processEvents();
+                    /*
+                     * TODO: требуется перерисовать диалог, не обрабатывая
+                     * иные события
+                     *
+                     * методом научного тыка по кнопке с разной частотой,
+                     * удалось поймать отладчиком наезд в этом месте
+                     *
+                     * QCoreApplication::processEvents(
+                     *   QEventLoop::ProcessEventsFlag::DialogExec
+                     * );
+                     */
+                    QThread::msleep(10);
                 }
                 QJSValue binded = monitor->getResult();
                 root->updateProp(i.key(), binded);

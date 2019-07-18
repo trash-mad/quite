@@ -23,6 +23,8 @@ ComponentNode::ComponentNode(
         eval->newQObject(this).property("setState")
     );
 
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     renderSubtree(this->render);
 }
 
@@ -72,7 +74,7 @@ void ComponentNode::renderSubtree(QJSValue render) {
 /*---------------------------------------------------------------------------*/
 
 QJSValue ComponentNode::setState(QJSValue state) {
-    qDebug() << "ComponentNode setState";
+    qDebug() << "ComponentNode setState" << QThread::currentThreadId();
     this->state = getNodeParams(state);
     instance.setProperty("state", state);
     renderSubtree(this->render);

@@ -23,7 +23,9 @@ Binder::~Binder() {
 QJSValue Binder::bind(QJSValue func, QJSValue instance, QJSEngine* eval) {
     qDebug() << "Binder bind";
     Binder* binder = new Binder(func, instance);
-    return eval->newQObject(binder).property("call");
+    QJSValue binded = eval->newQObject(binder).property("call");
+    QQmlEngine::setObjectOwnership(binder, QQmlEngine::JavaScriptOwnership);
+    return binded;
 }
 
 /*---------------------------------------------------------------------------*/

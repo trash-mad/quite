@@ -4,7 +4,9 @@
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
+#include <QQmlEngine>
 #include <QLinkedList>
+#include <QReadWriteLock>
 #include <QJSValueIterator>
 
 namespace Quite {
@@ -27,6 +29,7 @@ class Node : public QObject {
   Q_OBJECT
   protected:
     NodeType type;
+    QReadWriteLock locker;
     QLinkedList<Node*> child;
     QMap<QString, QJSValue> props;
   public:

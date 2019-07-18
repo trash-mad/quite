@@ -18,6 +18,7 @@ Element::Element(Node *node, QQmlEngine *engine, Element *parent)
 
 Element::~Element() {
     qDebug() << "Element dtor";
+    //node->deleteLater();
     delete item;
 }
 

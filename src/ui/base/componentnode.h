@@ -1,10 +1,12 @@
 #ifndef COMPONENTNODE_H
 #define COMPONENTNODE_H
 
+#include <QThread>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
+#include <QQmlEngine>
 #include <QLinkedList>
 
 #include "src/ui/base/node.h"

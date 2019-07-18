@@ -34,6 +34,8 @@ void Engine::run() {
         eval->globalObject().prototype()
     );
 
+    eval->installExtensions(QJSEngine::Extension::GarbageCollectionExtension);
+
     QEventLoop loop;
     qDebug() << "Engine event loop started";
 

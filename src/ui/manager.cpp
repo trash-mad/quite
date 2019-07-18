@@ -13,7 +13,7 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             element = new Window(node, &engine, parent);
             break;
         case NodeType::RectangleType:
-            element = new Rectangle(node, &engine, parent);
+            element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
             break;
         case NodeType::ButtonType:
             element = new Button(node, &engine, parent);

@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
+#include <QQmlEngine>
 #include <QStringList>
 
 #include "src/events/eval.h"
