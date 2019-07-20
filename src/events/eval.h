@@ -18,11 +18,16 @@ namespace Events {
 /*****************************************************************************/
 
 class Eval : public Base::Event{
-  private:
+  protected:
     QJSValue func;
+    QJSValue instance;
     QJSValueList args;
   public:
-    explicit Eval(QJSValue func, QJSValueList args);
+    explicit Eval(
+        QJSValue func,
+        QJSValueList args,
+        QJSValue instance = QJSValue()
+    );
     virtual ~Eval();
     virtual EventResult process(
         QObject* engine,

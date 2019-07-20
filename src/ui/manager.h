@@ -4,6 +4,8 @@
 #include <QtDebug>
 #include <QObject>
 
+#include "src/base/event.h"
+
 #include "src/ui/base/node.h"
 #include "src/ui/base/element.h"
 #include "src/ui/base/invoker.h"
@@ -14,6 +16,7 @@
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/rectangle.h"
 
+using namespace Quite::Base;
 using namespace Quite::Ui::Base;
 using namespace Quite::Ui::Elements;
 
@@ -41,8 +44,7 @@ class Manager : public QObject {
     void updateSubtree(Node* child, Component* that);
   signals:
     void closed();
-    void bindMethod(BindMonitor* monitor);
-    void eval(QJSValue func, QJSValueList args);
+    void eval(Event* e);
 };
 
 /*****************************************************************************/

@@ -8,31 +8,27 @@ namespace Ui {
 Element *Manager::renderElement(Node *node, Element *parent) {
     qDebug() << "WindowManager renderComponent";
     Element* element = nullptr;
-    switch (node->getType()) {
-        case NodeType::WindowType:
+    NodeType type = node->getType();
+
+    if (type==NodeType::ComponentType) {
+         element = renderComponent(node, parent);
+    } else {
+        if(type==NodeType::WindowType) {
             element = new Window(node, &engine, parent);
-            break;
-        case NodeType::RectangleType:
+        } else if (type==NodeType::RectangleType) {
             element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
-            break;
-        case NodeType::ButtonType:
+        } else if (type==NodeType::ButtonType) {
             element = new Button(node, &engine, parent);
-            break;
-        case NodeType::ComponentType:
-            element = renderComponent(node, parent);
-            break;
-        case NodeType::NeverType:
-            qCritical() << "WindowManager renderComponent NeverType";
-            break;
-        default:
-            qCritical() << "WindowManager renderComponent invalid type";
+        } else {
+            qCritical() << "Manager can't render node" << type;
+        }
+        element->propsChanged();
     }
-    element->updateProps(node->getProps());
     connect(
         element,
-        SIGNAL(eval(QJSValue,QJSValueList)),
+        SIGNAL(eval(Event*)),
         this,
-        SIGNAL(eval(QJSValue,QJSValueList))
+        SIGNAL(eval(Event*))
     );
     return element;
 }
@@ -44,12 +40,6 @@ Component *Manager::renderComponent(Node* node, Element *parent) {
         dynamic_cast<ComponentNode*>(node),
         &engine,
         parent
-    );
-    connect(
-        component,
-        SIGNAL(bindMethod(BindMonitor*)),
-        this,
-        SIGNAL(bindMethod(BindMonitor*))
     );
     connect(
         component,

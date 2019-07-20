@@ -23,7 +23,6 @@ class ComponentNode : public Node {
     QMap<QString, QJSValue> state;
     QJSValue instance;
     QJSValue render;
-    QJSEngine* eval;
   public:
     ComponentNode(
         QJSEngine* eval,

@@ -9,7 +9,13 @@ namespace Base {
 Element::Element(Node *node, QQmlEngine *engine, Element *parent)
   : QObject(parent) {
     qDebug() << "Element ctor";
-    this->props = node->getProps();
+    connect(
+        node,
+        SIGNAL(variantPropsChanged(QMap<QString, QVariant>)),
+        this,
+        SLOT(receiveProps(QMap<QString, QVariant>))
+    );
+    this->props = node->getVariantProps();
     this->engine = engine;
     this->node = node;
 }
@@ -18,7 +24,6 @@ Element::Element(Node *node, QQmlEngine *engine, Element *parent)
 
 Element::~Element() {
     qDebug() << "Element dtor";
-    //node->deleteLater();
     delete item;
 }
 
@@ -30,7 +35,7 @@ QLinkedList<Element*> Element::getChild() const {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QJSValue> Element::getProps() const {
+QMap<QString, QVariant> Element::getProps() const {
     return props;
 }
 
@@ -65,17 +70,10 @@ void Element::invoke(
 
 /*---------------------------------------------------------------------------*/
 
-void Element::updateProps(QMap<QString, QJSValue> props) {
-    qDebug() << "Element updateProps";
+void Element::receiveProps(QMap<QString, QVariant> props) {
+    qDebug() << "Element receiveProps";
     this->props = props;
     propsChanged();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::updateProp(QString key, QJSValue value) {
-    qDebug() << "Element updateProp" << key;
-    props.insert(key, value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -90,11 +88,11 @@ void Element::receiveSubtree(QLinkedList<Element *> child) {
 
 void Element::propsChanged() {
     qDebug() << "Element default propsChanged";
-    QMap<QString, QJSValue>::iterator i;
+    QMap<QString, QVariant>::iterator i;
     for(i = props.begin(); i!= props.end(); i++) {
         QString name = i.key();
-        QVariant value = i.value().toVariant();
-        item->setProperty(name.toStdString().c_str(),value);
+        QVariant value = i.value();
+        item->setProperty(name.toStdString().c_str(), value);
     }
 }
 

@@ -3,11 +3,14 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QJSValue>
+#include <QVariant>
 #include <QQuickItem>
 #include <QQmlEngine>
 
 #include "src/ui/base/node.h"
+#include "src/base/event.h"
+
+using namespace Quite::Base;
 
 namespace Quite {
 namespace Ui {
@@ -19,7 +22,7 @@ class Element : public QObject {
   Q_OBJECT
   protected:
     QLinkedList<Element*> child;
-    QMap<QString, QJSValue> props;
+    QMap<QString, QVariant> props;
     Node* node;
   protected:
     QQuickItem* item;
@@ -28,7 +31,7 @@ class Element : public QObject {
     Element(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
     QLinkedList<Element*> getChild() const;
-    QMap<QString, QJSValue> getProps() const;
+    QMap<QString, QVariant> getProps() const;
     QQuickItem* getItem() const;
     Node* getNode() const;
     virtual void invoke(
@@ -38,15 +41,15 @@ class Element : public QObject {
         QVariant p3,
         QVariant p4
     );
-    void updateProps(QMap<QString, QJSValue> props);
-    void updateProp(QString key, QJSValue value);
+  private slots:
+    void receiveProps(QMap<QString, QVariant> props);
   public slots:
     void receiveSubtree(QLinkedList<Element*> child);
-  protected:
+  public:
     virtual void propsChanged();
     virtual void childChanged();
   signals:
-    void eval(QJSValue obj, QJSValueList args = QJSValueList());
+    void eval(Event* e);
 };
 
 /*****************************************************************************/

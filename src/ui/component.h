@@ -23,18 +23,13 @@ class Component : public Element {
     QJSValue instance;
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
-    virtual ~Component();
-  protected:
-    virtual void childChanged() override;
-  private:
-    void bindChildElementCallbacks(Element* root);
+    virtual ~Component() override;
   public slots:
     void receiveSubtree(Element* child);
   private slots:
     void requireSubtree(Node* child);
   signals:
     void updateSubtree(Node* child, Component* that);
-    void bindMethod(BindMonitor* monitor);
 };
 
 /*****************************************************************************/

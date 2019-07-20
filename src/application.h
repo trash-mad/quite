@@ -44,8 +44,8 @@ class Application : public QObject {
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);
     void importModule(QString path);
-  public slots:
-    void bindMethod(BindMonitor* monitor);
+  private slots:
+    void eval(Event* e);
 };
 
 /*****************************************************************************/

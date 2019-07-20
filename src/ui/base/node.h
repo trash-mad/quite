@@ -9,6 +9,10 @@
 #include <QReadWriteLock>
 #include <QJSValueIterator>
 
+#include "src/objects/invoke.h"
+
+using namespace Quite::Objects;
+
 namespace Quite {
 namespace Ui {
 namespace Base {
@@ -31,7 +35,11 @@ class Node : public QObject {
     NodeType type;
     QReadWriteLock locker;
     QLinkedList<Node*> child;
-    QMap<QString, QJSValue> props;
+    QMap<QString, QJSValue> valueProps;
+    QMap<QString, QVariant> variantProps;
+    QJSValue executionContext = QJSValue();
+  private:
+    void gcInvoke();
   public:
     Node(
         QJSValue type,
@@ -42,12 +50,17 @@ class Node : public QObject {
     virtual ~Node();
     NodeType getType() const;
     QLinkedList<Node*> getChild() const;
-    QMap<QString, QJSValue> getProps() const;
+    virtual QMap<QString, QVariant> getVariantProps();
+    void updateContext(QJSValue executionContext);
   public:
     static QMap<QString, QJSValue> getNodeParams(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
     static NodeType getNodeType(QString type);
+  protected:
+    void generateVariantProps();
+  signals:
+    void variantPropsChanged(QMap<QString, QVariant> props);
 };
 
 /*****************************************************************************/

@@ -12,6 +12,7 @@ equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Q
 SOURCES += src/main.cpp \
     src/monitors/bindmonitor.cpp \
     src/objects/binder.cpp \
+    src/objects/invoke.cpp \
     src/ui/base/node.cpp \
     src/ui/base/componentnode.cpp \
     src/ui/base/element.cpp \
@@ -43,6 +44,7 @@ SOURCES += src/events/throwerror.cpp
 HEADERS += src/base/engine.h \
     src/monitors/bindmonitor.h \
     src/objects/binder.h \
+    src/objects/invoke.h \
     src/ui/base/node.h \
     src/ui/base/componentnode.h \
     src/ui/base/element.h \

@@ -29,11 +29,17 @@ void Button::invoke(
     QVariant p4
 ) {
     if (type == "clicked") {
-        QMap<QString, QJSValue> props = getProps();
-        QMap<QString, QJSValue>::iterator i;
+        QMap<QString, QVariant> props = getProps();
+        QMap<QString, QVariant>::iterator i;
         for(i = props.begin(); i!= props.end(); i++) {
             if (i.key()=="onClicked") {
-                emit eval(i.value());
+                Invoke* invoke = nullptr;
+                if (Invoke::tryCast(i.value(), invoke)) {
+                    qDebug() << "emit";
+                    emit eval(invoke->createEval({}));
+                } else {
+                    qCritical() << "Button onClicked is not callable";
+                }
             }
         }
     } else {

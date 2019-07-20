@@ -12,11 +12,13 @@ ComponentNode::ComponentNode(
     QJSValue render
 ) {
     qDebug() << "ComponentNode ctor";
-    this->props = Node::getNodeParams(instance.property("props"));
+    this->valueProps = Node::getNodeParams(instance.property("props"));
     this->state = Node::getNodeParams(instance.property("state"));
     this->type = NodeType::ComponentType;
     this->instance = instance;
     this->render = render;
+
+    generateVariantProps();
 
     instance.prototype().setProperty(
         "setState",
@@ -43,6 +45,7 @@ QJSValue ComponentNode::getInstance() const {
 /*---------------------------------------------------------------------------*/
 
 void ComponentNode::renderSubtree(QJSValue render) {
+    qDebug() << "ComponentNode renderSubtree";
     Node* node = nullptr;
     if (!render.isCallable()) {
         qCritical() << "ComponentNode renderSubtree render is not callable";
@@ -66,6 +69,7 @@ void ComponentNode::renderSubtree(QJSValue render) {
                 this->child.clear();
             }
             child.append(node);
+            updateContext(instance);
             emit childChanged(node);
         }
     }
