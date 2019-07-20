@@ -88,7 +88,7 @@ QJSValue QuiteExtension::createElementInternal(
         QJSValue state = instance.property("state");
         instance.setProperty("props", props);
         instance.setProperty("state", state);
-        node = new Element(eval, instance, props, state, render);
+        node = new ComponentNode(eval, instance, render);
     } else {
         node = new Node(type, props, child);
     }

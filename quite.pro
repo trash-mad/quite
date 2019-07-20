@@ -10,18 +10,18 @@ lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
 SOURCES += src/main.cpp \
-    src/ui/components/button.cpp \
-    src/ui/base/invoker.cpp \
-    src/ui/base/element.cpp \
-    src/ui/components/elementwrapper.cpp \  
     src/monitors/bindmonitor.cpp \
-    src/objects/binder.cpp
+    src/objects/binder.cpp \
+    src/ui/base/node.cpp \
+    src/ui/base/componentnode.cpp \
+    src/ui/base/element.cpp \
+    src/ui/component.cpp \
+    src/ui/elements/rectangle.cpp \
+    src/ui/elements/button.cpp \
+    src/ui/manager.cpp \
+    src/ui/elements/window.cpp \
+    src/ui/base/invoker.cpp
 SOURCES += src/events/renderui.cpp
-SOURCES += src/ui/base/component.cpp
-SOURCES += src/ui/base/node.cpp
-SOURCES += src/ui/windowmanager.cpp
-SOURCES += src/ui/components/window.cpp
-SOURCES += src/ui/components/rectangle.cpp
 SOURCES += src/extensions/quiteextension.cpp 
 SOURCES +=
 SOURCES += src/events/eval.cpp
@@ -41,18 +41,18 @@ SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h \
-    src/ui/components/button.h \
-    src/ui/base/invoker.h \
-    src/ui/base/element.h \
-    src/ui/components/elementwrapper.h \  
     src/monitors/bindmonitor.h \
-    src/objects/binder.h
+    src/objects/binder.h \
+    src/ui/base/node.h \
+    src/ui/base/componentnode.h \
+    src/ui/base/element.h \
+    src/ui/component.h \
+    src/ui/elements/rectangle.h \
+    src/ui/elements/button.h \
+    src/ui/manager.h \
+    src/ui/elements/window.h \
+    src/ui/base/invoker.h
 HEADERS += src/events/renderui.h
-HEADERS += src/ui/base/component.h
-HEADERS += src/ui/base/node.h
-HEADERS += src/ui/windowmanager.h
-HEADERS += src/ui/components/window.h
-HEADERS += src/ui/components/rectangle.h
 HEADERS += src/extensions/quiteextension.h 
 HEADERS +=
 HEADERS += src/events/eval.h

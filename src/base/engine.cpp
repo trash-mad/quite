@@ -92,23 +92,6 @@ void Engine::windowClosed() {
 
 /*---------------------------------------------------------------------------*/
 
-void Engine::bindMethod(QJSValue func, QJSValue inst) {
-    qDebug() << "Engine bindMethod";
-    QJSValue result = func.prototype().property("bind").callWithInstance(func, {inst.prototype()});
-    if (result.isError()) {
-        qCritical() << "Engine bindMethod" << result.toString();
-    } else if(result.isCallable()) {
-        //func = result;
-        func.callWithInstance({inst});
-    } else {
-        qCritical() << "Engine bindMethod" << result.toString();
-    }
-    //Binder* binder = new Binder(func, inst);
-    //return eval->newQObject(binder).property("call");
-}
-
-/*---------------------------------------------------------------------------*/
-
 void Engine::evalFunc(QJSValue func, QJSValueList args) {
     qDebug() << "Engine eval";
     QCoreApplication::postEvent(this, new Events::Eval(func, args));

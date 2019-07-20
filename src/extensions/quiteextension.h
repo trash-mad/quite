@@ -11,12 +11,14 @@
 #include "src/ui/base/element.h"
 #include "src/events/renderui.h"
 #include "src/base/extension.h"
+#include "src/ui/component.h"
 #include "src/events/await.h"
 #include "src/ui/base/node.h"
 
 using namespace Quite::Ui::Base;
 using namespace Quite::Events;
 using namespace Quite::Base;
+using namespace Quite::Ui;
 
 namespace Quite {
 namespace Extensions {
