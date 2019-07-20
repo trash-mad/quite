@@ -45,6 +45,7 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
 
 Window::~Window() {
     qDebug() << "Window dtor";
+    item = nullptr;
 }
 
 /*****************************************************************************/

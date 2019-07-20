@@ -27,6 +27,7 @@ Element *Manager::renderElement(Node *node, Element *parent) {
         default:
             qCritical() << "WindowManager renderComponent invalid type";
     }
+    element->updateProps(node->getProps());
     connect(
         element,
         SIGNAL(eval(QJSValue,QJSValueList)),

@@ -64,6 +64,7 @@ void ComponentNode::renderSubtree(QJSValue render) {
                 this->child.clear();
             }
             child.append(node);
+            emit childChanged(node);
         }
     }
 }

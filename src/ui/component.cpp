@@ -8,8 +8,7 @@ namespace Ui {
 Component::Component(ComponentNode* node, QQmlEngine *engine, Element *parent)
   : Element(node, engine, parent) {
     qDebug() << "Component ctor";
-    QQmlComponent rect(engine, ":/qml/Component.qml");
-    item = qobject_cast<QQuickItem*>(rect.create());
+    item = new QQuickItem();
     instance = node->getInstance();
     connect(
         node,

@@ -34,7 +34,7 @@ class Window : public Element {
     WindowPrivate window;
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
-    virtual ~Window();
+    virtual ~Window() override;
   signals:
     void closed();
 };

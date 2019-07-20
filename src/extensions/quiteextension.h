@@ -6,6 +6,7 @@
 #include <QJSValue>
 #include <QJSEngine>
 #include <QQmlEngine>
+#include <QJSValueIterator>
 
 #include "src/events/throwerror.h"
 #include "src/ui/base/element.h"
