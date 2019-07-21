@@ -7,9 +7,7 @@ namespace Base {
 /*****************************************************************************/
 
 NodeType Node::getNodeType(QString type) {
-    if (type == "Element") {
-        return NodeType::ElementType;
-    } else if(type == "Rectangle") {
+    if(type == "Rectangle") {
         return NodeType::RectangleType;
     } else if(type == "Button") {
         return NodeType::ButtonType;
@@ -19,6 +17,26 @@ NodeType Node::getNodeType(QString type) {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::generateVariantProps() {
+    qDebug() << "Node generateVariantProps";
+    gcInvoke();
+    variantProps.clear();
+    QMap<QString, QJSValue>::iterator iter;
+    for (iter=valueProps.begin();iter!=valueProps.end();iter++) {
+        if (iter.value().isCallable() && !executionContext.isUndefined()) {
+            variantProps.insert(
+                iter.key(),
+                QVariant::fromValue(new Invoke(iter.value(), executionContext))
+            );
+        } else {
+            variantProps.insert(iter.key(), iter.value().toVariant());
+        }
+    }
+    emit variantPropsChanged(variantProps);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -59,8 +77,8 @@ QLinkedList<Node *> Node::castNodeList(QJSValue arr) {
     } if(!arr.isArray()) {
         qCritical() << "castNodeList arr is not array";
     } else {
-        const int length = arr.property("length").toInt();
-        for (int i = 0; i != length; i++) {
+        const uint length = arr.property("length").toUInt();
+        for (uint i = 0; i != length; i++) {
             Node* node = nullptr;
             QJSValue item = arr.property(i);
             if (!item.isQObject()) {
@@ -77,19 +95,43 @@ QLinkedList<Node *> Node::castNodeList(QJSValue arr) {
 
 /*---------------------------------------------------------------------------*/
 
-Node::Node(QJSValue type, QJSValue props, QJSValue child)
-  : QObject(nullptr) {
+Node::Node(QObject* parent)
+ :  QObject(parent) {
     qDebug() << "Node ctor";
-    if (!type.isString()) {
-        qCritical() << "Node name not string not func";
-    } else if(!props.isNull() && !props.isObject()) {
-        qCritical() << "Node props is not object";
-    } else if(!child.isUndefined() && !child.isArray()) {
-        qCritical() << "Child is not array";
-    } else {
-        this->props = getNodeParams(props);
-        this->child = castNodeList(child);
-        this->type = getNodeType(type.toString());
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::gcInvoke() {
+    QMap<QString, QVariant>::iterator iter;
+    for (iter=variantProps.begin();iter!=variantProps.end();iter++) {
+        Invoke* invoke = nullptr;
+        if (Invoke::tryCast(iter.value(), invoke)) {
+            invoke->deleteLater();
+        } else {
+            continue;
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+Node::Node(QJSValue type, QJSValue props, QJSValue child)
+  : Node() {
+    qDebug() << "Node dtor";
+
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+    this->type = getNodeType(type.toString());
+    this->valueProps = getNodeParams(props);
+    this->child = castNodeList(child);
+
+    generateVariantProps();
+
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        Node* item = (*iter);
+        item->setParent(this);
     }
 }
 
@@ -97,6 +139,7 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
 
 Node::~Node() {
     qDebug() << "Node dtor";
+    gcInvoke();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -113,31 +156,22 @@ QLinkedList<Node *> Node::getChild() const {
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QJSValue> Node::getProps() const {
-    return props;
+QMap<QString, QVariant> Node::getVariantProps() {
+    qDebug() << "Node default getVariantProps";
+    return variantProps;
 }
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Node::commitChild(QJSValue child) {
-    qDebug() << "Node commitChild";
+void Node::updateContext(QJSValue executionContext) {
+    qDebug() << "Node updateContext";
+    this->executionContext = executionContext;
+    generateVariantProps();
     QLinkedList<Node*>::iterator i;
-    for (i=this->child.begin();i!=this->child.end();i++) {
-        Node* node = (*i);
-        node->deleteLater();
+    for (i=child.begin();i!=child.end();i++) {
+        Node* current = (*i);
+        current->updateContext(executionContext);
     }
-    this->child = castNodeList(child);
-    emit childChanged(this->child);
-    return QJSValue();
-}
-
-/*---------------------------------------------------------------------------*/
-
-QJSValue Node::commitProps(QJSValue props) {
-    qDebug() << "Node commitProps";
-    this->props = getNodeParams(props);
-    emit propsChanged(this->props);
-    return QJSValue();
 }
 
 /*****************************************************************************/

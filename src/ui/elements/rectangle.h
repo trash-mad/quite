@@ -3,28 +3,27 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QQuickWindow>
+#include <QQmlComponent>
 
-#include "src/ui/base/component.h"
+#include "src/ui/base/element.h"
 
 using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {
-namespace Components {
+namespace Elements {
 
 /*****************************************************************************/
 
-class Rectangle : public Component {
+class Rectangle : public Element {
   public:
-    Rectangle(Node* node, QQmlEngine* engine, Component* parent);
+    Rectangle(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Rectangle();
-    virtual void invoke(QString type, QVariant p1, QVariant p2, QVariant p3);
 };
 
 /*****************************************************************************/
 
-} // namespace Components
+} // namespace Elements
 } // namespace Ui
 } // namespace Quite
 

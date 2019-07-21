@@ -129,6 +129,7 @@ QJSValue Wrapper::fromQObject(
         if(it.value().isCallable()) {
             Wrapper* wrapped = new Wrapper(obj, it.name(), eval, engine);
             QJSValue managed = eval->newQObject(wrapped);
+            QQmlEngine::setObjectOwnership(wrapped, QQmlEngine::CppOwnership);
             result.setProperty(it.name(),managed.property("call"));
         } else {
             result.setProperty(it.name(),it.value());

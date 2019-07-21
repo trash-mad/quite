@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
+#include <QQmlEngine>
 
 namespace Quite {
 namespace Objects {

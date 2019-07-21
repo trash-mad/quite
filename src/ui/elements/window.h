@@ -5,13 +5,13 @@
 #include <QObject>
 #include <QQuickWindow>
 
-#include "src/ui/base/component.h"
+#include "src/ui/base/element.h"
 
 using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {
-namespace Components {
+namespace Elements {
 
 /*****************************************************************************/
 
@@ -28,22 +28,20 @@ class WindowPrivate : public QQuickWindow {
 
 /*****************************************************************************/
 
-class Window : public Component{
+class Window : public Element {
   Q_OBJECT
   private:
     WindowPrivate window;
   public:
-    Window(Node* node, QQmlEngine* engine, Component* parent);
-    virtual ~Window();
-    void show();
-    virtual void invoke(QString type,QVariant p1,QVariant p2,QVariant p3);
+    Window(Node* node, QQmlEngine* engine, Element* parent);
+    virtual ~Window() override;
   signals:
     void closed();
 };
 
 /*****************************************************************************/
 
-} // namespace Components
+} // namespace Elements
 } // namespace Ui
 } // namespace Quite
 

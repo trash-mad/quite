@@ -2,7 +2,7 @@
 
 namespace Quite {
 namespace Ui {
-namespace Components {
+namespace Elements {
 
 /*****************************************************************************/
 
@@ -29,8 +29,8 @@ WindowPrivate::~WindowPrivate() {
 
 /*****************************************************************************/
 
-Window::Window(Node *node, QQmlEngine* engine, Component* parent)
-  : Component(node, engine, nullptr) {
+Window::Window(Node *node, QQmlEngine *engine, Element *parent)
+  : Element(node, engine, nullptr) {
     qDebug() << "Window ctor";
     if(parent!=nullptr) {
         qCritical() << "Window parent must be nullptr";
@@ -45,27 +45,11 @@ Window::Window(Node *node, QQmlEngine* engine, Component* parent)
 
 Window::~Window() {
     qDebug() << "Window dtor";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::show() {
-    qDebug() << "Window show";
-    window.show();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::invoke(QString type, QVariant p1, QVariant p2, QVariant p3) {
-    (void)(type);
-    (void)(p1);
-    (void)(p2);
-    (void)(p3);
-    qCritical() << "Window invoke not implemented";
+    item = nullptr;
 }
 
 /*****************************************************************************/
 
-} // namespace Components
+} // namespace Elements
 } // namespace Ui
 } // namespace Quite

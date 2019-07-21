@@ -44,9 +44,11 @@ QJSValue Emitter::fromObject(
     QObject* engine
 ) {
     if(origin.isCallable()) {
+        Emitter* instance = new Emitter(origin, engine);
         QJSValue managed = eval->newQObject(
-            new Emitter(origin, engine)
+            instance
         ).property("call");
+        QQmlEngine::setObjectOwnership(instance, QQmlEngine::CppOwnership);
         managed.prototype().setProperty("_emitterOrigin", origin);
         return managed;
     } else {

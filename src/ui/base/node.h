@@ -1,13 +1,17 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <QMap>
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
-#include <QVariant>
+#include <QQmlEngine>
 #include <QLinkedList>
+#include <QReadWriteLock>
 #include <QJSValueIterator>
+
+#include "src/objects/invoke.h"
+
+using namespace Quite::Objects;
 
 namespace Quite {
 namespace Ui {
@@ -17,7 +21,7 @@ namespace Base {
 
 enum NodeType {
     NeverType,
-    ElementType,
+    ComponentType,
     ButtonType,
     WindowType,
     RectangleType
@@ -27,31 +31,36 @@ enum NodeType {
 
 class Node : public QObject {
   Q_OBJECT
-  private:
+  protected:
     NodeType type;
+    QReadWriteLock locker;
     QLinkedList<Node*> child;
-    QMap<QString, QJSValue> props;
+    QMap<QString, QJSValue> valueProps;
+    QMap<QString, QVariant> variantProps;
+    QJSValue executionContext = QJSValue();
+  private:
+    void gcInvoke();
   public:
-    explicit Node(
-        QJSValue type = QJSValue(),
-        QJSValue props = QJSValue(),
-        QJSValue child = QJSValue()
+    Node(
+        QJSValue type,
+        QJSValue props,
+        QJSValue child
     );
+    explicit Node(QObject* parent = nullptr);
     virtual ~Node();
     NodeType getType() const;
     QLinkedList<Node*> getChild() const;
-    QMap<QString, QJSValue> getProps() const;
+    virtual QMap<QString, QVariant> getVariantProps();
+    void updateContext(QJSValue executionContext);
   public:
     static QMap<QString, QJSValue> getNodeParams(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
     static NodeType getNodeType(QString type);
-  public slots:
-    QJSValue commitChild(QJSValue child);
-    QJSValue commitProps(QJSValue props);
+  protected:
+    void generateVariantProps();
   signals:
-    void childChanged(QLinkedList<Node*> child);
-    void propsChanged(QMap<QString, QJSValue> props);
+    void variantPropsChanged(QMap<QString, QVariant> props);
 };
 
 /*****************************************************************************/

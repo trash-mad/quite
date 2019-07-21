@@ -6,94 +6,105 @@ namespace Base {
 
 /*****************************************************************************/
 
-Element::Element(
-    QJSEngine* eval,
-    QJSValue instance,
-    QJSValue props,
-    QJSValue state,
-    QJSValue render
-) : Node(QJSValue("Element"), props, renderSubtree(render, instance, eval)) {
+Element::Element(Node *node, QQmlEngine *engine, Element *parent)
+  : QObject(parent) {
     qDebug() << "Element ctor";
-    this->state = getNodeParams(state);
-    this->instance = instance;
-    this->render = render;
-    this->props = props;
-    this->eval = eval;
-
-    instance.prototype().setProperty(
-        "setState",
-        eval->newQObject(this).property("setState")
+    connect(
+        node,
+        SIGNAL(variantPropsChanged(QMap<QString, QVariant>)),
+        this,
+        SLOT(receiveProps(QMap<QString, QVariant>))
     );
+    this->props = node->getVariantProps();
+    this->engine = engine;
+    this->node = node;
 }
 
 /*---------------------------------------------------------------------------*/
 
 Element::~Element() {
     qDebug() << "Element dtor";
+    delete item;
 }
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QJSValue> Element::getState() const {
-    return state;
+QLinkedList<Element*> Element::getChild() const {
+    return child;
 }
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Element::getInstance() const {
-    return instance;
+QMap<QString, QVariant> Element::getProps() const {
+    return props;
 }
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Element::renderSubtree(
-    QJSValue render,
-    QJSValue instance,
-    QJSEngine *eval
+QQuickItem *Element::getItem() const {
+    return item;
+}
+
+/*---------------------------------------------------------------------------*/
+
+Node *Element::getNode() const {
+    return node;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::invoke(
+    QString type,
+    QVariant p1,
+    QVariant p2,
+    QVariant p3,
+    QVariant p4
 ) {
-    qDebug() << "Element renderSubtree";
-    QJSValue result = eval->newArray(1);
-    QJSValue child = eval->newQObject(
-        renderSubtree(render,instance).first()
-    );
-    result.setProperty(0, child);
-    return result;
+    (void)(type);
+    (void)(p1);
+    (void)(p2);
+    (void)(p3);
+    (void)(p4);
+    qDebug() << "Element default invoke";
 }
 
 /*---------------------------------------------------------------------------*/
 
-QLinkedList<Node*> Element::renderSubtree(
-    QJSValue render,
-    QJSValue instance
-) {
-    QLinkedList<Node*> result;
-    if (!render.isCallable()) {
-        qCritical() << "Element renderSubtree render is not callable";
-    } else {
-        QJSValue root = render.callWithInstance(
-            instance,
-            {instance.property("props"), instance.property("state")}
-        );
-        Node* node = nullptr;
-        if (root.isError()) {
-            qCritical() << "Element renderSubree" << root.toString();
-        } else if (!tryCastNode(root, node)) {
-            qCritical() << "Element renderSubtree render result is not Node*";
-        } else {
-            result.append(node);
-        }
+void Element::receiveProps(QMap<QString, QVariant> props) {
+    qDebug() << "Element receiveProps";
+    this->props = props;
+    propsChanged();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::receiveSubtree(QLinkedList<Element *> child) {
+    qDebug() << "Element receiveSubtree";
+    this->child = child;
+    childChanged();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::propsChanged() {
+    qDebug() << "Element default propsChanged";
+    QMap<QString, QVariant>::iterator i;
+    for(i = props.begin(); i!= props.end(); i++) {
+        QString name = i.key();
+        QVariant value = i.value();
+        item->setProperty(name.toStdString().c_str(), value);
     }
-    return result;
 }
 
 /*---------------------------------------------------------------------------*/
 
-QJSValue Element::setState(QJSValue state) {
-    qDebug() << "Element setState";
-    this->state = getNodeParams(state);
-    instance.setProperty("state", state);
-    commitChild(renderSubtree(render, instance, eval));
-    return QJSValue();
+void Element::childChanged() {
+    qDebug() << "Element default childChanged";
+    QLinkedList<Element*>::iterator i;
+    for (i=child.begin(); i!=child.end();i++) {
+        Element* element = (*i);
+        element->getItem()->setParentItem(item);
+    }
 }
 
 /*****************************************************************************/

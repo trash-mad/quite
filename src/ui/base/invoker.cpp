@@ -6,7 +6,7 @@ namespace Base {
 
 /*****************************************************************************/
 
-Invoker::Invoker(QObject* parent)
+Invoker::Invoker(QObject *parent)
   : QObject(parent) {
     qDebug() << "Invoker ctor";
 }
@@ -26,7 +26,7 @@ void Invoker::install(QQmlEngine *engine) {
 
 /*---------------------------------------------------------------------------*/
 
-void Invoker::setRoot(Component *root) {
+void Invoker::setRoot(Element *root) {
     qDebug() << "Invoker setRoot";
     /*
      * TODO: Invoker::setRoot() может проводить инициализацию для быстой
@@ -40,15 +40,15 @@ void Invoker::setRoot(Component *root) {
 
 /*---------------------------------------------------------------------------*/
 
-Component *Invoker::findComponentByItem(Component *root, QQuickItem *item) {
+Element *Invoker::findElementByItem(Element *root, QQuickItem *item) {
     QQuickItem* current = root->getItem();
     if(current == item) {
         return root;
     } else {
-        QLinkedList<Component*>::iterator i;
-        QLinkedList<Component*> child = root->getChild();
+        QLinkedList<Element*>::iterator i;
+        QLinkedList<Element*> child = root->getChild();
         for (i=child.begin(); i!=child.end();i++) {
-            Component* result = findComponentByItem((*i), item);
+            Element* result = findElementByItem((*i), item);
             if(result!=nullptr) {
                 return result;
             } else {
@@ -61,19 +61,20 @@ Component *Invoker::findComponentByItem(Component *root, QQuickItem *item) {
 
 /*---------------------------------------------------------------------------*/
 
-void Invoker::invoke (
-    QQuickItem* item,
+void Invoker::invoke(
+    QQuickItem *obj,
     QString type,
     QVariant p1,
     QVariant p2,
-    QVariant p3
+    QVariant p3,
+    QVariant p4
 ) {
     qDebug() << "Invoker invoke";
-    Component* component = findComponentByItem(root, item);
-    if(component == nullptr) {
+    Element* element = findElementByItem(root, obj);
+    if(element == nullptr) {
         qCritical() << "Invoker findComponentByItem nullptr";
     } else {
-        component->invoke(type, p1, p2, p3);
+        element->invoke(type, p1, p2, p3, p4);
     }
 }
 

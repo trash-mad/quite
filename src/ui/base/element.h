@@ -1,15 +1,16 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-#include <QMap>
-#include <QList>
 #include <QtDebug>
 #include <QObject>
-#include <QJSValue>
-#include <QJSEngine>
-#include <QLinkedList>
+#include <QVariant>
+#include <QQuickItem>
+#include <QQmlEngine>
 
 #include "src/ui/base/node.h"
+#include "src/base/event.h"
+
+using namespace Quite::Base;
 
 namespace Quite {
 namespace Ui {
@@ -17,37 +18,38 @@ namespace Base {
 
 /*****************************************************************************/
 
-class Element : public Node {
+class Element : public QObject {
   Q_OBJECT
-  private:
-    QMap<QString, QJSValue> state;
-    QJSValue instance;
-    QJSEngine* eval;
-    QJSValue render;
-    QJSValue props;
+  protected:
+    QLinkedList<Element*> child;
+    QMap<QString, QVariant> props;
+    Node* node;
+  protected:
+    QQuickItem* item;
+    QQmlEngine* engine;
   public:
-    Element(
-        QJSEngine* eval,
-        QJSValue instance,
-        QJSValue props,
-        QJSValue state,
-        QJSValue render
-    );
+    Element(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
-    QMap<QString, QJSValue> getState() const;
-    QJSValue getInstance() const;
-  private:
-    static QJSValue renderSubtree(
-        QJSValue render,
-        QJSValue instance,
-        QJSEngine* engine
+    QLinkedList<Element*> getChild() const;
+    QMap<QString, QVariant> getProps() const;
+    QQuickItem* getItem() const;
+    Node* getNode() const;
+    virtual void invoke(
+        QString type,
+        QVariant p1,
+        QVariant p2,
+        QVariant p3,
+        QVariant p4
     );
-    static QLinkedList<Node*> renderSubtree(
-        QJSValue render,
-        QJSValue instance
-    );
+  private slots:
+    void receiveProps(QMap<QString, QVariant> props);
   public slots:
-    QJSValue setState(QJSValue state);
+    void receiveSubtree(QLinkedList<Element*> child);
+  public:
+    virtual void propsChanged();
+    virtual void childChanged();
+  signals:
+    void eval(Event* e);
 };
 
 /*****************************************************************************/

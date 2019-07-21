@@ -34,6 +34,8 @@ void Engine::run() {
         eval->globalObject().prototype()
     );
 
+    eval->installExtensions(QJSEngine::Extension::GarbageCollectionExtension);
+
     QEventLoop loop;
     qDebug() << "Engine event loop started";
 
@@ -88,23 +90,6 @@ bool Engine::event(QEvent* e) {
 void Engine::windowClosed() {
     qDebug() << "Engine windowClosed";
     uiexec = false;
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Engine::bindMethod(QJSValue func, QJSValue inst) {
-    qDebug() << "Engine bindMethod";
-    QJSValue result = func.prototype().property("bind").callWithInstance(func, {inst.prototype()});
-    if (result.isError()) {
-        qCritical() << "Engine bindMethod" << result.toString();
-    } else if(result.isCallable()) {
-        //func = result;
-        func.callWithInstance({inst});
-    } else {
-        qCritical() << "Engine bindMethod" << result.toString();
-    }
-    //Binder* binder = new Binder(func, inst);
-    //return eval->newQObject(binder).property("call");
 }
 
 /*---------------------------------------------------------------------------*/

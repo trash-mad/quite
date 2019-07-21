@@ -8,18 +8,12 @@ Application::Application()
   : QObject(nullptr) {
     qDebug() << "Application ctor" << QDateTime::currentDateTime().toTime_t();
     connect(&engine, SIGNAL(renderUi(Node*)), &manager, SLOT(renderUi(Node*)));
-    connect(
-        &manager,
-        SIGNAL(bindMethod(BindMonitor*)),
-        this,
-        SLOT(bindMethod(BindMonitor*))
-    );
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(
         &manager,
-        SIGNAL(eval(QJSValue,QJSValueList)),
-        &engine,
-        SLOT(evalFunc(QJSValue,QJSValueList))
+        SIGNAL(eval(Event*)),
+        this,
+        SLOT(eval(Event*))
     );
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
@@ -83,9 +77,9 @@ void Application::importModule(QString path) {
 
 /*---------------------------------------------------------------------------*/
 
-void Application::bindMethod(BindMonitor* monitor) {
-    qDebug() << "Application bindMethod";
-    QCoreApplication::postEvent(&engine, new Await(monitor));
+void Application::eval(Event *e) {
+    qDebug() << "Application eval";
+    QCoreApplication::postEvent(&engine, e);
 }
 
 /*****************************************************************************/

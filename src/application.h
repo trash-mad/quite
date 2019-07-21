@@ -12,7 +12,7 @@
 
 #include "src/base/engine.h"
 #include "src/ui/base/node.h"
-#include "src/ui/windowmanager.h"
+#include "src/ui/manager.h"
 #include "src/events/importmodule.h"
 #include "src/monitors/bindmonitor.h"
 #include "src/events/installextension.h"
@@ -30,7 +30,7 @@ class Application : public QObject {
   Q_OBJECT
   private:
     Engine engine;
-    WindowManager manager;
+    Manager manager;
   protected:
     explicit Application();
     virtual ~Application();
@@ -44,8 +44,8 @@ class Application : public QObject {
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);
     void importModule(QString path);
-  public slots:
-    void bindMethod(BindMonitor* monitor);
+  private slots:
+    void eval(Event* e);
 };
 
 /*****************************************************************************/
