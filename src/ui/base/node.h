@@ -33,7 +33,6 @@ class Node : public QObject {
   Q_OBJECT
   protected:
     NodeType type;
-    QReadWriteLock locker;
     QLinkedList<Node*> child;
     QMap<QString, QJSValue> valueProps;
     QMap<QString, QVariant> variantProps;
@@ -51,14 +50,14 @@ class Node : public QObject {
     NodeType getType() const;
     QLinkedList<Node*> getChild() const;
     virtual QMap<QString, QVariant> getVariantProps();
-    void updateContext(QJSValue executionContext);
+    virtual void updateContext(QJSValue executionContext);
   public:
     static QMap<QString, QJSValue> getNodeParams(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
     static NodeType getNodeType(QString type);
   protected:
-    void generateVariantProps();
+    void generateVariantProps(QJSValue context);
   signals:
     void variantPropsChanged(QMap<QString, QVariant> props);
 };

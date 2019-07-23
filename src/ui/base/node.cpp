@@ -21,16 +21,16 @@ NodeType Node::getNodeType(QString type) {
 
 /*---------------------------------------------------------------------------*/
 
-void Node::generateVariantProps() {
+void Node::generateVariantProps(QJSValue context) {
     qDebug() << "Node generateVariantProps";
     gcInvoke();
     variantProps.clear();
     QMap<QString, QJSValue>::iterator iter;
     for (iter=valueProps.begin();iter!=valueProps.end();iter++) {
-        if (iter.value().isCallable() && !executionContext.isUndefined()) {
+        if (iter.value().isCallable()) {
             variantProps.insert(
                 iter.key(),
-                QVariant::fromValue(new Invoke(iter.value(), executionContext))
+                QVariant::fromValue(new Invoke(iter.value(), context))
             );
         } else {
             variantProps.insert(iter.key(), iter.value().toVariant());
@@ -126,7 +126,7 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
     this->valueProps = getNodeParams(props);
     this->child = castNodeList(child);
 
-    generateVariantProps();
+    generateVariantProps(this->executionContext);
 
     QLinkedList<Node*>::iterator iter;
     for (iter=this->child.begin();iter!=this->child.end();iter++) {
@@ -166,7 +166,7 @@ QMap<QString, QVariant> Node::getVariantProps() {
 void Node::updateContext(QJSValue executionContext) {
     qDebug() << "Node updateContext";
     this->executionContext = executionContext;
-    generateVariantProps();
+    generateVariantProps(this->executionContext);
     QLinkedList<Node*>::iterator i;
     for (i=child.begin();i!=child.end();i++) {
         Node* current = (*i);

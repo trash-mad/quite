@@ -13,12 +13,18 @@ ComponentNode::ComponentNode(
 ) {
     qDebug() << "ComponentNode ctor";
     this->valueProps = Node::getNodeParams(instance.property("props"));
-    this->state = Node::getNodeParams(instance.property("state"));
+
+    if (instance.property("state").isUndefined()) {
+        instance.setProperty("state", eval->newObject());
+    } else {
+        this->state = Node::getNodeParams(instance.property("state"));
+    }
+
     this->type = NodeType::ComponentType;
-    this->instance = instance;
+    this->executionContext = instance;
     this->render = render;
 
-    generateVariantProps();
+    generateVariantProps(this->executionContext);
 
     instance.prototype().setProperty(
         "setState",
@@ -39,7 +45,19 @@ ComponentNode::~ComponentNode() {
 /*---------------------------------------------------------------------------*/
 
 QJSValue ComponentNode::getInstance() const {
-    return instance;
+    return executionContext;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void ComponentNode::updateContext(QJSValue context) {
+    qDebug() << "ComponentNode updateContext";
+    generateVariantProps(context);
+    QLinkedList<Node*>::iterator i;
+    for (i=child.begin();i!=child.end();i++) {
+        Node* current = (*i);
+        current->updateContext(this->executionContext);
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -51,9 +69,9 @@ void ComponentNode::renderSubtree(QJSValue render) {
         qCritical() << "ComponentNode renderSubtree render is not callable";
     } else {
         QJSValue root = render.callWithInstance(
-            instance, {
-                instance.property("props"),
-                instance.property("state")
+            executionContext, {
+                executionContext.property("props"),
+                executionContext.property("state")
             }
         );
         if (root.isError()) {
@@ -69,7 +87,7 @@ void ComponentNode::renderSubtree(QJSValue render) {
                 this->child.clear();
             }
             child.append(node);
-            updateContext(instance);
+            updateContext(executionContext);
             emit childChanged(node);
         }
     }
@@ -80,7 +98,7 @@ void ComponentNode::renderSubtree(QJSValue render) {
 QJSValue ComponentNode::setState(QJSValue state) {
     qDebug() << "ComponentNode setState" << QThread::currentThreadId();
     this->state = getNodeParams(state);
-    instance.setProperty("state", state);
+    executionContext.setProperty("state", state);
     renderSubtree(this->render);
     return QJSValue();
 }

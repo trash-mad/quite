@@ -21,7 +21,6 @@ class ComponentNode : public Node {
   Q_OBJECT
   private:
     QMap<QString, QJSValue> state;
-    QJSValue instance;
     QJSValue render;
   public:
     ComponentNode(
@@ -29,8 +28,9 @@ class ComponentNode : public Node {
         QJSValue instance,
         QJSValue render
     );
-    virtual ~ComponentNode();
+    virtual ~ComponentNode() override;
     QJSValue getInstance() const;
+    virtual void updateContext(QJSValue executionContext) override;
   protected:
     void renderSubtree(QJSValue render);
   public slots:

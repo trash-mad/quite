@@ -83,6 +83,18 @@ QJSValue QuiteExtension::createElementInternal(
     qDebug() << "QuiteExtension createElementInternal";
     if (type.isCallable()) {
         QJSValue origin = type.prototype().property("_emitterOrigin");
+
+        /*
+         * Баг в Qt5 - функции НИКОГДА не попадают в параметры
+         * перепробовал все способы...
+         */
+
+        QJSValue arg = eval->newObject();
+        arg.setProperty("test",eval->evaluate("(function(a) { return console.log(a); })"));
+        arg.setProperty("omg",1);
+        arg.property("test").call({"I am here"});
+
+        //QJSValue instance = origin.callAsConstructor({arg});
         QJSValue instance = origin.callAsConstructor({props});
         QJSValue render = instance.property("render");
         QJSValue state = instance.property("state");
