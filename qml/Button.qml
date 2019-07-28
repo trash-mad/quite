@@ -4,6 +4,8 @@ Button {
     id: button
     text: "Button"
     onClicked: {
-        Quite.invoke(button, "clicked");
+        //Quite.invoke(button, "clicked");
+        console.log(123);
+        onClick();
     }
 }

@@ -12,7 +12,6 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
     if(parent!=nullptr) {
         qCritical() << "Window parent must be nullptr";
     } else {
-        qDebug() << getItem()->staticMetaObject.className();
         return;
     }
 }

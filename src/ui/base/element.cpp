@@ -15,12 +15,14 @@ Element::Element(
     qDebug() << "Element ctor";
     this->type=node->getEnumType();
     connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-    QQmlComponent component(engine, compUri);
-    //item.beginCreate(engine->rootContext());
-    //item.setProperty("element", QVariant::fromValue(this));
-    //item.completeCreate();
 
-    QObject* object = component.create();
+    context=new QQmlContext(engine->rootContext(),this);
+    context->setContextObject(this);
+
+    QQmlComponent component(engine, compUri);
+    QObject* object=component.beginCreate(context);
+    component.completeCreate();
+
     QQuickWindow* window = qobject_cast<QQuickWindow*>(object);
     if (window==nullptr) {
         item=qobject_cast<QQuickItem*>(object);
@@ -34,6 +36,12 @@ Element::Element(
 Element::~Element() {
     qDebug() << "Element dtor";
     item->deleteLater();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::onClick() {
+    qCritical() << "Element default click handler";
 }
 
 /*---------------------------------------------------------------------------*/

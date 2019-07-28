@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QQuickItem>
+#include <QQmlContext>
 #include <QQuickWindow>
 
 #include "node.h"
@@ -18,8 +19,9 @@ namespace Base {
 class Element : public QObject {
   Q_OBJECT
   private:
-    QLinkedList<Element*> child;
     QMap<QString, QVariant> props;
+    QLinkedList<Element*> child;
+    QQmlContext* context;
     NodeType type;
     Node* node;
   private:
@@ -27,6 +29,13 @@ class Element : public QObject {
   public:
     Element(QString compUri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
+
+  /*
+   * Слоты, привязываемые к контексту QML компонента
+   * Они виртуальные - переопределяем в наследнике элемента
+   */
+  public slots:
+    virtual void onClick();
 
   /*
    * Действия, выполняемые для синхронизации элемента и item. Доступны к
