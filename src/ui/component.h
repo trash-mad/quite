@@ -3,14 +3,18 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QJSValue>
+#include <QVector>
+
+#include <sstream>
+#include <vector>
 
 #include "src/ui/base/componentnode.h"
-#include "src/monitors/bindmonitor.h"
+#include "src/objects/nodestruct.h"
 #include "src/ui/base/element.h"
+#include "3rdparty/dtl/dtl.hpp"
 
 using namespace Quite::Ui::Base;
-using namespace Quite::Monitors;
+using namespace Quite::Objects;
 
 namespace Quite {
 namespace Ui {
@@ -19,22 +23,46 @@ namespace Ui {
 
 class Component : public Element {
   Q_OBJECT
-  private:
-    QJSValue instance;
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
-    virtual ~Component() override;
-  public slots:
-    void receiveSubtree(Element* child);
+    virtual ~Component();
+
+  /*
+   * Методы для сравнения двух древ
+   */
+  private:
+    bool checkTree(QVector<NodeStruct>& tree);
+    bool tryInsertAfterChild(
+        std::vector<NodeStruct>& merged,
+        NodeStruct child,
+        int lastIndex
+    );
+    bool tryAppendChild(
+        std::vector<NodeStruct>& merged,
+        NodeStruct child,
+        int lastIndex
+    );
+
+  /*
+   * Слот для обработки diff или полного рендеринга
+   */
   private slots:
-    void requireSubtree(Node* child);
+    void subtreeChangedHandler(
+        QVector<NodeStruct>& newTree,
+        QVector<NodeStruct>& tree,
+        Node* newRoot
+    );
+
+  /*
+   * Сигнал для полного рендеринга, если diff невозможен
+   */
   signals:
-    void updateSubtree(Node* child, Component* that);
+    void renderSubtree(Node* child);
 };
 
 /*****************************************************************************/
 
 } // namespace Ui
-} // namespace Quite
+} // namespa Quite
 
 #endif // COMPONENT_H

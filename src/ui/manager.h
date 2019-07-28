@@ -8,7 +8,6 @@
 
 #include "src/ui/base/node.h"
 #include "src/ui/base/element.h"
-#include "src/ui/base/invoker.h"
 #include "src/ui/base/componentnode.h"
 
 #include "src/ui/component.h"
@@ -30,7 +29,6 @@ class Manager : public QObject {
   private:
     Window* rootElement = nullptr;
     QQmlEngine engine;
-    Invoker invoker;
   public:
     explicit Manager(QObject* parent = nullptr);
     virtual ~Manager();

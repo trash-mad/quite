@@ -6,82 +6,100 @@ namespace Base {
 
 /*****************************************************************************/
 
-Element::Element(Node *node, QQmlEngine *engine, Element *parent)
-  : QObject(parent) {
+Element::Element(
+    QString compUri,
+    Node *node,
+    QQmlEngine *engine,
+    Element *parent
+) : QObject(parent) {
     qDebug() << "Element ctor";
-    connect(
-        node,
-        SIGNAL(variantPropsChanged(QMap<QString, QVariant>)),
-        this,
-        SLOT(receiveProps(QMap<QString, QVariant>))
-    );
-    this->props = node->getVariantProps();
-    this->engine = engine;
-    this->node = node;
+    this->type=node->getEnumType();
+    connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    QQmlComponent component(engine, compUri);
+    //item.beginCreate(engine->rootContext());
+    //item.setProperty("element", QVariant::fromValue(this));
+    //item.completeCreate();
+
+    QObject* object = component.create();
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(object);
+    if (window==nullptr) {
+        item=qobject_cast<QQuickItem*>(object);
+    } else {
+        item=window->contentItem();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 
 Element::~Element() {
     qDebug() << "Element dtor";
-    delete item;
+    item->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
 
-QLinkedList<Element*> Element::getChild() const {
-    return child;
+void Element::childInsertAfter(Node *after, Element *child) {
+    qDebug() << "Element default childInsertAfter";
+    QList<QQuickItem*>::iterator itemIter=this->item->childItems().begin();
+    QLinkedList<Element*>::iterator elemIter=this->child.begin();
+    while (elemIter!=this->child.end()) {
+        Element* item = (*elemIter);
+        if (item->getNode()==after) {
+            elemIter++;
+            itemIter++;
+            this->child.insert(elemIter,child);
+            this->getItem()->childItems().insert(itemIter,child->getItem());
+            connect(
+                child,
+                SIGNAL(destroyed(QObject*)),
+                this,
+                SLOT(childDeletedHandler(QObject*))
+            );
+            return;
+        } else {
+            elemIter++;
+            itemIter++;
+        }
+    }
+    qCritical() << "Element default childInsertAfter child not found";
 }
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QVariant> Element::getProps() const {
-    return props;
+void Element::childAppend(Element *child) {
+    qDebug() << "Element default childAppend";
+    this->child.append(child);
+    child->getItem()->setParentItem(item);
+    connect(
+        child,
+        SIGNAL(destroyed(QObject*)),
+        this,
+        SLOT(childDeletedHandler(QObject*))
+    );
 }
 
 /*---------------------------------------------------------------------------*/
 
-QQuickItem *Element::getItem() const {
-    return item;
+void Element::childDeleted(Element *child) {
+    qDebug() << "Element default childDeleted";
+    this->child.removeOne(child);
 }
 
 /*---------------------------------------------------------------------------*/
 
-Node *Element::getNode() const {
-    return node;
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::invoke(
-    QString type,
-    QVariant p1,
-    QVariant p2,
-    QVariant p3,
-    QVariant p4
-) {
-    (void)(type);
-    (void)(p1);
-    (void)(p2);
-    (void)(p3);
-    (void)(p4);
-    qDebug() << "Element default invoke";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::receiveProps(QMap<QString, QVariant> props) {
-    qDebug() << "Element receiveProps";
-    this->props = props;
-    propsChanged();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::receiveSubtree(QLinkedList<Element *> child) {
-    qDebug() << "Element receiveSubtree";
-    this->child = child;
-    childChanged();
+void Element::childChanged() {
+    qDebug() << "Element default childChanged";
+    QLinkedList<Element*>::iterator i;
+    for (i=child.begin(); i!=child.end();i++) {
+        Element* element = (*i);
+        element->getItem()->setParentItem(getItem());
+        connect(
+            element,
+            SIGNAL(destroyed(QObject*)),
+            this,
+            SLOT(childDeletedHandler(QObject*))
+        );
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -98,13 +116,74 @@ void Element::propsChanged() {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::childChanged() {
-    qDebug() << "Element default childChanged";
-    QLinkedList<Element*>::iterator i;
-    for (i=child.begin(); i!=child.end();i++) {
-        Element* element = (*i);
-        element->getItem()->setParentItem(item);
+QMap<QString, QVariant> Element::getProps() const {
+    return props;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QLinkedList<Element *> Element::getChild() const {
+    return child;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QQuickItem *Element::getItem() const {
+    return item;
+}
+
+/*---------------------------------------------------------------------------*/
+
+NodeType Element::getType() const {
+    return type;
+}
+
+/*---------------------------------------------------------------------------*/
+
+Node *Element::getNode() const {
+    return node;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::receiveSubtree(QLinkedList<Element *> child) {
+    qDebug() << "Element receiveSubtree";
+    this->child=child;
+    childChanged();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::propsChangedHandler(QMap<QString, QVariant> commitProps) {
+    qDebug() << "Element propsChangedHandler";
+    this->props=commitProps;
+    propsChanged();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::childInsertedAfterHandler(Node *after, Node *child) {
+    qDebug() << "Element childInsertedAfterHandler";
+    emit insertAfterChild(after, child);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::childDeletedHandler(QObject* child) {
+    qDebug() << "Element childDeletedHandler";
+    Element* item = qobject_cast<Element*>(child);
+    if (item==nullptr) {
+        childDeleted(item);
+    } else {
+        qCritical() << "Element childDeletedHandler child not Element";
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::childAppendedHandler(Node *child) {
+    qDebug() << "Element childAppendedHandler";
+    emit appendChild(child);
 }
 
 /*****************************************************************************/

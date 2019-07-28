@@ -53,6 +53,7 @@ void Application::logHandler(
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     qInstallMessageHandler(logHandler);
+    //qRegisterMetaType<Element>("Element");
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
     Application a;

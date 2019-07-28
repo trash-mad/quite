@@ -3,7 +3,7 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QQuickWindow>
+#include <QVariant>
 
 #include "src/ui/base/element.h"
 
@@ -15,28 +15,14 @@ namespace Elements {
 
 /*****************************************************************************/
 
-class WindowPrivate : public QQuickWindow {
-  Q_OBJECT
-  protected:
-    virtual bool event(QEvent* e) override;
-  public:
-    WindowPrivate();
-    virtual ~WindowPrivate();
-  signals:
-    void closed();
-};
-
-/*****************************************************************************/
-
 class Window : public Element {
   Q_OBJECT
-  private:
-    WindowPrivate window;
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
-  signals:
-    void closed();
+
+  public:
+    virtual QQuickItem* getItem() const override;
 };
 
 /*****************************************************************************/

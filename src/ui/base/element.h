@@ -3,14 +3,11 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QVariant>
-#include <QQuickItem>
 #include <QQmlEngine>
+#include <QQuickItem>
+#include <QQuickWindow>
 
-#include "src/ui/base/node.h"
-#include "src/base/event.h"
-
-using namespace Quite::Base;
+#include "node.h"
 
 namespace Quite {
 namespace Ui {
@@ -20,36 +17,60 @@ namespace Base {
 
 class Element : public QObject {
   Q_OBJECT
-  protected:
+  private:
     QLinkedList<Element*> child;
     QMap<QString, QVariant> props;
+    NodeType type;
     Node* node;
-  protected:
+  private:
     QQuickItem* item;
-    QQmlEngine* engine;
   public:
-    Element(Node* node, QQmlEngine* engine, Element* parent);
+    Element(QString compUri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
-    QLinkedList<Element*> getChild() const;
-    QMap<QString, QVariant> getProps() const;
-    QQuickItem* getItem() const;
-    Node* getNode() const;
-    virtual void invoke(
-        QString type,
-        QVariant p1,
-        QVariant p2,
-        QVariant p3,
-        QVariant p4
-    );
-  private slots:
-    void receiveProps(QMap<QString, QVariant> props);
-  public slots:
-    void receiveSubtree(QLinkedList<Element*> child);
+
+  /*
+   * Действия, выполняемые для синхронизации элемента и item. Доступны к
+   * переопределению, но смысл сводится скорее к выполнению операции
+   * перед стандартным действием (логгирование и тд)
+   */
   public:
-    virtual void propsChanged();
+    virtual void childInsertAfter(Node* after, Element* child);
+    virtual void childAppend(Element* child);
+  protected:
+    virtual void childDeleted(Element* child);
     virtual void childChanged();
+    virtual void propsChanged();
+  /*
+   * Геттеры, сеттеры
+   */
+  protected:
+    QMap<QString, QVariant> getProps() const;
+    QLinkedList<Element*> getChild() const;
+    virtual QQuickItem* getItem() const;
+    NodeType getType() const;
+    Node* getNode() const;
+
+  /*
+   * Получение элементов, собранных из нод
+   */
+  public:
+    void receiveSubtree(QLinkedList<Element*> child);
+
+  /*
+   * Обработчики сигналов ноды
+   */
+  private slots:
+    void propsChangedHandler(QMap<QString, QVariant> commitProps);
+    void childInsertedAfterHandler(Node* after, Node* child);
+    void childDeletedHandler(QObject* child);
+    void childAppendedHandler(Node* child);
+
+  /*
+   * Сигналы для Manager, чтобы рендерить элементы
+   */
   signals:
-    void eval(Event* e);
+    void insertAfterChild(Node* after, Node* child);
+    void appendChild(Node* child);
 };
 
 /*****************************************************************************/

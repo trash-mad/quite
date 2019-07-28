@@ -10,11 +10,11 @@
 
 #include <iostream>
 
+#include "src/ui/manager.h"
 #include "src/base/engine.h"
 #include "src/ui/base/node.h"
-#include "src/ui/manager.h"
+#include "src/ui/base/element.h"
 #include "src/events/importmodule.h"
-#include "src/monitors/bindmonitor.h"
 #include "src/events/installextension.h"
 
 using namespace Quite::Ui::Base;

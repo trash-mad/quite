@@ -8,7 +8,7 @@ namespace Ui {
 Element *Manager::renderElement(Node *node, Element *parent) {
     qDebug() << "WindowManager renderComponent";
     Element* element = nullptr;
-    NodeType type = node->getType();
+    NodeType type = node->getEnumType();
 
     if (type==NodeType::ComponentType) {
          element = renderComponent(node, parent);
@@ -22,14 +22,15 @@ Element *Manager::renderElement(Node *node, Element *parent) {
         } else {
             qCritical() << "Manager can't render node" << type;
         }
-        element->propsChanged();
+
+        QMetaObject::invokeMethod(node, "commitProps", Qt::QueuedConnection);
     }
-    connect(
+    /*connect(
         element,
         SIGNAL(eval(Event*)),
         this,
         SIGNAL(eval(Event*))
-    );
+    );*/
     return element;
 }
 
@@ -75,7 +76,7 @@ Element* Manager::renderElementTree(Node *node, Element* parent) {
 void Manager::updateSubtree(Node* child, Component* that) {
     qDebug() << "WindowManager updateSubtree";
     Element* element = static_cast<Element*>(that);
-    that->receiveSubtree(renderElementTree(child, element));
+    //that->receiveSubtree(renderElementTree(child, element));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -83,7 +84,6 @@ void Manager::updateSubtree(Node* child, Component* that) {
 Manager::Manager(QObject *parent)
   : QObject(parent){
     qDebug() << "Manager ctor";
-    invoker.install(&engine);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -107,8 +107,6 @@ void Manager::renderUi(Node *root) {
         rootElement = dynamic_cast<Window*>(
             renderElementTree(root)
         );
-        connect(rootElement, SIGNAL(closed()), this, SIGNAL(closed()));
-        invoker.setRoot(rootElement);
     }
 }
 

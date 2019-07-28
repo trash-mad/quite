@@ -6,47 +6,193 @@ namespace Base {
 
 /*****************************************************************************/
 
-NodeType Node::getNodeType(QString type) {
-    if(type == "Rectangle") {
-        return NodeType::RectangleType;
-    } else if(type == "Button") {
-        return NodeType::ButtonType;
-    } else if (type == "Window") {
-        return NodeType::WindowType;
-     } else {
-        qCritical() << "getNodeType invalid node type" << type;
-        return NodeType::NeverType;
+Node::Node(QJSValue type, QJSValue props, QJSValue child)
+  : QObject(nullptr) {
+    qDebug() << "Node ctor";
+    this->type=Node::castNodeType(type.toString());
+    this->props=Node::castNodeParams(props);
+    this->child=Node::castNodeList(child);
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        Node* node = (*iter);
+        totalChildCount+=node->getTotalChildCount();
+        node->setParent(this);
     }
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Node::generateVariantProps(QJSValue context) {
-    qDebug() << "Node generateVariantProps";
-    gcInvoke();
-    variantProps.clear();
-    QMap<QString, QJSValue>::iterator iter;
-    for (iter=valueProps.begin();iter!=valueProps.end();iter++) {
-        if (iter.value().isCallable()) {
-            variantProps.insert(
-                iter.key(),
-                QVariant::fromValue(new Invoke(iter.value(), context))
-            );
+Node::~Node() {
+    qDebug() << "Node dtor";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::appendChild(Node *child) {
+    qDebug() << "Node appendChild";
+    this->child.append(child);
+    emit childAppended(child);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::insertAfterChild(Node *after, Node *child) {
+    qDebug() << "Node insertChild";
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        Node* item = (*iter);
+        if (after==item) {
+            iter++;
+            if (iter==this->child.end()) {
+                this->child.append(child);
+            } else {
+                this->child.insert(iter,child);
+            }
+            emit childInsertedAfter(after, child);
+            return;
         } else {
-            variantProps.insert(iter.key(), iter.value().toVariant());
+            continue;
         }
     }
-    emit variantPropsChanged(variantProps);
+    qCritical() << "Node insertChild before node not found";
 }
 
 /*---------------------------------------------------------------------------*/
 
-QMap<QString, QJSValue> Node::getNodeParams(QJSValue props) {
+void Node::mergeProps(Node *node) {
+    qDebug() << "Node mergeProps";
+    QMap<QString,QJSValue> nodeProps=node->getProps();
+    bool update=false;
+    if (nodeProps.count()!=props.count()) {
+        update=true;
+    } else {
+        for (int i=0;i!=props.count();i++) {
+            QString propKey=props.keys().at(i);
+            QString nodeKey=nodeProps.keys().at(i);
+            QJSValue propValue=props.values().at(i);
+            QJSValue nodeValue=nodeProps.values().at(i);
+            if (propKey!=nodeKey) {
+                update=true;
+                break;
+            } else if (!propValue.equals(nodeValue)) {
+                update=true;
+                break;
+            } else {
+                continue;
+            }
+        }
+    }
+    if (update) {
+        this->props=nodeProps;
+        commitProps();
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+/*
+ * Метод изымает данные из QJSValue в QVariant на стороне
+ * потока JavaScript и вещает в поток QML через сигнал
+ * propsChanged()
+ *
+ * Должен быть вызван при построении древа компонентов в Manager и
+ * при обновлении контекста выполнения instance
+ */
+void Node::commitProps() {
+    qDebug() << "Node commitProps";
+    QMap<QString, QVariant> tmp;
+    QMap<QString, QJSValue>::iterator iter;
+    for (iter=props.begin();iter!=props.end();iter++) {
+        if (iter.key()=="key") {
+            key=iter.value().toInt();
+        } else if (iter.value().isCallable()) {
+            //TODO: привязать к контексту выполнения instance
+            tmp.insert(iter.key(),iter.value().toVariant());
+        } else {
+            tmp.insert(iter.key(),iter.value().toVariant());
+        }
+    }
+    emit propsChanged(tmp);
+}
+
+/*---------------------------------------------------------------------------*/
+
+/*
+ * Метод осуществляет привязку вызываемых функций к инстанции компонента,
+ * вызывая commitProps и обновляя ссылку на актуальную инстанцию.
+ *
+ * Должен быть переопределен в ComponentNode, чтобы коллбеки из свойств
+ * получили вышестоящий контекст, а дочерние компоненты выполнялись в текущем
+ * контексте
+ *
+ * По умолчанию работает рекурсивно для всего древа.
+ */
+void Node::updateContext(QJSValue context,  bool recursive) {
+    this->context=context;
+    commitProps();
+    if (recursive) {
+        updateChildContext(context);
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::updateChildContext(QJSValue context) {
+    qDebug() << "Node updateChildContext";
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        (*iter)->updateContext(context);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+QMap<QString, QJSValue> Node::getProps() const {
+    return props;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QLinkedList<Node *> Node::getChild() const {
+    return child;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int Node::getTotalChildCount() const {
+    return totalChildCount;
+}
+
+/*---------------------------------------------------------------------------*/
+
+NodeType Node::getEnumType() const {
+    return type;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int Node::getType() const {
+    return static_cast<int>(type);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int Node::getKey() const {
+    return key;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QMap<QString, QJSValue> Node::castNodeParams(QJSValue props) {
     QMap<QString, QJSValue> tmp;
     if(props.isNull()){
         return tmp;
     } else if(!props.isObject() ){
-        qCritical() << "getNodeParams props is not object";
+        qCritical() << "castNodeParams props is not object";
     } else {
         QJSValueIterator it(props);
         while (it.hasNext()) {
@@ -55,17 +201,6 @@ QMap<QString, QJSValue> Node::getNodeParams(QJSValue props) {
         }
     }
     return tmp;
-}
-
-/*---------------------------------------------------------------------------*/
-
-bool Node::tryCastNode(QJSValue src, Node *&dst) {
-    if(!src.isQObject()) {
-        return false;
-    } else {
-        dst = qobject_cast<Node*>(src.toQObject());
-        return dst!=nullptr;
-    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -95,82 +230,29 @@ QLinkedList<Node *> Node::castNodeList(QJSValue arr) {
 
 /*---------------------------------------------------------------------------*/
 
-Node::Node(QObject* parent)
- :  QObject(parent) {
-    qDebug() << "Node ctor";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Node::gcInvoke() {
-    QMap<QString, QVariant>::iterator iter;
-    for (iter=variantProps.begin();iter!=variantProps.end();iter++) {
-        Invoke* invoke = nullptr;
-        if (Invoke::tryCast(iter.value(), invoke)) {
-            invoke->deleteLater();
-        } else {
-            continue;
-        }
+bool Node::tryCastNode(QJSValue src, Node *&dst) {
+    if(!src.isQObject()) {
+        return false;
+    } else {
+        dst = qobject_cast<Node*>(src.toQObject());
+        return dst!=nullptr;
     }
 }
 
 /*---------------------------------------------------------------------------*/
 
-Node::Node(QJSValue type, QJSValue props, QJSValue child)
-  : Node() {
-    qDebug() << "Node dtor";
-
-    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
-
-    this->type = getNodeType(type.toString());
-    this->valueProps = getNodeParams(props);
-    this->child = castNodeList(child);
-
-    generateVariantProps(this->executionContext);
-
-    QLinkedList<Node*>::iterator iter;
-    for (iter=this->child.begin();iter!=this->child.end();iter++) {
-        Node* item = (*iter);
-        item->setParent(this);
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
-Node::~Node() {
-    qDebug() << "Node dtor";
-    gcInvoke();
-}
-
-/*---------------------------------------------------------------------------*/
-
-NodeType Node::getType() const {
-    return type;
-}
-
-/*---------------------------------------------------------------------------*/
-
-QLinkedList<Node *> Node::getChild() const {
-    return child;
-}
-
-/*---------------------------------------------------------------------------*/
-
-QMap<QString, QVariant> Node::getVariantProps() {
-    qDebug() << "Node default getVariantProps";
-    return variantProps;
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Node::updateContext(QJSValue executionContext) {
-    qDebug() << "Node updateContext";
-    this->executionContext = executionContext;
-    generateVariantProps(this->executionContext);
-    QLinkedList<Node*>::iterator i;
-    for (i=child.begin();i!=child.end();i++) {
-        Node* current = (*i);
-        current->updateContext(executionContext);
+NodeType Node::castNodeType(QString type) {
+    if(type == "Component") {
+        return NodeType::ComponentType;
+    } else if(type == "Rectangle") {
+        return NodeType::RectangleType;
+    } else if(type == "Button") {
+        return NodeType::ButtonType;
+    } else if (type == "Window") {
+        return NodeType::WindowType;
+     } else {
+        qCritical() << "getNodeType invalid node type" << type;
+        return NodeType::NeverType;
     }
 }
 

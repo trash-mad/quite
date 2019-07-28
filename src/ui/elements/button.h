@@ -18,13 +18,6 @@ class Button : public Element {
   public:
     Button(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Button();
-    virtual void invoke(
-        QString type,
-        QVariant p1,
-        QVariant p2,
-        QVariant p3,
-        QVariant p4
-    );
 };
 
 /*****************************************************************************/

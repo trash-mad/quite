@@ -4,14 +4,9 @@
 #include <QtDebug>
 #include <QObject>
 #include <QJSValue>
-#include <QQmlEngine>
+#include <QJSEngine>
 #include <QLinkedList>
-#include <QReadWriteLock>
 #include <QJSValueIterator>
-
-#include "src/objects/invoke.h"
-
-using namespace Quite::Objects;
 
 namespace Quite {
 namespace Ui {
@@ -19,47 +14,76 @@ namespace Base {
 
 /*****************************************************************************/
 
-enum NodeType {
-    NeverType,
-    ComponentType,
-    ButtonType,
-    WindowType,
-    RectangleType
+enum NodeType : int {
+    NeverType = -1,
+    ComponentType = 0,
+    ButtonType = 1,
+    WindowType = 2,
+    RectangleType = 3
 };
 
 /*****************************************************************************/
 
-class Node : public QObject {
+/*
+ * Класс осуществляет базовый контейнер для описания элемента
+ * на стороне JavaScript для передачи на рендеринг в QML
+ */
+class Node : public QObject{
   Q_OBJECT
-  protected:
-    NodeType type;
-    QLinkedList<Node*> child;
-    QMap<QString, QJSValue> valueProps;
-    QMap<QString, QVariant> variantProps;
-    QJSValue executionContext = QJSValue();
   private:
-    void gcInvoke();
+    QMap<QString, QJSValue> props;
+    QLinkedList<Node*> child;
+    int totalChildCount = 1;
+    QJSValue context;
+    NodeType type;
+    int key=0;
   public:
-    Node(
-        QJSValue type,
-        QJSValue props,
-        QJSValue child
-    );
-    explicit Node(QObject* parent = nullptr);
-    virtual ~Node();
-    NodeType getType() const;
+    explicit Node(QJSValue type, QJSValue props, QJSValue child);
+    ~Node();
+
+  /*
+   * Слоты управления древом под-нод
+   */
+  public slots:
+    void appendChild(Node* child);
+    void insertAfterChild(Node* after, Node* child);
+
+  /*
+   * Слоты управления свойствами ноды
+   */
+  public slots:
+    void mergeProps(Node* node);
+    void commitProps();
+    virtual void updateContext(QJSValue context, bool recursive = true);
+    void updateChildContext(QJSValue context);
+
+  /*
+   * Геттеры, сеттеры
+   */
+  public:
+    QMap<QString,QJSValue> getProps() const;
     QLinkedList<Node*> getChild() const;
-    virtual QMap<QString, QVariant> getVariantProps();
-    virtual void updateContext(QJSValue executionContext);
+    int getTotalChildCount() const;
+    NodeType getEnumType() const;
+    int getType() const;
+    int getKey() const;
+
+  /*
+   * Методы для типизации объектов JS в нативные структуры данных
+   */
   public:
-    static QMap<QString, QJSValue> getNodeParams(QJSValue props);
+    static QMap<QString, QJSValue> castNodeParams(QJSValue props);
     static QLinkedList<Node*> castNodeList(QJSValue src);
     static bool tryCastNode(QJSValue src, Node*& dst);
-    static NodeType getNodeType(QString type);
-  protected:
-    void generateVariantProps(QJSValue context);
+    static NodeType castNodeType(QString type);
+
+  /*
+   * Сигналы для прослушки со стороны Элементов
+   */
   signals:
-    void variantPropsChanged(QMap<QString, QVariant> props);
+    void propsChanged(QMap<QString, QVariant> commitProps);
+    void childInsertedAfter(Node* after, Node* child);
+    void childAppended(Node* child);
 };
 
 /*****************************************************************************/
