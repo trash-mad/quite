@@ -1,12 +1,14 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include <QUrl>
 #include <QtDebug>
 #include <QObject>
 #include <QQmlEngine>
 #include <QQuickItem>
 #include <QQmlContext>
 #include <QQuickWindow>
+#include <QStringLiteral>
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
@@ -32,7 +34,7 @@ class Element : public QObject {
   private:
     QQuickItem* item;
   public:
-    Element(QString compUri, Node* node, QQmlEngine* engine, Element* parent);
+    Element(QUrl uri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
 
   /*

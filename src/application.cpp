@@ -58,10 +58,11 @@ void Application::logHandler(
 
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
-    //app.setQuitOnLastWindowClosed(false);
+    app.setQuitOnLastWindowClosed(false);
     qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
+    qRegisterMetaType<QVector<NodeStruct>>("QVector<NodeStruct>");
     qmlRegisterType<WindowComponent>("WindowComponent",1,0,"WindowComponent");
     Application a;
     a.installExtension(Extension::TimerExtension);

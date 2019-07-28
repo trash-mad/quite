@@ -7,7 +7,7 @@ namespace Base {
 /*****************************************************************************/
 
 Element::Element(
-    QString compUri,
+    QUrl uri,
     Node *node,
     QQmlEngine *engine,
     Element *parent
@@ -37,7 +37,7 @@ Element::Element(
     context=new QQmlContext(engine->rootContext(),this);
     context->setContextObject(this);
 
-    QQmlComponent component(engine, compUri);
+    QQmlComponent component(engine, uri);
     QObject* object=component.beginCreate(context);
     component.completeCreate();
 

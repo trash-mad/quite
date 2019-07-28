@@ -7,7 +7,12 @@ namespace Elements {
 /*****************************************************************************/
 
 Button::Button(Node *node, QQmlEngine *engine, Element *parent)
-  : Element(":/qml/Button.qml", node, engine, parent) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Button.qml")),
+        node,
+        engine,
+        parent
+    ){
     qDebug() << "Button ctor";
 }
 

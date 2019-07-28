@@ -7,7 +7,12 @@ namespace Elements {
 /*****************************************************************************/
 
 Window::Window(Node *node, QQmlEngine *engine, Element *parent)
-  : Element(":/qml/Window.qml", node, engine, nullptr) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Window.qml")),
+        node,
+        engine,
+        nullptr
+    ) {
     qDebug() << "Window ctor";
     if(parent!=nullptr) {
         qCritical() << "Window parent must be nullptr";

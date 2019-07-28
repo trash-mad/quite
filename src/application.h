@@ -5,6 +5,7 @@
 #include <QGuiApplication>
 #include <QDateTime>
 #include <QObject>
+#include <QVector>
 #include <QDebug>
 #include <QDir>
 
@@ -15,6 +16,7 @@
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
 #include "src/ui/base/element.h"
+#include "src/objects/nodestruct.h"
 #include "src/events/importmodule.h"
 #include "src/events/installextension.h"
 #include "src/ui/components/windowcomponent.h"

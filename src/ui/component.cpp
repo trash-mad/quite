@@ -6,7 +6,12 @@ namespace Ui {
 /*****************************************************************************/
 
 Component::Component(ComponentNode* node, QQmlEngine* engine, Element* parent)
-  : Element(":/qml/Component.qml", node, engine, parent) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Component.qml")),
+        node,
+        engine,
+        parent
+    ) {
     qDebug() << "Component ctor";
     connect(
         node,

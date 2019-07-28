@@ -7,7 +7,12 @@ namespace Elements {
 /*****************************************************************************/
 
 Rectangle::Rectangle(Node *node, QQmlEngine *engine, Element *parent)
-  : Element(":/qml/Rectangle.qml", node, engine, parent) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Rectangle.qml")),
+        node,
+        engine,
+        parent
+    ) {
     qDebug() << "Rectangle ctor";
 }
 
