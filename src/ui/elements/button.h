@@ -18,7 +18,7 @@ class Button : public Element {
   Q_OBJECT
   public:
     Button(Node* node, QQmlEngine* engine, Element* parent);
-    virtual ~Button();
+    virtual ~Button() override;
   /*
    * Слот привязывается к контесту выполнения QML компонента в Element
    */

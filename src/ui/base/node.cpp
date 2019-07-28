@@ -108,8 +108,10 @@ void Node::commitProps() {
         if (iter.key()=="key") {
             key=iter.value().toInt();
         } else if (iter.value().isCallable()) {
-            //TODO: привязать к контексту выполнения instance
-            tmp.insert(iter.key(),iter.value().toVariant());
+            tmp.insert(iter.key(),QVariant::fromValue(new Invoke(
+               iter.value(),
+               context
+            )));
         } else {
             tmp.insert(iter.key(),iter.value().toVariant());
         }

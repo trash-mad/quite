@@ -13,12 +13,14 @@
 #include "src/ui/manager.h"
 #include "src/base/engine.h"
 #include "src/ui/base/node.h"
+#include "src/objects/invoke.h"
 #include "src/ui/base/element.h"
 #include "src/events/importmodule.h"
 #include "src/events/installextension.h"
 
 using namespace Quite::Ui::Base;
 using namespace Quite::Monitors;
+using namespace Quite::Objects;
 using namespace Quite::Events;
 using namespace Quite::Ui;
 
@@ -44,8 +46,6 @@ class Application : public QObject {
     static int exec(int argc, char *argv[]);
     void installExtension(Quite::Extension ext);
     void importModule(QString path);
-  private slots:
-    void eval(Event* e);
 };
 
 /*****************************************************************************/

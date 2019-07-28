@@ -17,9 +17,11 @@
 #include "src/base/monitor.h"
 #include "src/events/await.h"
 #include "src/ui/base/node.h"
+#include "src/objects/invoke.h"
 #include "src/events/renderui.h"
 
 using namespace Quite::Ui::Base;
+using namespace Quite::Objects;
 using namespace Quite::Events;
 
 namespace Quite {
@@ -35,14 +37,14 @@ class Engine : public QThread {
     QJSEngine* eval;
     bool uiexec;
   public:
-    explicit Engine(QObject *parent = 0);
+    explicit Engine(QObject *parent = nullptr);
     virtual ~Engine();
   protected:
     virtual void run();
     virtual bool event(QEvent* event);
   public slots:
+    void invokeHandler(Invoke* o);
     void windowClosed();
-    void evalFunc(QJSValue func, QJSValueList args);
   signals:
     void done();
     void renderUi(Node* rootNode);

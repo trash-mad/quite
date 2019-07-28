@@ -20,7 +20,19 @@ Button::~Button() {
 /*---------------------------------------------------------------------------*/
 
 void Button::onClick() {
-    qDebug() << "BUTTON CLICK)))";
+    QMap<QString, QVariant> props = getProps();
+    Invoke* obj = nullptr;
+    if (!props.contains("onClick")) {
+        return;
+    } else {
+        QVariant callBack = props["onClick"];
+        if (Invoke::tryCast(callBack, obj)) {
+            qDebug() << "Button onClick";
+            emit invoke(obj);
+        } else {
+            qCritical() << "Button onClick not callable";
+        }
+    }
 }
 
 /*****************************************************************************/

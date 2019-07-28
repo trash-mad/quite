@@ -8,6 +8,10 @@
 #include <QLinkedList>
 #include <QJSValueIterator>
 
+#include "src/objects/invoke.h"
+
+using namespace Quite::Objects;
+
 namespace Quite {
 namespace Ui {
 namespace Base {

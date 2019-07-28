@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include "src/base/event.h"
+#include "src/objects/invoke.h"
 
 #include "src/ui/base/node.h"
 #include "src/ui/base/element.h"
@@ -16,6 +17,7 @@
 #include "src/ui/elements/rectangle.h"
 
 using namespace Quite::Base;
+using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
 using namespace Quite::Ui::Elements;
 
@@ -42,7 +44,7 @@ class Manager : public QObject {
     void updateSubtree(Node* child, Component* that);
   signals:
     void closed();
-    void eval(Event* e);
+    void invoke(Invoke* o);
 };
 
 /*****************************************************************************/

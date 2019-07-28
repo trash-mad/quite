@@ -20,9 +20,6 @@ class Window : public Element {
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
-
-  public:
-    virtual QQuickItem* getItem() const override;
 };
 
 /*****************************************************************************/

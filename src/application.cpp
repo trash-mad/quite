@@ -11,9 +11,15 @@ Application::Application()
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(
         &manager,
-        SIGNAL(eval(Event*)),
-        this,
-        SLOT(eval(Event*))
+        SIGNAL(invoke(Invoke*)),
+        &engine,
+        SLOT(invokeHandler(Invoke*))
+    );
+    connect(
+        &manager,
+        SIGNAL(closed()),
+        &engine,
+        SLOT(windowClosed())
     );
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
@@ -52,8 +58,8 @@ void Application::logHandler(
 
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
+    //app.setQuitOnLastWindowClosed(false);
     qInstallMessageHandler(logHandler);
-    //qRegisterMetaType<Element>("Element");
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
     Application a;
@@ -74,13 +80,6 @@ void Application::installExtension(Extension ext) {
 
 void Application::importModule(QString path) {
     QCoreApplication::postEvent(&engine, new ImportModule(path));
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Application::eval(Event *e) {
-    qDebug() << "Application eval";
-    QCoreApplication::postEvent(&engine, e);
 }
 
 /*****************************************************************************/

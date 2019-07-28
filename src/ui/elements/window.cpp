@@ -22,12 +22,6 @@ Window::~Window() {
     qDebug() << "Window dtor";
 }
 
-/*---------------------------------------------------------------------------*/
-
-QQuickItem *Window::getItem() const {
-    return Element::getItem();
-}
-
 /*****************************************************************************/
 
 } // namespace Elements

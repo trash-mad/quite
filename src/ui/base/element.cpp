@@ -15,6 +15,24 @@ Element::Element(
     qDebug() << "Element ctor";
     this->type=node->getEnumType();
     connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    connect(
+        node,
+        SIGNAL(propsChanged(QMap<QString,QVariant>)),
+        this,
+        SLOT(propsChangedHandler(QMap<QString,QVariant>))
+    );
+    connect(
+        node,
+        SIGNAL(childInsertedAfter(Node*, Node*)),
+        this,
+        SLOT(childInsertedAfterHandler(Node*, Node*))
+    );
+    connect(
+        node,
+        SIGNAL(childAppended(Node*)),
+        this,
+        SLOT(childAppendedHandler(Node*))
+    );
 
     context=new QQmlContext(engine->rootContext(),this);
     context->setContextObject(this);
@@ -28,6 +46,12 @@ Element::Element(
         item=qobject_cast<QQuickItem*>(object);
     } else {
         item=window->contentItem();
+        /*connect(
+            window,
+            SIGNAL(closed(QQuickCloseEvent*)),
+            this,
+            SIGNAL(windowClosed())
+        );*/
     }
 }
 

@@ -9,6 +9,9 @@
 #include <QQuickWindow>
 
 #include "node.h"
+#include "src/objects/invoke.h"
+
+using namespace Quite::Objects;
 
 namespace Quite {
 namespace Ui {
@@ -80,6 +83,8 @@ class Element : public QObject {
   signals:
     void insertAfterChild(Node* after, Node* child);
     void appendChild(Node* child);
+    void invoke(Invoke* method);
+    void windowClosed();
 };
 
 /*****************************************************************************/

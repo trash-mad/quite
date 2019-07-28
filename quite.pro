@@ -9,7 +9,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp
+SOURCES += src/main.cpp \
+    src/objects/invoke.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/objects/nodestruct.cpp
 SOURCES += src/ui/base/componentnode.cpp
@@ -37,7 +38,8 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h
+HEADERS += src/base/engine.h \
+    src/objects/invoke.h
 HEADERS += 3rdparty/dtl/Diff.hpp
 HEADERS += 3rdparty/dtl/Diff3.hpp
 HEADERS += 3rdparty/dtl/Lcs.hpp

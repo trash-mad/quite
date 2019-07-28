@@ -15,6 +15,7 @@ Element *Manager::renderElement(Node *node, Element *parent) {
     } else {
         if(type==NodeType::WindowType) {
             element = new Window(node, &engine, parent);
+            connect(element,SIGNAL(windowClosed()),this,SIGNAL(closed()));
         } else if (type==NodeType::RectangleType) {
             element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
         } else if (type==NodeType::ButtonType) {
@@ -23,14 +24,14 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             qCritical() << "Manager can't render node" << type;
         }
 
-        QMetaObject::invokeMethod(node, "commitProps", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(node, "commitProps", Qt::BlockingQueuedConnection);
     }
-    /*connect(
+    connect(
         element,
-        SIGNAL(eval(Event*)),
+        SIGNAL(invoke(Invoke*)),
         this,
-        SIGNAL(eval(Event*))
-    );*/
+        SIGNAL(invoke(Invoke*))
+    );
     return element;
 }
 
