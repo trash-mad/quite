@@ -17,7 +17,9 @@
 #include "src/ui/base/element.h"
 #include "src/events/importmodule.h"
 #include "src/events/installextension.h"
+#include "src/ui/components/windowcomponent.h"
 
+using namespace Quite::Ui::Components;
 using namespace Quite::Ui::Base;
 using namespace Quite::Monitors;
 using namespace Quite::Objects;

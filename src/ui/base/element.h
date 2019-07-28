@@ -8,10 +8,12 @@
 #include <QQmlContext>
 #include <QQuickWindow>
 
-#include "node.h"
+#include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
+#include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Objects;
+using namespace Quite::Ui::Components;
 
 namespace Quite {
 namespace Ui {

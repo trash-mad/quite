@@ -62,6 +62,7 @@ int Application::exec(int argc, char *argv[]) {
     qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
+    qmlRegisterType<WindowComponent>("WindowComponent",1,0,"WindowComponent");
     Application a;
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);

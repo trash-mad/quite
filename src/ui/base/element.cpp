@@ -41,17 +41,17 @@ Element::Element(
     QObject* object=component.beginCreate(context);
     component.completeCreate();
 
-    QQuickWindow* window = qobject_cast<QQuickWindow*>(object);
+    WindowComponent* window = qobject_cast<WindowComponent*>(object);
     if (window==nullptr) {
         item=qobject_cast<QQuickItem*>(object);
     } else {
         item=window->contentItem();
-        /*connect(
+        connect(
             window,
-            SIGNAL(closed(QQuickCloseEvent*)),
+            SIGNAL(closed()),
             this,
             SIGNAL(windowClosed())
-        );*/
+        );
     }
 }
 
