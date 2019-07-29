@@ -4,10 +4,6 @@
 #include <QtDebug>
 #include <QObject>
 #include <QVector>
-#include <QMutex>
-
-#include <sstream>
-#include <vector>
 
 #include "src/ui/base/componentnode.h"
 #include "src/objects/nodestruct.h"
@@ -40,35 +36,9 @@ class Component : public Element {
    */
   void resolveManagerActions(Element* root);
 
-  /*
-   * Методы для сравнения двух древ
-   */
-  private:
-    bool checkTree(QVector<NodeStruct>& tree);
-    bool tryInsertAfterChild(
-        std::vector<NodeStruct>& merged,
-        NodeStruct child,
-        int lastIndex
-    );
-    bool tryAppendChild(
-        std::vector<NodeStruct>& merged,
-        NodeStruct child,
-        int lastIndex
-    );
-
-  /*
-   * Слот для обработки diff или полного рендеринга
-   */
   private slots:
-    void subtreeChangedHandler(
-        QVector<NodeStruct> newTree,
-        QVector<NodeStruct> tree,
-        Node* newRoot
-    );
+    void renderSubtreeHandler(Node* child);
 
-  /*
-   * Сигнал для полного рендеринга, если diff невозможен
-   */
   signals:
     void renderSubtree(Node* child);
 };

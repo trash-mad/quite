@@ -24,14 +24,33 @@ QQuickItem *WindowComponent::contentItem() const {
     return window.contentItem();
 }
 
+/*---------------------------------------------------------------------------*/
+
+WindowComponentPrivate::WindowComponentPrivate() {
+    installEventFilter(this);
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
+    Q_UNUSED(obj);
+    if (ev->type()==QEvent::Close) {
+        emit closed();
+    }
+    return false;
+}
+
 /*****************************************************************************/
 
-bool WindowComponentPrivate::event(QEvent *e) {
+/*bool WindowComponentPrivate::event(QEvent *e) {
+    eventMutex.lock();
     if (e->type()==QEvent::Close) {
         emit closed();
     }
-    return QQuickWindow::event(e);
-}
+    bool result = QQuickWindow::event(e);
+    eventMutex.unlock();
+    return result;
+}*/
 
 /*****************************************************************************/
 

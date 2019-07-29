@@ -49,11 +49,7 @@ void ComponentNode::setState(QJSValue state) {
         QVector<NodeStruct> tree(getChild().first()->getTotalChildCount());
         ComponentNode::buildNodeTree(getChild().first(), tree);
         node->updateContext(instance);
-        emit subtreeChanged(
-            newTree,
-            tree,
-            node
-        );
+        subtreeChanged(newTree, tree, node);
     } else {
         qCritical() << "ComponentNode setState render is not Node*";
     }
@@ -139,6 +135,128 @@ QJSValue ComponentNode::initialRender(
         }
     }
     return result;
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool ComponentNode::checkTree(QVector<NodeStruct>& tree) {
+    for (int i=2;i!=tree.length();i++) {
+        if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
+            return false;
+        } else {
+            continue;
+        }
+    }
+    return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool ComponentNode::tryInsertAfterChild(
+    std::vector<NodeStruct> &merged,
+    NodeStruct child,
+    int lastIndex
+) {
+    qDebug() << "ComponentNode tryInsertAfterChild";
+    auto afterIndex = static_cast<unsigned long long>(lastIndex)-1;
+    if (merged[afterIndex].parent==child.parent) {
+        merged[afterIndex].parent->node->insertAfterChild(
+            merged[afterIndex].node,
+            child.node
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool ComponentNode::tryAppendChild(
+    std::vector<NodeStruct> &merged,
+    NodeStruct child,
+    int lastIndex
+) {
+    qDebug() << "ComponentNode tryAppendChild";
+    for (int i=lastIndex;i>=0;i--) {
+        auto index=static_cast<unsigned long long>(i);
+        if (*child.parent==merged[index]) {
+            merged[index].node->appendChild(
+                child.node
+            );
+            return true;
+        } else {
+            continue;
+        }
+    }
+    return false;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void ComponentNode::subtreeChanged(
+    QVector<NodeStruct> newTree,
+    QVector<NodeStruct> tree,
+    Node *newRoot
+) {
+    qDebug() << "Component subtreeChangedHandler";
+    qDebug() << "tree";
+    for(int i=0;i!=tree.length();i++) {
+        NodeStruct::printInfo(tree.at(i));
+    }
+    qDebug() << "newTree";
+    for(int i=0;i!=newTree.length();i++) {
+        NodeStruct::printInfo(newTree.at(i));
+    }
+    if (checkTree(tree)&&checkTree(newTree)) {
+        std::vector<NodeStruct> treeStd=tree.toStdVector();
+        std::vector<NodeStruct> newTreeStd=newTree.toStdVector();
+        qDebug() << "shortestEditScript";
+        dtl::Diff<NodeStruct, std::vector<NodeStruct>> d(
+            treeStd,
+            newTreeStd
+        );
+        std::ostringstream stream;
+        d.onHuge();
+        d.compose();
+        d.printSES(stream);
+        std::stringstream ss(stream.str().c_str());
+        std::string buf;
+        while (getline(ss,buf,'\n')) {
+            qDebug() << QString::fromStdString(buf);
+        }
+        dtl::Ses<NodeStruct> ses = d.getSes();
+        std::vector<std::pair<NodeStruct,dtl::elemInfo>> changes = ses.getSequence();
+        auto merged = d.patch(treeStd);
+        std::vector<std::pair<NodeStruct,dtl::elemInfo>>::iterator iter;
+        for (iter=changes.begin();iter!=changes.end();iter++) {
+            dtl::edit_t type = iter->second.type;
+            if (type==dtl::SES_ADD) {
+                int index = static_cast<int>(iter->second.afterIdx)-1;
+                if (tryInsertAfterChild(merged,iter->first,index)) {
+                    continue;
+                } else if (tryAppendChild(merged,iter->first,index)) {
+                    continue;
+                } else {
+                    this->appendChild(iter->first.node);
+                }
+            } else if (type==dtl::SES_COMMON) {
+                int afterIndex=static_cast<int>(iter->second.afterIdx)-1;
+                int beforeIndex=static_cast<int>(iter->second.beforeIdx)-1;
+                NodeStruct item = tree.at(beforeIndex);
+                NodeStruct newItem = newTree.at(afterIndex);
+                item.node->mergeProps(newItem.node);
+            } else if (type==dtl::SES_DELETE) {
+                iter->first.node->deleteLater();
+            } else {
+                qCritical() << "Invalid change type";
+            }
+        }
+        qDebug() << "Component diff render applied";
+    } else {
+        this->getChild().first()->deleteLater();
+        emit renderSubtree(newRoot);
+    }
 }
 
 /*****************************************************************************/

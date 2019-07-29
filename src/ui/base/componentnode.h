@@ -6,7 +6,11 @@
 #include <QObject>
 #include <QJSEngine>
 
+#include <sstream>
+#include <vector>
+
 #include "src/ui/base/node.h"
+#include "3rdparty/dtl/dtl.hpp"
 #include "src/objects/nodestruct.h"
 
 using namespace Quite::Objects;
@@ -58,12 +62,37 @@ class ComponentNode : public Node {
         QJSValue render
     );
 
-  signals:
+  /*
+   * Методы для сравнения двух древ
+   */
+  private:
+    bool checkTree(QVector<NodeStruct>& tree);
+    bool tryInsertAfterChild(
+        std::vector<NodeStruct>& merged,
+        NodeStruct child,
+        int lastIndex
+    );
+    bool tryAppendChild(
+        std::vector<NodeStruct>& merged,
+        NodeStruct child,
+        int lastIndex
+    );
+
+  /*
+   * Метод для обработки diff или полного рендеринга
+   */
+  private:
     void subtreeChanged(
         QVector<NodeStruct> newTree,
         QVector<NodeStruct> tree,
-        Node* newChild
+        Node* newRoot
     );
+
+  /*
+   * Сигнал для полного рендеринга, если diff невозможен
+   */
+  signals:
+    void renderSubtree(Node* child);
 };
 
 /*****************************************************************************/

@@ -1,6 +1,7 @@
 #ifndef WINDOWCOMPONENT_H
 #define WINDOWCOMPONENT_H
 
+#include <QThread>
 #include <QtDebug>
 #include <QObject>
 #include <QQuickItem>
@@ -14,8 +15,11 @@ namespace Components {
 
 class WindowComponentPrivate : public QQuickWindow {
   Q_OBJECT
+  public:
+    WindowComponentPrivate();
   protected:
-    virtual bool event(QEvent* e) override;
+    //virtual bool event(QEvent* e) override;
+    bool eventFilter(QObject *obj, QEvent *ev) override;
   signals:
     void closed();
 };

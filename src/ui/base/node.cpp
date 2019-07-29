@@ -150,12 +150,7 @@ void Node::mergeProps(Node *node) {
     /*
      *  GC merged node and commit props if need
      */
-    QMetaObject::invokeMethod(
-        node,
-        "deleteLater",
-        Qt::ConnectionType::QueuedConnection
-    );
-    //node->deleteLater();
+    node->deleteLater();
     if (update) {
         this->props=nodeProps;
         commitProps();
