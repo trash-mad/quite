@@ -32,6 +32,18 @@ Element *Manager::renderElement(Node *node, Element *parent) {
         this,
         SIGNAL(invoke(Invoke*))
     );
+    connect(
+        element,
+        SIGNAL(insertAfterChild(Node*,Node*)),
+        this,
+        SLOT(insertAfterChildHandler(Node*,Node*))
+    );
+    connect(
+        element,
+        SIGNAL(appendChild(Node*)),
+        this,
+        SLOT(appendChildHandler(Node*))
+    );
     return element;
 }
 
@@ -80,6 +92,22 @@ void Manager::renderSubtreeHandler(Node *child) {
     QLinkedList<Element*> tree;
     tree.append(renderElementTree(child,component));
     component->receiveSubtree(tree);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Manager::insertAfterChildHandler(Node *after, Node *child) {
+    qDebug() << "Manager insertAfterChildHandler";
+    Element* sender = qobject_cast<Element*>(QObject::sender());
+    sender->childInsertAfter(after, renderElementTree(child, sender));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Manager::appendChildHandler(Node *child) {
+    qDebug() << "Manager appendChildHandler";
+    Element* sender = qobject_cast<Element*>(QObject::sender());
+    sender->childAppend(renderElementTree(child, sender));
 }
 
 /*---------------------------------------------------------------------------*/

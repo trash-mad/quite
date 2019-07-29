@@ -46,12 +46,17 @@ class Node : public QObject{
     explicit Node(QJSValue type, QJSValue props, QJSValue child);
     ~Node();
 
+  private:
+    void subscribeChildNode(Node* node);
+
   /*
    * Слоты управления древом под-нод
    */
   public slots:
     void appendChild(Node* child);
     void insertAfterChild(Node* after, Node* child);
+  private slots:
+    void childDeletedHandler(QObject* child);
 
   /*
    * Слоты управления свойствами ноды
@@ -89,6 +94,20 @@ class Node : public QObject{
     void propsChanged(QMap<QString, QVariant> commitProps);
     void childInsertedAfter(Node* after, Node* child);
     void childAppended(Node* child);
+
+  /*
+   * Управление колличеством дочерних нод
+   */
+  private slots:
+    void incrementTotalChildCountHandler();
+    void decrementTotalChildCountHandler();
+
+  /*
+   * Управление колличеством дочерних нод
+   */
+  signals:
+    void incrementTotalChildCount();
+    void decrementTotalChildCount();
 };
 
 /*****************************************************************************/

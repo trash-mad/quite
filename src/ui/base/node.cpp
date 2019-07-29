@@ -17,7 +17,8 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
         for (iter=this->child.begin();iter!=this->child.end();iter++) {
             Node* node = (*iter);
             totalChildCount+=node->getTotalChildCount();
-            node->setParent(this);
+            subscribeChildNode(node);
+            //node->setParent(this);
         }
     }
     {
@@ -45,9 +46,36 @@ Node::~Node() {
 
 /*---------------------------------------------------------------------------*/
 
+void Node::subscribeChildNode(Node *node) {
+    qDebug() << "Node subscribeChildNode";
+    connect(
+        node,
+        SIGNAL(destroyed(QObject*)),
+        this,
+        SLOT(childDeletedHandler(QObject*))
+    );
+    connect(
+        node,
+        SIGNAL(incrementTotalChildCount()),
+        this,
+        SLOT(incrementTotalChildCountHandler())
+    );
+    connect(
+        node,
+        SIGNAL(decrementTotalChildCount()),
+        this,
+        SLOT(decrementTotalChildCountHandler())
+    );
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Node::appendChild(Node *child) {
     qDebug() << "Node appendChild";
     this->child.append(child);
+    subscribeChildNode(child);
+    totalChildCount++;
+    emit incrementTotalChildCount();
     emit childAppended(child);
 }
 
@@ -65,6 +93,9 @@ void Node::insertAfterChild(Node *after, Node *child) {
             } else {
                 this->child.insert(iter,child);
             }
+            subscribeChildNode(child);
+            totalChildCount++;
+            emit incrementTotalChildCount();
             emit childInsertedAfter(after, child);
             return;
         } else {
@@ -72,6 +103,23 @@ void Node::insertAfterChild(Node *after, Node *child) {
         }
     }
     qCritical() << "Node insertChild before node not found";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::childDeletedHandler(QObject *child) {
+    qDebug() << "Node childDeletedHandler";
+    QLinkedList<Node*>::iterator iter;
+    for (iter=this->child.begin();iter!=this->child.end();iter++) {
+        if (child==(*iter)) {
+            this->child.erase(iter);
+            totalChildCount--;
+            emit decrementTotalChildCount();
+            break;
+        } else {
+            continue;
+        }
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -279,6 +327,20 @@ NodeType Node::castNodeType(QString type) {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::incrementTotalChildCountHandler() {
+    totalChildCount++;
+    emit incrementTotalChildCount();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Node::decrementTotalChildCountHandler() {
+    totalChildCount--;
+    emit decrementTotalChildCount();
 }
 
 /*****************************************************************************/

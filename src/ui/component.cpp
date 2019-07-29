@@ -38,8 +38,8 @@ Component::~Component() {
 /*---------------------------------------------------------------------------*/
 
 bool Component::checkTree(QVector<NodeStruct> &tree) {
-    for (int i=1;i!=tree.length();i++) {
-        if (tree[i]==tree[i-1]) {
+    for (int i=2;i!=tree.length();i++) {
+        if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
             return false;
         } else {
             continue;

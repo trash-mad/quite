@@ -73,7 +73,11 @@ class Element : public QObject {
     void receiveSubtree(QLinkedList<Element*> child);
 
   /*
-   * Обработчики сигналов ноды
+   * Обработчики сигналов ноды. Возможно, в связи с парралельной работой QML и JS
+   * данные методы должны создать критерый для ожидания (bool), который
+   * будет мониторится через геттер в наследнике Component
+   * и реализовывать ожидание завершения перед новым рендерингом
+   *
    */
   private slots:
     void propsChangedHandler(QMap<QString, QVariant> commitProps);
