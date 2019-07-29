@@ -64,6 +64,12 @@ Element::~Element() {
 
 /*---------------------------------------------------------------------------*/
 
+bool Element::ready() const {
+    return insertAfterChildResolved&&appendChildResolved;
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Element::onClick() {
     qCritical() << "Element default click handler";
 }
@@ -87,6 +93,7 @@ void Element::childInsertAfter(Node *after, Element *child) {
                 this,
                 SLOT(childDeletedHandler(QObject*))
             );
+            insertAfterChildResolved=true;
             return;
         } else {
             elemIter++;
@@ -101,6 +108,7 @@ void Element::childInsertAfter(Node *after, Element *child) {
 void Element::childAppend(Element *child) {
     qDebug() << "Element default childAppend";
     this->child.append(child);
+    appendChildResolved=true;
     child->getItem()->setParentItem(item);
     connect(
         child,
@@ -196,6 +204,7 @@ void Element::propsChangedHandler(QMap<QString, QVariant> commitProps) {
 
 void Element::childInsertedAfterHandler(Node *after, Node *child) {
     qDebug() << "Element childInsertedAfterHandler";
+    insertAfterChildResolved=false;
     emit insertAfterChild(after, child);
 }
 
@@ -215,6 +224,7 @@ void Element::childDeletedHandler(QObject* child) {
 
 void Element::childAppendedHandler(Node *child) {
     qDebug() << "Element childAppendedHandler";
+    appendChildResolved=false;
     emit appendChild(child);
 }
 

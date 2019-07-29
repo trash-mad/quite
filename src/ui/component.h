@@ -4,6 +4,7 @@
 #include <QtDebug>
 #include <QObject>
 #include <QVector>
+#include <QMutex>
 
 #include <sstream>
 #include <vector>
@@ -28,6 +29,16 @@ class Component : public Element {
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
     virtual ~Component();
+
+  /*
+   * Рекурсивная функция, пробегающая дочерние элементы и проверяющая
+   * состояние ready() - таким образом, выполняется синхронизация
+   * действий с Manager
+   *
+   * ВЕРОЯТНО НАДО ЗАДЕПРЕКЕЙТИТЬ, так как в рекурсивной функции список
+   * потомков элемента не потокобезопасный
+   */
+  void resolveManagerActions(Element* root);
 
   /*
    * Методы для сравнения двух древ

@@ -62,7 +62,7 @@ class Node : public QObject{
    * Слоты управления свойствами ноды
    */
   public slots:
-    void mergeProps(Node* node);
+    Q_INVOKABLE void mergeProps(Node* node);
     void commitProps();
     virtual void updateContext(QJSValue context, bool recursive = true);
     void updateChildContext(QJSValue context);

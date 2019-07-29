@@ -33,9 +33,19 @@ class Element : public QObject {
     Node* node;
   private:
     QQuickItem* item;
+  private:
+    bool insertAfterChildResolved=true;
+    bool appendChildResolved=true;
   public:
     Element(QUrl uri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
+
+  /*
+   * Проверяется в компоненте и, если изменения не применены, выполняется
+   * ожидание
+   */
+  public:
+    bool ready() const;
 
   /*
    * Слоты, привязываемые к контексту QML компонента
@@ -56,10 +66,11 @@ class Element : public QObject {
     virtual void childDeleted(Element* child);
     virtual void childChanged();
     virtual void propsChanged();
+
   /*
    * Геттеры, сеттеры
    */
-  protected:
+  public:
     QMap<QString, QVariant> getProps() const;
     QLinkedList<Element*> getChild() const;
     virtual QQuickItem* getItem() const;

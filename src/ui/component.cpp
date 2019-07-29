@@ -37,6 +37,21 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
+void Component::resolveManagerActions(Element *root) {
+    while (!root->ready()) {
+        qDebug() << "Component resolveManagerActions await";
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+        QThread::msleep(50);
+    }
+    QLinkedList<Element*> child=root->getChild();
+    QLinkedList<Element*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        resolveManagerActions(*iter);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 bool Component::checkTree(QVector<NodeStruct> &tree) {
     for (int i=2;i!=tree.length();i++) {
         if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
@@ -61,6 +76,7 @@ bool Component::tryInsertAfterChild(
         QMetaObject::invokeMethod(
             merged[afterIndex].parent->node,
             "insertAfterChild",
+            Qt::ConnectionType::QueuedConnection,
             Q_ARG(Node*, merged[afterIndex].node),
             Q_ARG(Node*, child.node)
         );
@@ -84,6 +100,7 @@ bool Component::tryAppendChild(
             QMetaObject::invokeMethod(
                 merged[index].node,
                 "appendChild",
+                Qt::ConnectionType::QueuedConnection,
                 Q_ARG(Node*, child.node)
             );
             return true;
@@ -101,6 +118,8 @@ void Component::subtreeChangedHandler(
     QVector<NodeStruct> tree,
     Node *newRoot
 ) {
+    static QMutex mutex;
+    mutex.lock();
     qDebug() << "Component subtreeChangedHandler";
     qDebug() << "tree";
     for(int i=0;i!=tree.length();i++) {
@@ -143,6 +162,7 @@ void Component::subtreeChangedHandler(
                     QMetaObject::invokeMethod(
                         this->getNode(),
                         "appendChild",
+                        Qt::ConnectionType::QueuedConnection,
                         Q_ARG(Node*, iter->first.node)
                     );
                 }
@@ -154,7 +174,7 @@ void Component::subtreeChangedHandler(
                 QMetaObject::invokeMethod(
                     item.node,
                     "mergeProps",
-                    Qt::QueuedConnection,
+                    Qt::ConnectionType::QueuedConnection,
                     Q_ARG(Node*,newItem.node)
                 );
             } else if (type==dtl::SES_DELETE) {
@@ -183,6 +203,8 @@ void Component::subtreeChangedHandler(
         );
         emit renderSubtree(newRoot);
     }
+    QCoreApplication::processEvents();
+    mutex.unlock();
 }
 
 /*****************************************************************************/
