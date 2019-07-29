@@ -37,11 +37,14 @@ void Application::logHandler(
     QtMsgType type,
     const QMessageLogContext &context,
     const QString &msg) {
-    (void)(context);
+    Q_UNUSED(context);
+    static QMutex mutex;
+    mutex.lock();
     if(type == QtMsgType::QtInfoMsg) {
         std::cout << msg.toStdString() << "\n";
     } else if(type == QtMsgType::QtCriticalMsg) {
         std::cout << msg.toStdString() << "\n";
+        mutex.unlock();
         abort();
     } else {
         QFile f(QDir::current().filePath("debug.txt"));
@@ -49,9 +52,11 @@ void Application::logHandler(
             QTextStream(&f) << msg << "\n";
         } else {
             std::cout << "Can't append to debug.txt";
+            mutex.unlock();
             abort();
         }
     }
+    mutex.unlock();
 }
 
 /*---------------------------------------------------------------------------*/

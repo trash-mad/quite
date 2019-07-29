@@ -21,9 +21,10 @@ namespace Base {
 enum NodeType : int {
     NeverType = -1,
     ComponentType = 0,
-    ButtonType = 1,
-    WindowType = 2,
-    RectangleType = 3
+    FragmentType = 1,
+    ButtonType = 2,
+    WindowType = 3,
+    RectangleType = 4
 };
 
 /*****************************************************************************/

@@ -12,11 +12,28 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
     this->type=Node::castNodeType(type.toString());
     this->props=Node::castNodeParams(props);
     this->child=Node::castNodeList(child);
-    QLinkedList<Node*>::iterator iter;
-    for (iter=this->child.begin();iter!=this->child.end();iter++) {
-        Node* node = (*iter);
-        totalChildCount+=node->getTotalChildCount();
-        node->setParent(this);
+    {
+        QLinkedList<Node*>::iterator iter;
+        for (iter=this->child.begin();iter!=this->child.end();iter++) {
+            Node* node = (*iter);
+            totalChildCount+=node->getTotalChildCount();
+            node->setParent(this);
+        }
+    }
+    {
+        QMap<QString,QJSValue>::iterator iter;
+        for (iter=this->props.begin();iter!=this->props.end();iter++) {
+            if (iter.key()=="key") {
+                QJSValue key = iter.value();
+                if (key.isNumber()) {
+                    this->key=key.toInt();
+                } else {
+                    break;
+                }
+            } else {
+                continue;
+            }
+        }
     }
 }
 
@@ -82,6 +99,10 @@ void Node::mergeProps(Node *node) {
             }
         }
     }
+    /*
+     *  GC merged node and commit props if need
+     */
+    node->deleteLater();
     if (update) {
         this->props=nodeProps;
         commitProps();
@@ -246,6 +267,8 @@ bool Node::tryCastNode(QJSValue src, Node *&dst) {
 NodeType Node::castNodeType(QString type) {
     if(type == "Component") {
         return NodeType::ComponentType;
+    } else if (type == "Fragment") {
+        return NodeType::FragmentType;
     } else if(type == "Rectangle") {
         return NodeType::RectangleType;
     } else if(type == "Button") {

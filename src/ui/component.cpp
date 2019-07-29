@@ -16,14 +16,14 @@ Component::Component(ComponentNode* node, QQmlEngine* engine, Element* parent)
     connect(
         node,
         SIGNAL(subtreeChanged(
-            QVector<NodeStruct>&,
-            QVector<NodeStruct>&,
+            QVector<NodeStruct>,
+            QVector<NodeStruct>,
             Node*
         )),
         this,
         SLOT(subtreeChangedHandler(
-            QVector<NodeStruct>&,
-            QVector<NodeStruct>&,
+            QVector<NodeStruct>,
+            QVector<NodeStruct>,
             Node*
         ))
     );
@@ -56,7 +56,7 @@ bool Component::tryInsertAfterChild(
     int lastIndex
 ) {
     qDebug() << "Component tryInsertAfterChild";
-    auto afterIndex = static_cast<unsigned long long>(lastIndex-1);
+    auto afterIndex = static_cast<unsigned long long>(lastIndex)-1;
     if (merged[afterIndex].parent==child.parent) {
         QMetaObject::invokeMethod(
             merged[afterIndex].parent->node,
@@ -97,8 +97,8 @@ bool Component::tryAppendChild(
 /*---------------------------------------------------------------------------*/
 
 void Component::subtreeChangedHandler(
-    QVector<NodeStruct> &newTree,
-    QVector<NodeStruct> &tree,
+    QVector<NodeStruct> newTree,
+    QVector<NodeStruct> tree,
     Node *newRoot
 ) {
     qDebug() << "Component subtreeChangedHandler";
@@ -134,7 +134,7 @@ void Component::subtreeChangedHandler(
         for (iter=changes.begin();iter!=changes.end();iter++) {
             dtl::edit_t type = iter->second.type;
             if (type==dtl::SES_ADD) {
-                int index = static_cast<int>(iter->second.afterIdx);
+                int index = static_cast<int>(iter->second.afterIdx)-1;
                 if (tryInsertAfterChild(merged,iter->first,index)) {
                     continue;
                 } else if (tryAppendChild(merged,iter->first,index)) {
@@ -147,8 +147,8 @@ void Component::subtreeChangedHandler(
                     );
                 }
             } else if (type==dtl::SES_COMMON) {
-                int afterIndex=static_cast<int>(iter->second.afterIdx);
-                int beforeIndex=static_cast<int>(iter->second.beforeIdx);
+                int afterIndex=static_cast<int>(iter->second.afterIdx)-1;
+                int beforeIndex=static_cast<int>(iter->second.beforeIdx)-1;
                 NodeStruct item = tree.at(beforeIndex);
                 NodeStruct newItem = newTree.at(afterIndex);
                 QMetaObject::invokeMethod(
@@ -167,14 +167,22 @@ void Component::subtreeChangedHandler(
                 qCritical() << "Invalid change type";
             }
         }
+        qDebug() << "Component diff render applied";
     } else {
-        qInfo()
-            << "Diff rendering is impossible."
-            << "The sequence contains a list of items without a key prop"
-            /*TODO: << "or root node changed"*/;
+        if (!diffImposible) {
+            diffImposible=true;
+            qInfo()
+                << "Diff rendering is impossible."
+                << "The sequence contains a list of items without a key prop"
+                /*TODO: << "or root node changed"*/;
+        }
+        QMetaObject::invokeMethod(
+            this->getChild().first(),
+            "deleteLater",
+            Qt::QueuedConnection
+        );
         emit renderSubtree(newRoot);
     }
-    qInfo() << "Compared";
 }
 
 /*****************************************************************************/

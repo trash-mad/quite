@@ -60,8 +60,8 @@ class ComponentNode : public Node {
 
   signals:
     void subtreeChanged(
-        QVector<NodeStruct>& newTree,
-        QVector<NodeStruct>& tree,
+        QVector<NodeStruct> newTree,
+        QVector<NodeStruct> tree,
         Node* newChild
     );
 };

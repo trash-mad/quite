@@ -40,8 +40,13 @@ class Manager : public QObject {
     Component* renderComponent(Node* node, Element* parent);
     Element* renderElement(Node* node, Element* parent = nullptr);
     Element* renderElementTree(Node* node, Element* parent = nullptr);
+  /*
+   * Слоты для рендеринга, запрашиваемого компонентом.
+   */
   private slots:
-    void updateSubtree(Node* child, Component* that);
+    void renderSubtreeHandler(Node* child);
+
+
   signals:
     void closed();
     void invoke(Invoke* o);

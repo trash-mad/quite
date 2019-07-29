@@ -6,7 +6,8 @@ ClassOne.prototype.render = function () {
     console.log("ClassTwo render")
     return Quite.createElement("Button", {
         text: "Test",
-        onClicked: function() { 
+        onClick: function() { 
+            console.log("Props in ClassOne: "+JSON.stringify(this.props));
             this.props.callBack();
         }
     });
@@ -14,21 +15,22 @@ ClassOne.prototype.render = function () {
 
 function ClassTwo() {
     console.log("ClassTwo ctor");
+    this.test=this.test.bind(this);
 }
 
 ClassTwo.prototype.test = function () {
-    console.log("OMG)))");
+    console.log("Props in ClassTwo: "+JSON.stringify(this.props));
 }
 
 ClassTwo.prototype.render = function () {
     console.log("ClassTwo render");
-    return Quite.createElement(ClassOne, {callBack: this.test})
+    return Quite.createElement(ClassOne, {className:"ClassOne", callBack: this.test})
 }
 
 
 function test() {
     return  Quite.createElement("Window", null,
-        Quite.createElement(ClassTwo, {title: "Example"})
+        Quite.createElement(ClassTwo, {className: "ClassTwo"})
     );
 }
 

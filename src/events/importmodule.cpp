@@ -27,24 +27,25 @@ EventResult ImportModule::process(
     (void)(engine);
     (void)(pool);
     QJSValue module = eval->importModule(QDir::current().filePath(path));
-    if(module.isError()) {
-
+    if (!QFile::exists(QDir::current().filePath(path))) {
         qInfo()
             << "module"
             << QDir::current().filePath(path)
-            << "not found";
-
+            << "not exist";
+    } else if(module.isError()) {
+        qInfo()
+            << "module"
+            << QDir::current().filePath(path)
+            << "syntax error";
         eval->throwError(
             QString("MODULE_ERROR %1").arg(
                 module.toString()
             )
         );
-
-        eval->evaluate("");
     } else {
         QJSValue res = eval->evaluate("");
         if(res.isError()){
-            qInfo() << "module" << path << "syntax error";
+            qInfo() << "module" << path << "eval error";
             eval->throwError(
                 QString("EVAL_ERROR %1").arg(
                     res.toString()

@@ -41,7 +41,12 @@ class Wrapper : public QObject {
         QJSValue p2=QJSValue(),
         QJSValue p3=QJSValue(),
         QJSValue p4=QJSValue(),
-        QJSValue p5=QJSValue()
+        QJSValue p5=QJSValue(),
+        QJSValue p6=QJSValue(),
+        QJSValue p7=QJSValue(),
+        QJSValue p8=QJSValue(),
+        QJSValue p9=QJSValue(),
+        QJSValue p10=QJSValue()
     );
 
   public:

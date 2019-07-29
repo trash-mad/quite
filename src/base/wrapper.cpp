@@ -39,7 +39,12 @@ QJSValue Wrapper::call(
     QJSValue p2,
     QJSValue p3,
     QJSValue p4,
-    QJSValue p5
+    QJSValue p5,
+    QJSValue p6,
+    QJSValue p7,
+    QJSValue p8,
+    QJSValue p9,
+    QJSValue p10
 ) {
     qDebug()
         << "Wrapper call"
@@ -47,7 +52,12 @@ QJSValue Wrapper::call(
         << p2.toString()
         << p3.toString()
         << p4.toString()
-        << p5.toString();
+        << p5.toString()
+        << p6.toString()
+        << p7.toString()
+        << p8.toString()
+        << p9.toString()
+        << p10.toString();
 
     QJSValue result;
     if(p1.isUndefined()) {
@@ -95,7 +105,7 @@ QJSValue Wrapper::call(
             Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
             Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine))
         ));
-    } else {
+    } else if(p6.isUndefined()) {
         check(QMetaObject::invokeMethod(
             origin,
             property.toStdString().c_str(),
@@ -106,6 +116,81 @@ QJSValue Wrapper::call(
             Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
             Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
             Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine))
+        ));
+    } else if(p7.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p6,eval,engine))
+        ));
+    } else if(p8.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p6,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p7,eval,engine))
+        ));
+    } else if(p9.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p6,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p7,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p8,eval,engine))
+        ));
+    } else if(p10.isUndefined()) {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p6,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p7,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p8,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p9,eval,engine))
+        ));
+    } else {
+        check(QMetaObject::invokeMethod(
+            origin,
+            property.toStdString().c_str(),
+            Qt::DirectConnection,
+            Q_RETURN_ARG(QJSValue, result),
+            Q_ARG(QJSValue, Emitter::fromObject(p1,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p2,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p3,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p4,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p5,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p6,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p7,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p8,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p9,eval,engine)),
+            Q_ARG(QJSValue, Emitter::fromObject(p10,eval,engine))
         ));
     }
 

@@ -23,6 +23,8 @@ namespace Ui {
 
 class Component : public Element {
   Q_OBJECT
+  private:
+    bool diffImposible=false;
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
     virtual ~Component();
@@ -48,8 +50,8 @@ class Component : public Element {
    */
   private slots:
     void subtreeChangedHandler(
-        QVector<NodeStruct>& newTree,
-        QVector<NodeStruct>& tree,
+        QVector<NodeStruct> newTree,
+        QVector<NodeStruct> tree,
         Node* newRoot
     );
 

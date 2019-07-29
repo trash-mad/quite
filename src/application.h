@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDebug>
+#include <QMutex>
 #include <QDir>
 
 #include <iostream>

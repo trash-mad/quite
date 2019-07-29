@@ -45,9 +45,9 @@ Component *Manager::renderComponent(Node* node, Element *parent) {
     );
     connect(
         component,
-        SIGNAL(updateSubtree(Node*,Component*)),
+        SIGNAL(renderSubtree(Node*)),
         this,
-        SLOT(updateSubtree(Node*,Component*))
+        SLOT(renderSubtreeHandler(Node*))
     );
     return component;
 }
@@ -74,10 +74,12 @@ Element* Manager::renderElementTree(Node *node, Element* parent) {
 
 /*---------------------------------------------------------------------------*/
 
-void Manager::updateSubtree(Node* child, Component* that) {
-    qDebug() << "WindowManager updateSubtree";
-    Element* element = static_cast<Element*>(that);
-    //that->receiveSubtree(renderElementTree(child, element));
+void Manager::renderSubtreeHandler(Node *child) {
+    qDebug() << "Manager renderSubtreeHanler";
+    Component* component = qobject_cast<Component*>(QObject::sender());
+    QLinkedList<Element*> tree;
+    tree.append(renderElementTree(child,component));
+    component->receiveSubtree(tree);
 }
 
 /*---------------------------------------------------------------------------*/
