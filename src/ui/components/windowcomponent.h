@@ -1,6 +1,7 @@
 #ifndef WINDOWCOMPONENT_H
 #define WINDOWCOMPONENT_H
 
+#include <QTimer>
 #include <QThread>
 #include <QtDebug>
 #include <QObject>
@@ -37,9 +38,6 @@ class WindowComponent : public QQuickItem {
     WindowComponent();
     virtual ~WindowComponent() override;
     QQuickItem* contentItem() const;
-  private slots:
-    void beforeRendering();
-    void afterRendering();
   signals:
     void closed();
 };

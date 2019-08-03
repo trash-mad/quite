@@ -22,8 +22,8 @@ class RenderSynchronizer : public QObject {
   public:
     bool tryIncrementCounter(QString from);
     void decrementCounter(QString from);
-    bool tryBeginRender();
-    void endRender();
+    Q_DECL_DEPRECATED bool tryBeginRender();
+    Q_DECL_DEPRECATED void endRender();
     bool changesResolved();
   public:
     static RenderSynchronizer* instance();

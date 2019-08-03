@@ -67,7 +67,11 @@ bool RenderSynchronizer::tryBeginRender() {
 void RenderSynchronizer::endRender() {
     qDebug() << "RenderSynchronizer endRender"<<resolveCounter;
     locker.lock();
-    rendering=false;
+    if (rendering) {
+        rendering=false;
+    } else {
+        qCritical() << "RenderSynchronizer render not started";
+    }
     locker.unlock();
 }
 
