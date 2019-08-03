@@ -9,6 +9,7 @@ namespace Base {
 Node::Node(QJSValue type, QJSValue props, QJSValue child)
   : QObject(nullptr) {
     qDebug() << "Node ctor";
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     this->type=Node::castNodeType(type.toString());
     this->props=Node::castNodeParams(props);
     this->child=Node::castNodeList(child);
@@ -18,7 +19,6 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
             Node* node = (*iter);
             totalChildCount+=node->getTotalChildCount();
             subscribeChildNode(node);
-            //node->setParent(this);
         }
     }
     {

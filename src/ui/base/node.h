@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QJSValue>
 #include <QJSEngine>
+#include <QQmlEngine>
 #include <QLinkedList>
 #include <QJSValueIterator>
 

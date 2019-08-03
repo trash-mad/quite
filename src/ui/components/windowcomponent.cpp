@@ -68,18 +68,15 @@ bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
     Q_UNUSED(obj);
     if (ev->type()==QEvent::Close) {
         emit closed();
-    }/* else if (ev->type()==QEvent::UpdateRequest) {
-        // TODO:
-        // Что такое QQuickWindowPrivate::polishItems()?
-        // Судя по всему, это связано со штатной компоновкой Qt Quick
-        // Не нужно ли ожидать resolve у всех Element?
-        // пока на эти вопросы у меня нет ответа...
-        //
-        // нет, падения не всегда на нём - по ходу дела, придется писать
-        // ожидание применения изменений на виртуальное древл
-        //
-        return true;
-    }*/
+    } else if (ev->type()==QEvent::UpdateRequest) {
+        if (RenderSynchronizer::instance()->changesResolved()) {
+            qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE";
+            return false;
+        } else {
+            qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!SKIP";
+            return true;
+        }
+    }
     return false;
 }
 

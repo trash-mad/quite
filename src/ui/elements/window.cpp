@@ -25,6 +25,12 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
 
 Window::~Window() {
     qDebug() << "Window dtor";
+    /*
+     * Перед крашем пишется единственный Window dtor.
+     * Кажется, QQuickItem::polishItems() не при чем и дело в
+     * JS garbage collector
+     *
+     */
 }
 
 /*****************************************************************************/
