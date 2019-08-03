@@ -69,13 +69,7 @@ bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
     if (ev->type()==QEvent::Close) {
         emit closed();
     } else if (ev->type()==QEvent::UpdateRequest) {
-        if (RenderSynchronizer::instance()->changesResolved()) {
-            qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE";
-            return false;
-        } else {
-            qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!SKIP";
-            return true;
-        }
+        return RenderSynchronizer::instance()->changesResolved();
     }
     return false;
 }

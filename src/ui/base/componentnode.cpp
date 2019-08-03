@@ -38,9 +38,6 @@ void ComponentNode::incrementResolveCounter(QString from) {
     qDebug() << "ComponentNode incrementResolveCounter exec";
     while (!RenderSynchronizer::instance()->tryIncrementCounter(from)) {
         QCoreApplication::processEvents();
-        /*
-         * QMutex не атомарный, работает с задержкой
-         */
         QThread::msleep(50);
     }
     qDebug() << "ComponentNode incrementResolveCounter resolve";
