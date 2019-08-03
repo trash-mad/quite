@@ -288,7 +288,7 @@ void ComponentNode::subtreeChanged(
                 incrementResolveCounter(QString("Delete %1").arg(
                     QVariant(iter->first.node->getEnumType()).toString()
                 ));
-                iter->first.node->diffDelete();
+                iter->first.node->deleteNodeDiff();
             } else {
                 qCritical() << "Invalid change type";
             }

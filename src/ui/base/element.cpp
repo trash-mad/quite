@@ -239,14 +239,8 @@ void Element::childAppendedHandler(Node *child) {
 void Element::diffDeleteHandler() {
     qDebug() << "Element diffDeleteHandler";
     item->setParentItem(nullptr);
-    NodeType type=getType();
-    /*connect(node,&QObject::deleteLater,[type](){
-        RenderSynchronizer::instance()->decrementCounter(
-            QString("Delete %1").arg(QVariant(type).toString()
-        ));
-    });*/
     RenderSynchronizer::instance()->decrementCounter(
-        QString("Delete %1").arg(QVariant(type).toString()
+        QString("Delete %1").arg(QVariant(getType()).toString()
     ));
 }
 
