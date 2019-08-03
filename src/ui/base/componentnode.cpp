@@ -34,6 +34,31 @@ ComponentNode::~ComponentNode() {
 
 /*---------------------------------------------------------------------------*/
 
+void ComponentNode::incrementResolveCounter(QString from) {
+    qDebug() << "ComponentNode incrementResolveCounter exec";
+    while (!RenderSynchronizer::instance()->tryIncrementCounter(from)) {
+        QCoreApplication::processEvents();
+        /*
+         * QMutex не атомарный, работает с задержкой
+         */
+        QThread::msleep(50);
+    }
+    qDebug() << "ComponentNode incrementResolveCounter resolve";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void ComponentNode::resolveChanges() {
+    qDebug() << "ComponentNode resolveChanges exec";
+    while (!RenderSynchronizer::instance()->changesResolved()) {
+        QCoreApplication::processEvents();
+        QThread::msleep(50);
+    }
+    qDebug() << "ComponentNode resolveChanges resolve";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void ComponentNode::setState(QJSValue state) {
     instance.setProperty("state", state);
     QJSValue root = render.callWithInstance(
@@ -44,6 +69,7 @@ void ComponentNode::setState(QJSValue state) {
     );
     Node* node = nullptr;
     if (tryCastNode(root, node)) {
+        resolveChanges();
         QVector<NodeStruct> newTree(node->getTotalChildCount());
         ComponentNode::buildNodeTree(node, newTree, true);
         QVector<NodeStruct> tree(getChild().first()->getTotalChildCount());
@@ -160,6 +186,9 @@ bool ComponentNode::tryInsertAfterChild(
     qDebug() << "ComponentNode tryInsertAfterChild";
     auto afterIndex = static_cast<unsigned long long>(lastIndex)-1;
     if (merged[afterIndex].parent==child.parent) {
+        incrementResolveCounter(QString("tryInsert %1").arg(
+            QVariant(child.node->getEnumType()).toString()
+        ));
         merged[afterIndex].parent->node->insertAfterChild(
             merged[afterIndex].node,
             child.node
@@ -181,6 +210,9 @@ bool ComponentNode::tryAppendChild(
     for (int i=lastIndex;i>=0;i--) {
         auto index=static_cast<unsigned long long>(i);
         if (*child.parent==merged[index]) {
+            incrementResolveCounter(QString("tryAppend %1").arg(
+                QVariant(merged[index].node->getEnumType()).toString()
+            ));
             merged[index].node->appendChild(
                 child.node
             );
@@ -238,6 +270,9 @@ void ComponentNode::subtreeChanged(
                 } else if (tryAppendChild(merged,iter->first,index)) {
                     continue;
                 } else {
+                    incrementResolveCounter(QString("Append %1").arg(
+                        QVariant(iter->first.node->getEnumType()).toString()
+                    ));
                     this->appendChild(iter->first.node);
                 }
             } else if (type==dtl::SES_COMMON) {
@@ -245,15 +280,22 @@ void ComponentNode::subtreeChanged(
                 int beforeIndex=static_cast<int>(iter->second.beforeIdx)-1;
                 NodeStruct item = tree.at(beforeIndex);
                 NodeStruct newItem = newTree.at(afterIndex);
+                incrementResolveCounter(QString("MergeProps %1").arg(
+                    QVariant(item.node->getEnumType()).toString()
+                ));
                 item.node->mergeProps(newItem.node);
             } else if (type==dtl::SES_DELETE) {
-                iter->first.node->deleteLater();
+                incrementResolveCounter(QString("Delete %1").arg(
+                    QVariant(iter->first.node->getEnumType()).toString()
+                ));
+                iter->first.node->diffDelete();
             } else {
                 qCritical() << "Invalid change type";
             }
         }
         qDebug() << "Component diff render applied";
     } else {
+        incrementResolveCounter("Subtree update");
         this->getChild().first()->deleteLater();
         emit renderSubtree(newRoot);
     }

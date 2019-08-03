@@ -70,6 +70,14 @@ void Node::subscribeChildNode(Node *node) {
 
 /*---------------------------------------------------------------------------*/
 
+void Node::deleteNodeDiff() {
+    qDebug() << "Node deleteNodeDiff";
+    emit diffDelete();
+    deleteLater();
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Node::appendChild(Node *child) {
     qDebug() << "Node appendChild";
     this->child.append(child);
@@ -153,8 +161,14 @@ void Node::mergeProps(Node *node) {
     node->deleteLater();
     if (update) {
         this->props=nodeProps;
-        commitProps();
+        commitProps(true);
     } else {
+        /*
+         * Рендеринг не нужен, подчищаем очередь
+         */
+        RenderSynchronizer::instance()->decrementCounter(QString("Merge %1").arg(
+            QVariant(getType()).toString()
+        ));
         return;
     }
 }
@@ -169,7 +183,7 @@ void Node::mergeProps(Node *node) {
  * Должен быть вызван при построении древа компонентов в Manager и
  * при обновлении контекста выполнения instance
  */
-void Node::commitProps() {
+void Node::commitProps(bool merge) {
     qDebug() << "Node commitProps";
     QMap<QString, QVariant> tmp;
     QMap<QString, QJSValue>::iterator iter;
@@ -185,7 +199,7 @@ void Node::commitProps() {
             tmp.insert(iter.key(),iter.value().toVariant());
         }
     }
-    emit propsChanged(tmp);
+    emit propsChanged(tmp, merge);
 }
 
 /*---------------------------------------------------------------------------*/

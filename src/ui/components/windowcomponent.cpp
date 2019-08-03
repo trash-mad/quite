@@ -9,6 +9,20 @@ namespace Components {
 WindowComponent::WindowComponent() {
     qDebug() << "WindowComponent ctor";
     connect(&window,SIGNAL(closed()),this,SIGNAL(closed()));
+    connect(
+        &window,
+        SIGNAL(beforeRendering()),
+        this,
+        SLOT(beforeRendering()),
+        Qt::DirectConnection
+    );
+    connect(
+        &window,
+        SIGNAL(afterRendering()),
+        this,
+        SLOT(afterRendering()),
+        Qt::DirectConnection
+    );
     window.show();
 }
 
@@ -25,6 +39,24 @@ QQuickItem *WindowComponent::contentItem() const {
 }
 
 /*---------------------------------------------------------------------------*/
+
+void WindowComponent::beforeRendering() {
+    qDebug() << "WindowComponent beforeRendering exec";
+    while (!RenderSynchronizer::instance()->tryBeginRender()) {
+        QCoreApplication::processEvents();
+        QThread::msleep(40);
+    }
+    qDebug() << "WindowComponent beforeRendering resolve";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void WindowComponent::afterRendering() {
+    qDebug() << "WindowComponent afterRendering";
+    RenderSynchronizer::instance()->endRender();
+}
+
+/*****************************************************************************/
 
 WindowComponentPrivate::WindowComponentPrivate() {
     installEventFilter(this);
@@ -50,18 +82,6 @@ bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
     }*/
     return false;
 }
-
-/*****************************************************************************/
-
-/*bool WindowComponentPrivate::event(QEvent *e) {
-    eventMutex.lock();
-    if (e->type()==QEvent::Close) {
-        emit closed();
-    }
-    bool result = QQuickWindow::event(e);
-    eventMutex.unlock();
-    return result;
-}*/
 
 /*****************************************************************************/
 

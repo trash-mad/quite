@@ -12,8 +12,10 @@
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
+#include "src/ui/rendersynchronizer.h"
 #include "src/ui/components/windowcomponent.h"
 
+using namespace Quite::Ui;
 using namespace Quite::Objects;
 using namespace Quite::Ui::Components;
 
@@ -33,19 +35,9 @@ class Element : public QObject {
     Node* node;
   private:
     QQuickItem* item;
-  private:
-    bool insertAfterChildResolved=true;
-    bool appendChildResolved=true;
   public:
     Element(QUrl uri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
-
-  /*
-   * Проверяется в компоненте и, если изменения не применены, выполняется
-   * ожидание
-   */
-  public:
-    bool ready() const;
 
   /*
    * Слоты, привязываемые к контексту QML компонента
@@ -81,7 +73,7 @@ class Element : public QObject {
    * Получение элементов, собранных из нод
    */
   public:
-    void receiveSubtree(QLinkedList<Element*> child);
+    virtual void receiveSubtree(QLinkedList<Element*> child);
 
   /*
    * Обработчики сигналов ноды. Возможно, в связи с парралельной работой QML и JS
@@ -91,10 +83,11 @@ class Element : public QObject {
    *
    */
   private slots:
-    void propsChangedHandler(QMap<QString, QVariant> commitProps);
+    void propsChangedHandler(QMap<QString, QVariant> commitProps, bool merge);
     void childInsertedAfterHandler(Node* after, Node* child);
     void childDeletedHandler(QObject* child);
     void childAppendedHandler(Node* child);
+    void diffDeleteHandler();
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы

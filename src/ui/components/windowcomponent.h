@@ -7,6 +7,10 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 
+#include "src/ui/rendersynchronizer.h"
+
+using namespace Quite::Ui;
+
 namespace Quite {
 namespace Ui {
 namespace Components {
@@ -18,7 +22,6 @@ class WindowComponentPrivate : public QQuickWindow {
   public:
     WindowComponentPrivate();
   protected:
-    //virtual bool event(QEvent* e) override;
     bool eventFilter(QObject *obj, QEvent *ev) override;
   signals:
     void closed();
@@ -34,6 +37,9 @@ class WindowComponent : public QQuickItem {
     WindowComponent();
     virtual ~WindowComponent() override;
     QQuickItem* contentItem() const;
+  private slots:
+    void beforeRendering();
+    void afterRendering();
   signals:
     void closed();
 };

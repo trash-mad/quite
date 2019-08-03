@@ -24,17 +24,7 @@ class Component : public Element {
     bool diffImposible=false;
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
-    virtual ~Component();
-
-  /*
-   * Рекурсивная функция, пробегающая дочерние элементы и проверяющая
-   * состояние ready() - таким образом, выполняется синхронизация
-   * действий с Manager
-   *
-   * ВЕРОЯТНО НАДО ЗАДЕПРЕКЕЙТИТЬ, так как в рекурсивной функции список
-   * потомков элемента не потокобезопасный
-   */
-  void resolveManagerActions(Element* root);
+    virtual ~Component() override;
 
   private slots:
     void renderSubtreeHandler(Node* child);

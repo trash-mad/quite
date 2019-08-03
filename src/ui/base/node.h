@@ -9,8 +9,10 @@
 #include <QJSValueIterator>
 
 #include "src/objects/invoke.h"
+#include "src/ui/rendersynchronizer.h"
 
 using namespace Quite::Objects;
+using namespace Quite::Ui;
 
 namespace Quite {
 namespace Ui {
@@ -50,6 +52,12 @@ class Node : public QObject{
     void subscribeChildNode(Node* node);
 
   /*
+   * Отдельный слот для удаления ноды в порядке diff изменений
+   */
+  public:
+    void deleteNodeDiff();
+
+  /*
    * Слоты управления древом под-нод
    */
   public slots:
@@ -62,8 +70,8 @@ class Node : public QObject{
    * Слоты управления свойствами ноды
    */
   public slots:
-    Q_INVOKABLE void mergeProps(Node* node);
-    void commitProps();
+    void mergeProps(Node* node);
+    void commitProps(bool merge=false);
     virtual void updateContext(QJSValue context, bool recursive = true);
     void updateChildContext(QJSValue context);
 
@@ -91,7 +99,7 @@ class Node : public QObject{
    * Сигналы для прослушки со стороны Элементов
    */
   signals:
-    void propsChanged(QMap<QString, QVariant> commitProps);
+    void propsChanged(QMap<QString, QVariant> commitProps, bool merge);
     void childInsertedAfter(Node* after, Node* child);
     void childAppended(Node* child);
 
@@ -104,10 +112,12 @@ class Node : public QObject{
 
   /*
    * Управление колличеством дочерних нод
+   * Сигнал удаления с пометкой декремента diff счетчика
    */
   signals:
     void incrementTotalChildCount();
     void decrementTotalChildCount();
+    void diffDelete();
 };
 
 /*****************************************************************************/

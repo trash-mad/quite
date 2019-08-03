@@ -1,4 +1,4 @@
-QT += core qml quick quickcontrols2
+QT += core qml quick gui quickcontrols2 quickwidgets
 TARGET = quite
 TEMPLATE = app
 CONFIG += c++17
@@ -11,7 +11,8 @@ equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Q
 
 SOURCES += src/main.cpp \
     src/objects/invoke.cpp \
-    src/ui/components/windowcomponent.cpp
+    src/ui/components/windowcomponent.cpp \
+    src/ui/rendersynchronizer.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/objects/nodestruct.cpp
 SOURCES += src/ui/base/componentnode.cpp
@@ -41,7 +42,8 @@ SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h \
     src/objects/invoke.h \
-    src/ui/components/windowcomponent.h
+    src/ui/components/windowcomponent.h \
+    src/ui/rendersynchronizer.h
 HEADERS += 3rdparty/dtl/Diff.hpp
 HEADERS += 3rdparty/dtl/Diff3.hpp
 HEADERS += 3rdparty/dtl/Lcs.hpp

@@ -8,6 +8,8 @@
 #include "src/ui/base/node.h"
 
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace Quite::Ui::Base;
 

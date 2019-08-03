@@ -29,20 +29,6 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::resolveManagerActions(Element *root) {
-    while (!root->ready()) {
-        qDebug() << "Component resolveManagerActions await";
-        QCoreApplication::processEvents();
-    }
-    QLinkedList<Element*> child=root->getChild();
-    QLinkedList<Element*>::iterator iter;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        resolveManagerActions(*iter);
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
 void Component::renderSubtreeHandler(Node *child) {
     if (!diffImposible) {
         diffImposible=true;

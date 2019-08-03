@@ -12,8 +12,10 @@
 #include "src/ui/base/node.h"
 #include "3rdparty/dtl/dtl.hpp"
 #include "src/objects/nodestruct.h"
+#include "src/ui/rendersynchronizer.h"
 
 using namespace Quite::Objects;
+using namespace Quite::Ui;
 
 namespace Quite {
 namespace Ui {
@@ -33,6 +35,14 @@ class ComponentNode : public Node {
   public:
     ComponentNode(QJSEngine* eval, QJSValue instance, QJSValue render);
     virtual ~ComponentNode() override;
+
+  /*
+   * Вызов метода дождется окончания рендеринга окна и предотвратит новый,
+   * пока Element не отчитаются о применении изменений
+   */
+  private:
+    void incrementResolveCounter(QString from);
+    void resolveChanges();
 
   /*
    * Слот setState для начала обновления древа

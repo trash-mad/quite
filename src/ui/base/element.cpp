@@ -17,9 +17,9 @@ Element::Element(
     connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     connect(
         node,
-        SIGNAL(propsChanged(QMap<QString,QVariant>)),
+        SIGNAL(propsChanged(QMap<QString,QVariant>,bool)),
         this,
-        SLOT(propsChangedHandler(QMap<QString,QVariant>))
+        SLOT(propsChangedHandler(QMap<QString,QVariant>,bool))
     );
     connect(
         node,
@@ -32,6 +32,12 @@ Element::Element(
         SIGNAL(childAppended(Node*)),
         this,
         SLOT(childAppendedHandler(Node*))
+    );
+    connect(
+        node,
+        SIGNAL(diffDelete()),
+        this,
+        SLOT(diffDeleteHandler())
     );
 
     context=new QQmlContext(engine->rootContext(),this);
@@ -64,12 +70,6 @@ Element::~Element() {
 
 /*---------------------------------------------------------------------------*/
 
-bool Element::ready() const {
-    return insertAfterChildResolved&&appendChildResolved;
-}
-
-/*---------------------------------------------------------------------------*/
-
 void Element::onClick() {
     qCritical() << "Element default click handler";
 }
@@ -93,7 +93,6 @@ void Element::childInsertAfter(Node *after, Element *child) {
                 this,
                 SLOT(childDeletedHandler(QObject*))
             );
-            insertAfterChildResolved=true;
             return;
         } else {
             elemIter++;
@@ -108,7 +107,6 @@ void Element::childInsertAfter(Node *after, Element *child) {
 void Element::childAppend(Element *child) {
     qDebug() << "Element default childAppend";
     this->child.append(child);
-    appendChildResolved=true;
     child->getItem()->setParentItem(item);
     connect(
         child,
@@ -194,17 +192,26 @@ void Element::receiveSubtree(QLinkedList<Element *> child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::propsChangedHandler(QMap<QString, QVariant> commitProps) {
+void Element::propsChangedHandler(
+    QMap<QString, QVariant> commitProps,
+    bool merge
+) {
     qDebug() << "Element propsChangedHandler";
     this->props=commitProps;
-    propsChanged();
+    if (merge) {
+        propsChanged();
+        RenderSynchronizer::instance()->decrementCounter(
+            QString("Merge %1").arg(QVariant(getType()).toString())
+        );
+    } else {
+        propsChanged();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 
 void Element::childInsertedAfterHandler(Node *after, Node *child) {
     qDebug() << "Element childInsertedAfterHandler";
-    insertAfterChildResolved=false;
     emit insertAfterChild(after, child);
 }
 
@@ -224,8 +231,23 @@ void Element::childDeletedHandler(QObject* child) {
 
 void Element::childAppendedHandler(Node *child) {
     qDebug() << "Element childAppendedHandler";
-    appendChildResolved=false;
     emit appendChild(child);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::diffDeleteHandler() {
+    qDebug() << "Element diffDeleteHandler";
+    item->setParentItem(nullptr);
+    NodeType type=getType();
+    /*connect(node,&QObject::deleteLater,[type](){
+        RenderSynchronizer::instance()->decrementCounter(
+            QString("Delete %1").arg(QVariant(type).toString()
+        ));
+    });*/
+    RenderSynchronizer::instance()->decrementCounter(
+        QString("Delete %1").arg(QVariant(type).toString()
+    ));
 }
 
 /*****************************************************************************/

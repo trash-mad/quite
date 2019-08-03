@@ -25,7 +25,18 @@ void NodeStruct::printInfo(const NodeStruct& that) {
 
 QString NodeStruct::getInfo(const NodeStruct &that) {
     QStringList tmp;
+    QString nodePointer;
+
+    {
+        const void * address = static_cast<const void*>(that.node);
+        std::stringstream ss;
+        ss << address;
+        std::string name = ss.str();
+        nodePointer=QString::fromStdString(name);
+    }
+
     tmp << "NodeStruct"
+    << "node:" << nodePointer
     << "newTree:" << QVariant(that.newTree).toString()
     << "childCount" << QVariant(that.childCount).toString()
     << "type" << QVariant(that.type).toString()

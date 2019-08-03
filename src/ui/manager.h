@@ -16,6 +16,9 @@
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/rectangle.h"
 
+#include "src/ui/rendersynchronizer.h"
+
+using namespace Quite::Ui;
 using namespace Quite::Base;
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
