@@ -8,13 +8,14 @@ namespace Ui {
 Element *Manager::renderElement(Node *node, Element *parent) {
     qDebug() << "WindowManager renderComponent";
     Element* element = nullptr;
-    NodeType type = node->getType();
+    NodeType type = node->getEnumType();
 
     if (type==NodeType::ComponentType) {
          element = renderComponent(node, parent);
     } else {
         if(type==NodeType::WindowType) {
             element = new Window(node, &engine, parent);
+            connect(element,SIGNAL(windowClosed()),this,SIGNAL(closed()));
         } else if (type==NodeType::RectangleType) {
             element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
         } else if (type==NodeType::ButtonType) {
@@ -22,13 +23,26 @@ Element *Manager::renderElement(Node *node, Element *parent) {
         } else {
             qCritical() << "Manager can't render node" << type;
         }
-        element->propsChanged();
+
+        QMetaObject::invokeMethod(node, "commitProps", Qt::BlockingQueuedConnection);
     }
     connect(
         element,
-        SIGNAL(eval(Event*)),
+        SIGNAL(invoke(Invoke*)),
         this,
-        SIGNAL(eval(Event*))
+        SIGNAL(invoke(Invoke*))
+    );
+    connect(
+        element,
+        SIGNAL(insertAfterChild(Node*,Node*)),
+        this,
+        SLOT(insertAfterChildHandler(Node*,Node*))
+    );
+    connect(
+        element,
+        SIGNAL(appendChild(Node*)),
+        this,
+        SLOT(appendChildHandler(Node*))
     );
     return element;
 }
@@ -43,9 +57,9 @@ Component *Manager::renderComponent(Node* node, Element *parent) {
     );
     connect(
         component,
-        SIGNAL(updateSubtree(Node*,Component*)),
+        SIGNAL(renderSubtree(Node*)),
         this,
-        SLOT(updateSubtree(Node*,Component*))
+        SLOT(renderSubtreeHandler(Node*))
     );
     return component;
 }
@@ -72,10 +86,37 @@ Element* Manager::renderElementTree(Node *node, Element* parent) {
 
 /*---------------------------------------------------------------------------*/
 
-void Manager::updateSubtree(Node* child, Component* that) {
-    qDebug() << "WindowManager updateSubtree";
-    Element* element = static_cast<Element*>(that);
-    that->receiveSubtree(renderElementTree(child, element));
+void Manager::renderSubtreeHandler(Node *child) {
+    qDebug() << "Manager renderSubtreeHanler";
+    Component* component = qobject_cast<Component*>(QObject::sender());
+    QLinkedList<Element*> tree;
+    tree.append(renderElementTree(child,component));
+    component->receiveSubtree(tree);
+    RenderSynchronizer::instance()->decrementCounter(QString("Subtree %1").arg(
+        QVariant(child->getType()).toString()
+    ));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Manager::insertAfterChildHandler(Node *after, Node *child) {
+    qDebug() << "Manager insertAfterChildHandler";
+    Element* sender = qobject_cast<Element*>(QObject::sender());
+    sender->childInsertAfter(after, renderElementTree(child, sender));
+    RenderSynchronizer::instance()->decrementCounter(QString("Insert %1").arg(
+        QVariant(child->getType()).toString()
+    ));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Manager::appendChildHandler(Node *child) {
+    qDebug() << "Manager appendChildHandler";
+    Element* sender = qobject_cast<Element*>(QObject::sender());
+    sender->childAppend(renderElementTree(child, sender));
+    RenderSynchronizer::instance()->decrementCounter(QString("Append %1").arg(
+        QVariant(child->getType()).toString()
+    ));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -83,7 +124,6 @@ void Manager::updateSubtree(Node* child, Component* that) {
 Manager::Manager(QObject *parent)
   : QObject(parent){
     qDebug() << "Manager ctor";
-    invoker.install(&engine);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -107,8 +147,6 @@ void Manager::renderUi(Node *root) {
         rootElement = dynamic_cast<Window*>(
             renderElementTree(root)
         );
-        connect(rootElement, SIGNAL(closed()), this, SIGNAL(closed()));
-        invoker.setRoot(rootElement);
     }
 }
 

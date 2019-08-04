@@ -3,14 +3,15 @@
 
 #include <QtDebug>
 #include <QObject>
-#include <QJSValue>
+#include <QVector>
 
 #include "src/ui/base/componentnode.h"
-#include "src/monitors/bindmonitor.h"
+#include "src/objects/nodestruct.h"
 #include "src/ui/base/element.h"
+#include "3rdparty/dtl/dtl.hpp"
 
 using namespace Quite::Ui::Base;
-using namespace Quite::Monitors;
+using namespace Quite::Objects;
 
 namespace Quite {
 namespace Ui {
@@ -20,21 +21,21 @@ namespace Ui {
 class Component : public Element {
   Q_OBJECT
   private:
-    QJSValue instance;
+    bool diffImposible=false;
   public:
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
     virtual ~Component() override;
-  public slots:
-    void receiveSubtree(Element* child);
+
   private slots:
-    void requireSubtree(Node* child);
+    void renderSubtreeHandler(Node* child);
+
   signals:
-    void updateSubtree(Node* child, Component* that);
+    void renderSubtree(Node* child);
 };
 
 /*****************************************************************************/
 
 } // namespace Ui
-} // namespace Quite
+} // namespa Quite
 
 #endif // COMPONENT_H

@@ -15,16 +15,15 @@ namespace Elements {
 /******************************************************************************/
 
 class Button : public Element {
+  Q_OBJECT
   public:
     Button(Node* node, QQmlEngine* engine, Element* parent);
-    virtual ~Button();
-    virtual void invoke(
-        QString type,
-        QVariant p1,
-        QVariant p2,
-        QVariant p3,
-        QVariant p4
-    );
+    virtual ~Button() override;
+  /*
+   * Слот привязывается к контесту выполнения QML компонента в Element
+   */
+  public slots:
+    virtual void onClick() override;
 };
 
 /*****************************************************************************/

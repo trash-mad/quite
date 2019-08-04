@@ -19,11 +19,12 @@ class Invoke : public QObject {
   private:
     QJSValue func;
     QJSValue instance;
-    QJSValueList args;
+    QList<QVariant> args;
   public:
-    Invoke(QJSValue func, QJSValue instance);
+    explicit Invoke(QJSValue func=QJSValue(), QJSValue instance=QJSValue());
     virtual ~Invoke();
-    Eval* createEval(QList<QVariant> args);
+    Eval* createEval();
+    void addArgs(QList<QVariant> args);
     static bool tryCast(QVariant src, Invoke*& dst);
 };
 

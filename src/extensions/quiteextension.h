@@ -44,6 +44,7 @@ class QuiteExtension : public Extension {
         QJSValue props,
         QJSValue child
     );
+    void parseChildElement(QJSValue child, QJSValueList& arr);
   public slots:
     QJSValue render(QJSValue root);
     QJSValue createElement(
@@ -51,7 +52,12 @@ class QuiteExtension : public Extension {
         QJSValue props,
         QJSValue child1 = QJSValue(),
         QJSValue child2 = QJSValue(),
-        QJSValue child3 = QJSValue()
+        QJSValue child3 = QJSValue(),
+        QJSValue child4 = QJSValue(),
+        QJSValue child5 = QJSValue(),
+        QJSValue child6 = QJSValue(),
+        QJSValue child7 = QJSValue(),
+        QJSValue child8 = QJSValue()
     );
 };
 

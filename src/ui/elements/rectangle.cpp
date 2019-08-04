@@ -7,10 +7,13 @@ namespace Elements {
 /*****************************************************************************/
 
 Rectangle::Rectangle(Node *node, QQmlEngine *engine, Element *parent)
-  : Element(node, engine, parent) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Rectangle.qml")),
+        node,
+        engine,
+        parent
+    ) {
     qDebug() << "Rectangle ctor";
-    QQmlComponent rect(engine, ":/qml/Rectangle.qml");
-    item = qobject_cast<QQuickItem*>(rect.create());
 }
 
 /*---------------------------------------------------------------------------*/

@@ -7,10 +7,13 @@ namespace Elements {
 /*****************************************************************************/
 
 Button::Button(Node *node, QQmlEngine *engine, Element *parent)
-  : Element(node, engine, parent) {
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Button.qml")),
+        node,
+        engine,
+        parent
+    ){
     qDebug() << "Button ctor";
-    QQmlComponent rect(engine, ":/qml/Button.qml");
-    item = qobject_cast<QQuickItem*>(rect.create());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -21,29 +24,19 @@ Button::~Button() {
 
 /*---------------------------------------------------------------------------*/
 
-void Button::invoke(
-    QString type,
-    QVariant p1,
-    QVariant p2,
-    QVariant p3,
-    QVariant p4
-) {
-    if (type == "clicked") {
-        QMap<QString, QVariant> props = getProps();
-        QMap<QString, QVariant>::iterator i;
-        for(i = props.begin(); i!= props.end(); i++) {
-            if (i.key()=="onClicked") {
-                Invoke* invoke = nullptr;
-                if (Invoke::tryCast(i.value(), invoke)) {
-                    qDebug() << "emit";
-                    emit eval(invoke->createEval({}));
-                } else {
-                    qCritical() << "Button onClicked is not callable";
-                }
-            }
-        }
+void Button::onClick() {
+    QMap<QString, QVariant> props = getProps();
+    Invoke* obj = nullptr;
+    if (!props.contains("onClick")) {
+        return;
     } else {
-        Element::invoke(type, p1, p2, p3, p4);
+        QVariant callBack = props["onClick"];
+        if (Invoke::tryCast(callBack, obj)) {
+            qDebug() << "Button onClick";
+            emit invoke(obj);
+        } else {
+            qCritical() << "Button onClick not callable";
+        }
     }
 }
 

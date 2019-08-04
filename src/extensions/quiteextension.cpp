@@ -45,31 +45,66 @@ QJSValue QuiteExtension::render(QJSValue root) {
 
 /*---------------------------------------------------------------------------*/
 
+void QuiteExtension::parseChildElement(QJSValue child, QJSValueList& arr) {
+    qDebug() << "QuiteExtension parseChildElement";
+    Node* node=nullptr;
+    if (child.isUndefined()) {
+        return;
+    } else if (child.isArray()) {
+        const int length = child.property("length").toInt();
+        for (int i=0;i!=length;i++) {
+            arr.append(child.property(static_cast<uint>(i)));
+        }
+    } else {
+        if (Node::tryCastNode(child,node)) {
+            if (node->getType()==NodeType::FragmentType) {
+                QLinkedList<Node*>::iterator iter;
+                QLinkedList<Node*> nodes = node->getChild();
+                for (iter=nodes.begin();iter!=nodes.end();iter++) {
+                    arr.append(eval->newQObject(*iter));
+                }
+                return;
+            } else {
+                arr.append(child);
+            }
+        } else {
+            qCritical() << "QuiteExtension parseChildElement invalid child";
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 QJSValue QuiteExtension::createElement(
     QJSValue type,
     QJSValue props,
     QJSValue child1,
     QJSValue child2,
-    QJSValue child3
+    QJSValue child3,
+    QJSValue child4,
+    QJSValue child5,
+    QJSValue child6,
+    QJSValue child7,
+    QJSValue child8
 ) {
     qDebug() << "QuiteExtension createElement";
-    QJSValue child;
-    if(child1.isUndefined()) {
-        child = QJSValue();
-    } else if(child2.isUndefined()) {
-        child = eval->newArray(1);
-        child.setProperty(0, child1);
-    } else if(child3.isUndefined()) {
-        child = eval->newArray(2);
-        child.setProperty(0, child1);
-        child.setProperty(1, child2);
-    } else {
-        child = eval->newArray(3);
-        child.setProperty(0, child1);
-        child.setProperty(1, child2);
-        child.setProperty(2, child3);
+    QJSValueList child;
+    parseChildElement(child1, child);
+    parseChildElement(child2, child);
+    parseChildElement(child3, child);
+    parseChildElement(child4, child);
+    parseChildElement(child5, child);
+    parseChildElement(child6, child);
+    parseChildElement(child7, child);
+    parseChildElement(child8, child);
+    QJSValue arr = eval->newArray(static_cast<uint>(child.length()));
+    QJSValueList::iterator iter;
+    uint i=0;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        arr.setProperty(i,*iter);
+        i++;
     }
-    return createElementInternal(type, props, child);
+    return createElementInternal(type, props, arr);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -83,18 +118,6 @@ QJSValue QuiteExtension::createElementInternal(
     qDebug() << "QuiteExtension createElementInternal";
     if (type.isCallable()) {
         QJSValue origin = type.prototype().property("_emitterOrigin");
-
-        /*
-         * Баг в Qt5 - функции НИКОГДА не попадают в параметры
-         * перепробовал все способы...
-         */
-
-        QJSValue arg = eval->newObject();
-        arg.setProperty("test",eval->evaluate("(function(a) { return console.log(a); })"));
-        arg.setProperty("omg",1);
-        arg.property("test").call({"I am here"});
-
-        //QJSValue instance = origin.callAsConstructor({arg});
         QJSValue instance = origin.callAsConstructor({props});
         QJSValue render = instance.property("render");
         QJSValue state = instance.property("state");

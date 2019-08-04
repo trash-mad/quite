@@ -5,16 +5,19 @@ namespace Ui {
 
 /*****************************************************************************/
 
-Component::Component(ComponentNode* node, QQmlEngine *engine, Element *parent)
-  : Element(node, engine, parent) {
+Component::Component(ComponentNode* node, QQmlEngine* engine, Element* parent)
+  : Element(
+        QUrl(QStringLiteral("qrc:/qml/Component.qml")),
+        node,
+        engine,
+        parent
+    ) {
     qDebug() << "Component ctor";
-    item = new QQuickItem();
-    instance = node->getInstance();
     connect(
         node,
-        SIGNAL(childChanged(Node*)),
+        SIGNAL(renderSubtree(Node*)),
         this,
-        SLOT(requireSubtree(Node*))
+        SLOT(renderSubtreeHandler(Node*))
     );
 }
 
@@ -26,26 +29,17 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::receiveSubtree(Element* child) {
-    qDebug() << "Component receiveSubtree";
-    this->child.append(child);
-    childChanged();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Component::requireSubtree(Node *child) {
-    qDebug() << "Component emitUpdateSubtree";
-    QLinkedList<Element*>::iterator i;
-    for (i = this->child.begin(); i != this->child.end(); i++){
-        Element* element = (*i);
-        element->deleteLater();
+void Component::renderSubtreeHandler(Node *child) {
+    if (!diffImposible) {
+        diffImposible=true;
+        qInfo()
+            << "Diff rendering is impossible."
+            << "The sequence contains a list of items without a key prop";
     }
-    this->child.erase(this->child.begin(), this->child.end());
-    emit updateSubtree(child, this);
+    emit renderSubtree(child);
 }
 
 /*****************************************************************************/
 
 } // namespace Ui
-} // namespace Quite
+} // namespa Quite

@@ -5,10 +5,10 @@
 #include <QObject>
 
 #include "src/base/event.h"
+#include "src/objects/invoke.h"
 
 #include "src/ui/base/node.h"
 #include "src/ui/base/element.h"
-#include "src/ui/base/invoker.h"
 #include "src/ui/base/componentnode.h"
 
 #include "src/ui/component.h"
@@ -16,7 +16,11 @@
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/rectangle.h"
 
+#include "src/ui/rendersynchronizer.h"
+
+using namespace Quite::Ui;
 using namespace Quite::Base;
+using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
 using namespace Quite::Ui::Elements;
 
@@ -30,7 +34,6 @@ class Manager : public QObject {
   private:
     Window* rootElement = nullptr;
     QQmlEngine engine;
-    Invoker invoker;
   public:
     explicit Manager(QObject* parent = nullptr);
     virtual ~Manager();
@@ -40,11 +43,17 @@ class Manager : public QObject {
     Component* renderComponent(Node* node, Element* parent);
     Element* renderElement(Node* node, Element* parent = nullptr);
     Element* renderElementTree(Node* node, Element* parent = nullptr);
+  /*
+   * Слоты для рендеринга, запрашиваемого компонентом.
+   */
   private slots:
-    void updateSubtree(Node* child, Component* that);
+    void renderSubtreeHandler(Node* child);
+    void insertAfterChildHandler(Node* after, Node* child);
+    void appendChildHandler(Node* child);
+
   signals:
     void closed();
-    void eval(Event* e);
+    void invoke(Invoke* o);
 };
 
 /*****************************************************************************/

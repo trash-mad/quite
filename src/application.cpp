@@ -11,9 +11,15 @@ Application::Application()
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(
         &manager,
-        SIGNAL(eval(Event*)),
-        this,
-        SLOT(eval(Event*))
+        SIGNAL(invoke(Invoke*)),
+        &engine,
+        SLOT(invokeHandler(Invoke*))
+    );
+    connect(
+        &manager,
+        SIGNAL(closed()),
+        &engine,
+        SLOT(windowClosed())
     );
     connect(&engine, SIGNAL(done()), qApp, SLOT(quit()));
     engine.start();
@@ -31,11 +37,14 @@ void Application::logHandler(
     QtMsgType type,
     const QMessageLogContext &context,
     const QString &msg) {
-    (void)(context);
+    Q_UNUSED(context);
+    static QMutex mutex;
+    mutex.lock();
     if(type == QtMsgType::QtInfoMsg) {
         std::cout << msg.toStdString() << "\n";
     } else if(type == QtMsgType::QtCriticalMsg) {
         std::cout << msg.toStdString() << "\n";
+        mutex.unlock();
         abort();
     } else {
         QFile f(QDir::current().filePath("debug.txt"));
@@ -43,18 +52,23 @@ void Application::logHandler(
             QTextStream(&f) << msg << "\n";
         } else {
             std::cout << "Can't append to debug.txt";
+            mutex.unlock();
             abort();
         }
     }
+    mutex.unlock();
 }
 
 /*---------------------------------------------------------------------------*/
 
 int Application::exec(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
     qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
+    qRegisterMetaType<QVector<NodeStruct>>("QVector<NodeStruct>");
+    qmlRegisterType<WindowComponent>("WindowComponent",1,0,"WindowComponent");
     Application a;
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);
@@ -73,13 +87,6 @@ void Application::installExtension(Extension ext) {
 
 void Application::importModule(QString path) {
     QCoreApplication::postEvent(&engine, new ImportModule(path));
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Application::eval(Event *e) {
-    qDebug() << "Application eval";
-    QCoreApplication::postEvent(&engine, e);
 }
 
 /*****************************************************************************/
