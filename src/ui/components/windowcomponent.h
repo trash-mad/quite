@@ -8,9 +8,9 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 
-#include "src/ui/rendersynchronizer.h"
+#include "src/ui/base/diffcounter.h"
 
-using namespace Quite::Ui;
+using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {

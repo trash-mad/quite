@@ -36,7 +36,7 @@ ComponentNode::~ComponentNode() {
 
 void ComponentNode::incrementResolveCounter(QString from) {
     qDebug() << "ComponentNode incrementResolveCounter exec";
-    while (!RenderSynchronizer::instance()->tryIncrementCounter(from)) {
+    while (!DiffCounter::instance()->tryIncrementCounter(from)) {
         QCoreApplication::processEvents();
         QThread::msleep(50);
     }
@@ -47,7 +47,7 @@ void ComponentNode::incrementResolveCounter(QString from) {
 
 void ComponentNode::resolveChanges() {
     qDebug() << "ComponentNode resolveChanges exec";
-    while (!RenderSynchronizer::instance()->changesResolved()) {
+    while (!DiffCounter::instance()->changesResolved()) {
         QCoreApplication::processEvents();
         QThread::msleep(50);
     }

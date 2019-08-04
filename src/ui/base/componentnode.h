@@ -12,10 +12,10 @@
 #include "src/ui/base/node.h"
 #include "3rdparty/dtl/dtl.hpp"
 #include "src/objects/nodestruct.h"
-#include "src/ui/rendersynchronizer.h"
+#include "src/ui/base/diffcounter.h"
 
 using namespace Quite::Objects;
-using namespace Quite::Ui;
+using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {

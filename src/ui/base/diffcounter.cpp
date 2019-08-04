@@ -1,24 +1,25 @@
-#include "rendersynchronizer.h"
+#include "diffcounter.h"
 
 namespace Quite {
 namespace Ui {
+namespace Base {
 
 /*****************************************************************************/
 
-RenderSynchronizer::RenderSynchronizer() {
-    qDebug() << "RenderSynchronizer ctor";
+DiffCounter::DiffCounter() {
+    qDebug() << "DiffCounter ctor";
 }
 
 /*---------------------------------------------------------------------------*/
 
-RenderSynchronizer::~RenderSynchronizer() {
-    qDebug() << "RenderSynchronizer dtor";
+DiffCounter::~DiffCounter() {
+    qDebug() << "DiffCounter dtor";
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool RenderSynchronizer::tryIncrementCounter(QString from) {
-    qDebug() << "RenderSynchronizer tryIncrementCounter from"
+bool DiffCounter::tryIncrementCounter(QString from) {
+    qDebug() << "DiffCounter tryIncrementCounter from"
         << from << "counter" << resolveCounter;
     locker.lock();
     bool result;
@@ -34,12 +35,12 @@ bool RenderSynchronizer::tryIncrementCounter(QString from) {
 
 /*---------------------------------------------------------------------------*/
 
-void RenderSynchronizer::decrementCounter(QString from) {
-    qDebug() << "RenderSynchronizer decrementCounter from"
+void DiffCounter::decrementCounter(QString from) {
+    qDebug() << "DiffCounter decrementCounter from"
         <<from<<"counter"<<resolveCounter;
     locker.lock();
     if (resolveCounter==0) {
-        qCritical() << "RenderSynchronizer decrementCounter < 0";
+        qCritical() << "DiffCounter decrementCounter < 0";
     } else {
         resolveCounter--;
     }
@@ -48,8 +49,15 @@ void RenderSynchronizer::decrementCounter(QString from) {
 
 /*---------------------------------------------------------------------------*/
 
-bool RenderSynchronizer::tryBeginRender() {
-    qDebug() << "RenderSynchronizer tryBeginRender"<<resolveCounter;
+/*
+ * Будьте очень осторожны, используя эти методы! ComponentNode реализует
+ * ожидание с использованием while(true){ ... processEvents()}
+ * Как следствие, второй цикл while создаст deadlock. Чтобы избежать,
+ * применяйте в одном слоте сразу и tryBegin и end, а слот вызывайте через
+ * таймер!
+ */
+bool DiffCounter::tryBeginRender() {
+    qDebug() << "DiffCounter tryBeginRender"<<resolveCounter;
     locker.lock();
     bool result;
     if (resolveCounter==0) {
@@ -64,21 +72,21 @@ bool RenderSynchronizer::tryBeginRender() {
 
 /*---------------------------------------------------------------------------*/
 
-void RenderSynchronizer::endRender() {
-    qDebug() << "RenderSynchronizer endRender"<<resolveCounter;
+void DiffCounter::endRender() {
+    qDebug() << "DiffCounter endRender"<<resolveCounter;
     locker.lock();
     if (rendering) {
         rendering=false;
     } else {
-        qCritical() << "RenderSynchronizer render not started";
+        qCritical() << "DiffCounter render not started";
     }
     locker.unlock();
 }
 
 /*---------------------------------------------------------------------------*/
 
-bool RenderSynchronizer::changesResolved() {
-    qDebug() << "RenderSynchronizer changesResolved";
+bool DiffCounter::changesResolved() {
+    qDebug() << "DiffCounter changesResolved";
     locker.lock();
     bool result = resolveCounter==0;
     locker.unlock();
@@ -87,12 +95,13 @@ bool RenderSynchronizer::changesResolved() {
 
 /*---------------------------------------------------------------------------*/
 
-RenderSynchronizer* RenderSynchronizer::instance() {
-    static RenderSynchronizer synchr;
+DiffCounter* DiffCounter::instance() {
+    static DiffCounter synchr;
     return std::addressof(synchr);
 }
 
 /*****************************************************************************/
 
+} // namespace Base
 } // namespace Ui
 } // namespace Quite

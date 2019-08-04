@@ -166,7 +166,7 @@ void Node::mergeProps(Node *node) {
         /*
          * Рендеринг не нужен, подчищаем очередь
          */
-        RenderSynchronizer::instance()->decrementCounter(QString("Merge %1").arg(
+        DiffCounter::instance()->decrementCounter(QString("Merge %1").arg(
             QVariant(getType()).toString()
         ));
         return;

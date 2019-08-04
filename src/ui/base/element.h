@@ -12,11 +12,11 @@
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
-#include "src/ui/rendersynchronizer.h"
+#include "src/ui/base/diffcounter.h"
 #include "src/ui/components/windowcomponent.h"
 
-using namespace Quite::Ui;
 using namespace Quite::Objects;
+using namespace Quite::Ui::Base;
 using namespace Quite::Ui::Components;
 
 namespace Quite {

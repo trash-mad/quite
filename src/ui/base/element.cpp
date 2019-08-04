@@ -200,7 +200,7 @@ void Element::propsChangedHandler(
     this->props=commitProps;
     if (merge) {
         propsChanged();
-        RenderSynchronizer::instance()->decrementCounter(
+        DiffCounter::instance()->decrementCounter(
             QString("Merge %1").arg(QVariant(getType()).toString())
         );
     } else {
@@ -239,7 +239,7 @@ void Element::childAppendedHandler(Node *child) {
 void Element::diffDeleteHandler() {
     qDebug() << "Element diffDeleteHandler";
     item->setParentItem(nullptr);
-    RenderSynchronizer::instance()->decrementCounter(
+    DiffCounter::instance()->decrementCounter(
         QString("Delete %1").arg(QVariant(getType()).toString()
     ));
 }

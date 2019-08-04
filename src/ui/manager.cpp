@@ -92,7 +92,7 @@ void Manager::renderSubtreeHandler(Node *child) {
     QLinkedList<Element*> tree;
     tree.append(renderElementTree(child,component));
     component->receiveSubtree(tree);
-    RenderSynchronizer::instance()->decrementCounter(QString("Subtree %1").arg(
+    DiffCounter::instance()->decrementCounter(QString("Subtree %1").arg(
         QVariant(child->getType()).toString()
     ));
 }
@@ -103,7 +103,7 @@ void Manager::insertAfterChildHandler(Node *after, Node *child) {
     qDebug() << "Manager insertAfterChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childInsertAfter(after, renderElementTree(child, sender));
-    RenderSynchronizer::instance()->decrementCounter(QString("Insert %1").arg(
+    DiffCounter::instance()->decrementCounter(QString("Insert %1").arg(
         QVariant(child->getType()).toString()
     ));
 }
@@ -114,7 +114,7 @@ void Manager::appendChildHandler(Node *child) {
     qDebug() << "Manager appendChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childAppend(renderElementTree(child, sender));
-    RenderSynchronizer::instance()->decrementCounter(QString("Append %1").arg(
+    DiffCounter::instance()->decrementCounter(QString("Append %1").arg(
         QVariant(child->getType()).toString()
     ));
 }

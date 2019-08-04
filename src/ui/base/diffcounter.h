@@ -1,5 +1,5 @@
-#ifndef RENDERSYNCHRONIZER_H
-#define RENDERSYNCHRONIZER_H
+#ifndef DIFFCOUNTER_H
+#define DIFFCOUNTER_H
 
 #include <QtDebug>
 #include <QObject>
@@ -7,18 +7,19 @@
 
 namespace Quite {
 namespace Ui {
+namespace Base {
 
 /*****************************************************************************/
 
-class RenderSynchronizer : public QObject {
+class DiffCounter : public QObject {
   Q_OBJECT
   private:
     bool rendering=false;
     int resolveCounter=0;
     QMutex locker;
   private:
-    explicit RenderSynchronizer();
-    virtual ~RenderSynchronizer();
+    explicit DiffCounter();
+    virtual ~DiffCounter();
   public:
     bool tryIncrementCounter(QString from);
     void decrementCounter(QString from);
@@ -26,12 +27,13 @@ class RenderSynchronizer : public QObject {
     Q_DECL_DEPRECATED void endRender();
     bool changesResolved();
   public:
-    static RenderSynchronizer* instance();
+    static DiffCounter* instance();
 };
 
 /*****************************************************************************/
 
+} // namespace Base
 } // namespace Ui
 } // namespace Quite
 
-#endif // RENDERSYNCHRONIZER_H
+#endif // DIFFCOUNTER_H
