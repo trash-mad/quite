@@ -33,11 +33,10 @@ class WindowComponentPrivate : public QQuickWindow {
 class WindowComponent : public QQuickItem {
   Q_OBJECT
   private:
-    WindowComponentPrivate window;
+    WindowComponentPrivate *window;
   public:
     WindowComponent();
     virtual ~WindowComponent() override;
-    QQuickItem* contentItem() const;
   signals:
     void closed();
 };

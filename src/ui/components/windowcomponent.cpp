@@ -8,20 +8,17 @@ namespace Components {
 
 WindowComponent::WindowComponent() {
     qDebug() << "WindowComponent ctor";
-    connect(&window,SIGNAL(closed()),this,SIGNAL(closed()));
-    window.show();
+    window=new WindowComponentPrivate();
+    setParentItem(window->contentItem());
+    connect(window,SIGNAL(closed()),this,SIGNAL(closed()));
+    window->show();
 }
 
 /*---------------------------------------------------------------------------*/
 
 WindowComponent::~WindowComponent() {
     qDebug() << "WindowComponent dtor";
-}
-
-/*---------------------------------------------------------------------------*/
-
-QQuickItem *WindowComponent::contentItem() const {
-    return window.contentItem();
+    window->deleteLater();
 }
 
 /*****************************************************************************/

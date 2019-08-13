@@ -17,7 +17,13 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
     if(parent!=nullptr) {
         qCritical() << "Window parent must be nullptr";
     } else {
-        return;
+        WindowComponent* window = qobject_cast<WindowComponent*>(getItem());
+        connect(
+            window,
+            SIGNAL(closed()),
+            this,
+            SIGNAL(closed())
+        );
     }
 }
 

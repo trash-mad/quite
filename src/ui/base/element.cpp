@@ -46,19 +46,7 @@ Element::Element(
     QQmlComponent component(engine, uri);
     QObject* object=component.beginCreate(context);
     component.completeCreate();
-
-    WindowComponent* window = qobject_cast<WindowComponent*>(object);
-    if (window==nullptr) {
-        item=qobject_cast<QQuickItem*>(object);
-    } else {
-        item=window->contentItem();
-        connect(
-            window,
-            SIGNAL(closed()),
-            this,
-            SIGNAL(windowClosed())
-        );
-    }
+    item=qobject_cast<QQuickItem*>(object);
 }
 
 /*---------------------------------------------------------------------------*/

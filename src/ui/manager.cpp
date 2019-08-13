@@ -9,22 +9,31 @@ Element *Manager::renderElement(Node *node, Element *parent) {
     qDebug() << "WindowManager renderComponent";
     Element* element = nullptr;
     NodeType type = node->getEnumType();
-
     if (type==NodeType::ComponentType) {
          element = renderComponent(node, parent);
+    } else if (type==NodeType::WindowType) {
+        element = renderWindow(node, parent);
     } else {
-        if(type==NodeType::WindowType) {
-            element = new Window(node, &engine, parent);
-            connect(element,SIGNAL(windowClosed()),this,SIGNAL(closed()));
-        } else if (type==NodeType::RectangleType) {
-            element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
-        } else if (type==NodeType::ButtonType) {
-            element = new Button(node, &engine, parent);
-        } else {
-            qCritical() << "Manager can't render node" << type;
+        switch (type) {
+            case NodeType::RectangleType:
+                element = new Quite::Ui::Elements::Rectangle(
+                    node,
+                    &engine,
+                    parent
+                );
+                break;
+            case NodeType::ButtonType:
+                element = new Button(node, &engine, parent);
+                break;
+            default:
+                qCritical() << "Manager can't render node" << type;
         }
 
-        QMetaObject::invokeMethod(node, "commitProps", Qt::BlockingQueuedConnection);
+        QMetaObject::invokeMethod(
+            node,
+            "commitProps",
+            Qt::BlockingQueuedConnection
+        );
     }
     connect(
         element,
@@ -62,6 +71,19 @@ Component *Manager::renderComponent(Node* node, Element *parent) {
         SLOT(renderSubtreeHandler(Node*))
     );
     return component;
+}
+
+/*---------------------------------------------------------------------------*/
+
+Window* Manager::renderWindow(Node *node, Element *parent) {
+    Window* window = new Window(node, &engine, parent);
+    connect(
+        window,
+        SIGNAL(closed()),
+        this,
+        SIGNAL(closed())
+    );
+    return window;
 }
 
 /*---------------------------------------------------------------------------*/

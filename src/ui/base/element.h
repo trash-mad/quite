@@ -13,11 +13,9 @@
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
 #include "src/ui/base/diffcounter.h"
-#include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
-using namespace Quite::Ui::Components;
 
 namespace Quite {
 namespace Ui {
@@ -96,7 +94,6 @@ class Element : public QObject {
     void insertAfterChild(Node* after, Node* child);
     void appendChild(Node* child);
     void invoke(Invoke* method);
-    void windowClosed();
 };
 
 /*****************************************************************************/

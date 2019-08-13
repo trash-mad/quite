@@ -6,8 +6,10 @@
 #include <QVariant>
 
 #include "src/ui/base/element.h"
+#include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Ui::Base;
+using namespace Quite::Ui::Components;
 
 namespace Quite {
 namespace Ui {
@@ -20,6 +22,8 @@ class Window : public Element {
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
+  signals:
+    void closed();
 };
 
 /*****************************************************************************/
