@@ -5,7 +5,6 @@
  * file in the root directory of this source tree.
  */
 #include "Yoga.h"
-#include "log.h"
 #include <float.h>
 #include <string.h>
 #include <algorithm>
@@ -14,7 +13,6 @@
 #include "YGNode.h"
 #include "YGNodePrint.h"
 #include "Yoga-internal.h"
-#include "event/event.h"
 #include "instrumentation.h"
 #ifdef _MSC_VER
 #include <float.h>
@@ -28,7 +26,6 @@ __forceinline const float fmaxf(const float a, const float b) {
 #endif
 
 using namespace facebook::yoga;
-using detail::Log;
 
 #ifdef ANDROID
 static int YGAndroidLog(
@@ -213,8 +210,6 @@ WIN_EXPORT YGNodeRef YGNodeNewWithConfig(const YGConfigRef config) {
   const YGNodeRef node = new YGNode{config};
   YGAssertWithConfig(
       config, node != nullptr, "Could not allocate memory for node");
-  Event::publish<Event::NodeAllocation>(node, {config});
-
   return node;
 }
 
@@ -233,7 +228,6 @@ YGNodeRef YGNodeClone(YGNodeRef oldNode) {
       oldNode->getConfig(),
       node != nullptr,
       "Could not allocate memory for node");
-  Event::publish<Event::NodeAllocation>(node, {node->getConfig()});
   node->setOwner(nullptr);
   return node;
 }
@@ -252,7 +246,6 @@ static YGNodeRef YGNodeDeepClone(YGNodeRef oldNode) {
   auto config = YGConfigClone(*oldNode->getConfig());
   auto node = new YGNode{*oldNode, config};
   node->setOwner(nullptr);
-  Event::publish<Event::NodeAllocation>(node, {node->getConfig()});
 
   YGVector vec = YGVector();
   vec.reserve(oldNode->getChildren().size());
@@ -280,7 +273,6 @@ void YGNodeFree(const YGNodeRef node) {
   }
 
   node->clearChildren();
-  Event::publish<Event::NodeDeallocation>(node, {node->getConfig()});
   delete node;
 }
 
@@ -1629,7 +1621,6 @@ static void YGNodeWithMeasureFuncSetMeasuredDimensions(
             ownerWidth),
         YGDimensionHeight);
   } else {
-    Event::publish<Event::MeasureCallbackStart>(node);
 
     // Measure the text under the current constraints.
     const YGSize measuredSize = marker::MarkerSection<YGMarkerMeasure>::wrap(
@@ -1642,16 +1633,6 @@ static void YGNodeWithMeasureFuncSetMeasuredDimensions(
         layoutContext);
 
     layoutMarkerData.measureCallbacks += 1;
-
-    Event::publish<Event::MeasureCallbackEnd>(
-        node,
-        {layoutContext,
-         innerWidth,
-         widthMeasureMode,
-         innerHeight,
-         heightMeasureMode,
-         measuredSize.width,
-         measuredSize.height});
 
     node->setLayoutMeasuredDimension(
         YGNodeBoundAxis(
@@ -3811,48 +3792,11 @@ bool YGLayoutNodeInternal(
                    : layoutMarkerData.cachedMeasures) += 1;
 
     if (gPrintChanges && gPrintSkips) {
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "%s%d.{[skipped] ",
-          YGSpacer(depth),
-          depth);
       node->print(layoutContext);
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "wm: %s, hm: %s, aw: %f ah: %f => d: (%f, %f) %s\n",
-          YGMeasureModeName(widthMeasureMode, performLayout),
-          YGMeasureModeName(heightMeasureMode, performLayout),
-          availableWidth,
-          availableHeight,
-          cachedResults->computedWidth,
-          cachedResults->computedHeight,
-          reason);
     }
   } else {
     if (gPrintChanges) {
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "%s%d.{%s",
-          YGSpacer(depth),
-          depth,
-          needToVisitNode ? "*" : "");
       node->print(layoutContext);
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "wm: %s, hm: %s, aw: %f ah: %f %s\n",
-          YGMeasureModeName(widthMeasureMode, performLayout),
-          YGMeasureModeName(heightMeasureMode, performLayout),
-          availableWidth,
-          availableHeight,
-          reason);
     }
 
     YGNodelayoutImpl(
@@ -3872,25 +3816,7 @@ bool YGLayoutNodeInternal(
         generationCount);
 
     if (gPrintChanges) {
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "%s%d.}%s",
-          YGSpacer(depth),
-          depth,
-          needToVisitNode ? "*" : "");
       node->print(layoutContext);
-      Log::log(
-          node,
-          YGLogLevelVerbose,
-          nullptr,
-          "wm: %s, hm: %s, d: (%f, %f) %s\n",
-          YGMeasureModeName(widthMeasureMode, performLayout),
-          YGMeasureModeName(heightMeasureMode, performLayout),
-          layout->measuredDimensions[YGDimensionWidth],
-          layout->measuredDimensions[YGDimensionHeight],
-          reason);
     }
 
     layout->lastOwnerDirection = ownerDirection;
@@ -3902,9 +3828,6 @@ bool YGLayoutNodeInternal(
             layout->nextCachedMeasurementsIndex + 1;
       }
       if (layout->nextCachedMeasurementsIndex == YG_MAX_CACHED_RESULT_COUNT) {
-        if (gPrintChanges) {
-          Log::log(node, YGLogLevelVerbose, nullptr, "Out of cache entries!\n");
-        }
         layout->nextCachedMeasurementsIndex = 0;
       }
 
@@ -3943,18 +3866,6 @@ bool YGLayoutNodeInternal(
   }
 
   layout->generationCount = generationCount;
-
-  LayoutType layoutType;
-  if (performLayout) {
-    layoutType = !needToVisitNode && cachedResults == &layout->cachedLayout
-        ? LayoutType::kCachedLayout
-        : LayoutType::kLayout;
-  } else {
-    layoutType = cachedResults != nullptr ? LayoutType::kCachedMeasure
-                                          : LayoutType::kMeasure;
-  }
-  Event::publish<Event::NodeLayout>(node, {layoutType, layoutContext});
-
   return (needToVisitNode || cachedResults == nullptr);
 }
 
@@ -4062,7 +3973,6 @@ void YGNodeCalculateLayoutWithContext(
     const YGDirection ownerDirection,
     void* layoutContext) {
 
-  Event::publish<Event::LayoutPassStart>(node, {layoutContext});
   marker::MarkerSection<YGMarkerLayout> marker{node};
 
   // Increment the generation count. This will force the recursive routine to
@@ -4142,7 +4052,6 @@ void YGNodeCalculateLayoutWithContext(
   }
 
   marker.end();
-  Event::publish<Event::LayoutPassEnd>(node, {layoutContext, &marker.data});
 
   // We want to get rid off `useLegacyStretchBehaviour` from YGConfig. But we
   // aren't sure whether client's of yoga have gotten rid off this flag or not.
@@ -4237,7 +4146,8 @@ void YGConfigSetShouldDiffLayoutWithoutLegacyStretchBehaviour(
 
 void YGAssert(const bool condition, const char* message) {
   if (!condition) {
-    Log::log(YGNodeRef{nullptr}, YGLogLevelFatal, nullptr, "%s\n", message);
+    printf("YGAssert");
+    abort();
   }
 }
 
@@ -4246,7 +4156,8 @@ void YGAssertWithNode(
     const bool condition,
     const char* message) {
   if (!condition) {
-    Log::log(node, YGLogLevelFatal, nullptr, "%s\n", message);
+      printf("YGAssert");
+      abort();
   }
 }
 
@@ -4255,7 +4166,8 @@ void YGAssertWithConfig(
     const bool condition,
     const char* message) {
   if (!condition) {
-    Log::log(config, YGLogLevelFatal, nullptr, "%s\n", message);
+      printf("YGAssert");
+      abort();
   }
 }
 
