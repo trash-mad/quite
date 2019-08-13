@@ -25,9 +25,9 @@ class FlexNode : public QObject {
     FlexNode(QQuickItem* item);
     virtual ~FlexNode();
   public:
+    void calculateLayoutLtr();
     void appendChild(FlexNode* child);
-    void calculateLayoutRtl(int width, int height);
-    void calculateLayoutLtr(int width, int height);
+    Q_DECL_DEPRECATED void calculateLayoutRtl();
   private:
     void parseFlexDirection(QString direction);
     void parseJustifyContent(QString justify);
@@ -37,6 +37,8 @@ class FlexNode : public QObject {
     void parseDisplay(QString display);
     void parseFlexWrap(QString wrap);
     void parseOtherProps();
+  private:
+    void commitNewPos();
   public:
     /* flex */
     int getFlexGrow();

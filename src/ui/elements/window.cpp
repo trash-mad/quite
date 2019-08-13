@@ -41,13 +41,27 @@ Window::~Window() {
 
 /*---------------------------------------------------------------------------*/
 
+FlexNode *Window::buildFlexTree(Element *current) {
+    FlexNode* node = new FlexNode(current->getItem());
+    QLinkedList<Element*> child=current->getChild();
+    QLinkedList<Element*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        node->appendChild(buildFlexTree(*iter));
+    }
+    return node;
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Window::updateFlexLayout() {
-    qDebug() << "Window updateFlexLayout";
-    if (DiffCounter::instance()->changesResolved()) {
-        qDebug() << "Window updateFlexLayout update";
-        //todo: resize
+    qInfo() << "Window updateFlexLayout";
+    if (!DiffCounter::instance()->changesResolved()) {
+        qInfo() << "Window updateFlexLayout not ready";
     } else {
-        return;
+        qInfo() << "Window updateFlexLayout ready";
+        //FlexNode* rootNode = buildFlexTree(this);
+        //rootNode->calculateLayoutLtr();
+        //rootNode->deleteLater();
     }
 }
 

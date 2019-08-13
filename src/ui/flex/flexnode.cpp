@@ -9,6 +9,7 @@ namespace Flex {
 FlexNode::FlexNode(QQuickItem* item)
   : QObject (nullptr) {
     qDebug() << "FlexNode ctor";
+    node = YGNodeNew();
     this->item=item;
     parseJustifyContent(item->property("justifyContent").toString());
     parseFlexDirection(item->property("flexDirection").toString());
@@ -24,6 +25,7 @@ FlexNode::FlexNode(QQuickItem* item)
 
 FlexNode::~FlexNode() {
     qDebug() << "FlexNode dtor";
+    YGNodeFree(node);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -187,6 +189,19 @@ void FlexNode::parseOtherProps() {
     setPaddingBottom(item->property("paddingBottom").toInt());
     setHeight(item->property("height").toInt());
     setWidth(item->property("width").toInt());
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::commitNewPos() {
+    item->setY(getLayoutTop());
+    item->setX(getLayoutLeft());
+    item->setHeight(getLayoutHeight());
+    item->setWidth(getLayoutWidth());
+    QLinkedList<FlexNode*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        (*iter)->commitNewPos();
+    }
 }
 
 /*****************************************************************************/
@@ -622,24 +637,26 @@ void FlexNode::setPaddingBottom(int point) {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::calculateLayoutLtr(int width, int height) {
+void FlexNode::calculateLayoutLtr() {
     YGNodeCalculateLayout(
         node,
-        static_cast<float>(width),
-        static_cast<float>(height),
+        static_cast<float>(getWidth()),
+        static_cast<float>(getHeight()),
         YGDirectionLTR
     );
+    commitNewPos();
 }
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::calculateLayoutRtl(int width, int height) {
+void FlexNode::calculateLayoutRtl() {
     YGNodeCalculateLayout(
         node,
-        static_cast<float>(width),
-        static_cast<float>(height),
+        static_cast<float>(getWidth()),
+        static_cast<float>(getHeight()),
         YGDirectionRTL
     );
+    commitNewPos();
 }
 
 /*---------------------------------------------------------------------------*/
