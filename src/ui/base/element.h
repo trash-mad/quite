@@ -14,6 +14,8 @@
 #include "src/objects/invoke.h"
 #include "src/ui/base/diffcounter.h"
 
+#include <limits>
+
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
 

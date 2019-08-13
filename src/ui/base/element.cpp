@@ -45,6 +45,31 @@ Element::Element(
 
     QQmlComponent component(engine, uri);
     QObject* object=component.beginCreate(context);
+
+    component.setProperty("height", 0);
+    component.setProperty("width", 0);
+    component.setProperty("minHeight", 0);
+    component.setProperty("minWidth", 0);
+    component.setProperty("maxHeight", INT_MAX);
+    component.setProperty("maxWidth", INT_MAX);
+    component.setProperty("flexShrink", 0);
+    component.setProperty("flexGrow", 0);
+    component.setProperty("marginTop", 0);
+    component.setProperty("marginLeft", 0);
+    component.setProperty("marginRight", 0);
+    component.setProperty("marginBottom", 0);
+    component.setProperty("paddingTop", 0);
+    component.setProperty("paddingLeft", 0);
+    component.setProperty("paddingRight", 0);
+    component.setProperty("paddingBottom", 0);
+    component.setProperty("alignSelf", "auto");
+    component.setProperty("alignItems", "auto");
+    component.setProperty("alignContent", "auto");
+    component.setProperty("display", "flex");
+    component.setProperty("flexWrap", "noWrap");
+    component.setProperty("flexDirection", "row");
+    component.setProperty("justifyContent", "spaceBetween");
+
     component.completeCreate();
     item=qobject_cast<QQuickItem*>(object);
 }

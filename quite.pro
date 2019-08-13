@@ -9,7 +9,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp
+SOURCES += src/main.cpp \
+    src/ui/flex/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
 SOURCES += src/ui/components/windowcomponent.cpp
@@ -40,7 +41,8 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h
+HEADERS += src/base/engine.h \
+    src/ui/flex/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
 HEADERS += src/ui/components/windowcomponent.h
