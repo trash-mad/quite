@@ -6,6 +6,7 @@
 #include <QVariant>
 
 #include "src/ui/base/element.h"
+#include "src/ui/base/diffcounter.h"
 #include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Ui::Base;
@@ -22,6 +23,14 @@ class Window : public Element {
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
+
+  /*
+   * Слот для изменения компоновки флексбокс при обновлении дочерних
+   * элементов
+   */
+  private slots:
+    void updateFlexLayout();
+
   signals:
     void closed();
 };

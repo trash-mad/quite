@@ -24,6 +24,12 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
             this,
             SIGNAL(closed())
         );
+        connect(
+            this,
+            SIGNAL(update()),
+            this,
+            SLOT(updateFlexLayout())
+        );
     }
 }
 
@@ -31,6 +37,18 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
 
 Window::~Window() {
     qDebug() << "Window dtor";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Window::updateFlexLayout() {
+    qDebug() << "Window updateFlexLayout";
+    if (DiffCounter::instance()->changesResolved()) {
+        qDebug() << "Window updateFlexLayout update";
+        //todo: resize
+    } else {
+        return;
+    }
 }
 
 /*****************************************************************************/

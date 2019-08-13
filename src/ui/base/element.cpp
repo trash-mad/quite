@@ -81,6 +81,13 @@ void Element::childInsertAfter(Node *after, Element *child) {
                 this,
                 SLOT(childDeletedHandler(QObject*))
             );
+            connect(
+                child,
+                SIGNAL(update()),
+                this,
+                SIGNAL(update())
+            );
+            emit update();
             return;
         } else {
             elemIter++;
@@ -102,6 +109,13 @@ void Element::childAppend(Element *child) {
         this,
         SLOT(childDeletedHandler(QObject*))
     );
+    connect(
+        child,
+        SIGNAL(update()),
+        this,
+        SIGNAL(update())
+    );
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -109,6 +123,13 @@ void Element::childAppend(Element *child) {
 void Element::childDeleted(Element *child) {
     qDebug() << "Element default childDeleted";
     this->child.removeOne(child);
+    disconnect(
+        child,
+        SIGNAL(update()),
+        this,
+        SIGNAL(update())
+    );
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -125,7 +146,14 @@ void Element::childChanged() {
             this,
             SLOT(childDeletedHandler(QObject*))
         );
+        connect(
+            element,
+            SIGNAL(update()),
+            this,
+            SIGNAL(update())
+        );
     }
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -138,6 +166,7 @@ void Element::propsChanged() {
         QVariant value = i.value();
         item->setProperty(name.toStdString().c_str(), value);
     }
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/

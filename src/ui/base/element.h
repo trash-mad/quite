@@ -94,6 +94,12 @@ class Element : public QObject {
     void insertAfterChild(Node* after, Node* child);
     void appendChild(Node* child);
     void invoke(Invoke* method);
+
+  /*
+   * Сигнал для уведомления о изменении свойств/потомков
+   */
+  signals:
+    void update();
 };
 
 /*****************************************************************************/
