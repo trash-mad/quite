@@ -65,11 +65,11 @@ FlexNode *Window::buildFlexTree(Element *current) {
 /*---------------------------------------------------------------------------*/
 
 void Window::updateFlexLayout() {
-    qInfo() << "Window updateFlexLayout";
+    qDebug() << "Window updateFlexLayout";
     if (!DiffCounter::instance()->changesResolved()) {
-        qInfo() << "Window updateFlexLayout not ready";
+        qDebug() << "Window updateFlexLayout not ready";
     } else {
-        qInfo() << "Window updateFlexLayout ready";
+        qDebug() << "Window updateFlexLayout ready";
         FlexNode* rootNode = buildFlexTree(this);
         rootNode->printTree();
         rootNode->buildTree();

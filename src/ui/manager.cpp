@@ -28,13 +28,12 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             default:
                 qCritical() << "Manager can't render node" << type;
         }
-
-        QMetaObject::invokeMethod(
-            node,
-            "commitProps",
-            Qt::BlockingQueuedConnection
-        );
     }
+    QMetaObject::invokeMethod(
+        node,
+        "commitProps",
+        Qt::BlockingQueuedConnection
+    );
     connect(
         element,
         SIGNAL(invoke(Invoke*)),
@@ -169,6 +168,7 @@ void Manager::renderUi(Node *root) {
         rootElement = dynamic_cast<Window*>(
             renderElementTree(root)
         );
+        //rootElement->propsChanged();
     }
 }
 

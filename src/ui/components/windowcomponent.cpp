@@ -13,8 +13,8 @@ WindowComponent::WindowComponent() {
     connect(window,SIGNAL(closed()),this,SIGNAL(closed()));
     connect(window,SIGNAL(resize(int,int)),this,SLOT(resizeHandler(int,int)));
     window->show();
-    setProperty("height",window->size().height());
-    setProperty("width",window->size().width());
+    setProperty("height", window->size().height());
+    setProperty("width", window->size().width());
 }
 
 /*---------------------------------------------------------------------------*/

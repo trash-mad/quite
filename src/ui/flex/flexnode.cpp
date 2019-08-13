@@ -50,17 +50,17 @@ void FlexNode::printTree() {
 
 QString FlexNode::nodeInfo() {
     return (QStringList()
-        << item->property("justifyContent").toString()
-        << item->property("flexDirection").toString()
-        << item->property("alignContent").toString()
-        << item->property("alignItems").toString()
-        << item->property("alignSelf").toString()
-        << item->property("flexWrap").toString()
-        << item->property("display").toString()
-        << item->property("minHeight").toString()
-        << item->property("minWidth").toString()
-        << item->property("maxHeight").toString()
-        << item->property("maxWidth").toString()
+        << "justifyContent: " << item->property("justifyContent").toString()
+        << "flexDirection: " << item->property("flexDirection").toString()
+        << "alignContent: " << item->property("alignContent").toString()
+        << "alignItems: " << item->property("alignItems").toString()
+        << "alignSelf: " << item->property("alignSelf").toString()
+        << "alignSelf: " << item->property("flexWrap").toString()
+        << "display: " << item->property("display").toString()
+        << "minHeight: " << item->property("minHeight").toString()
+        << "minWidth: " << item->property("minWidth").toString()
+        << "maxHeight: " << item->property("maxHeight").toString()
+        << "maxWidth: " << item->property("maxWidth").toString()
     ).join(" ");
 }
 
@@ -251,6 +251,7 @@ void FlexNode::parseOtherProps() {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::commitNewPos() {
+    qInfo() << "FlexNode commitNewPos";
     int top = getLayoutTop();
     int bottom = getLayoutBottom();
     int left = getLayoutLeft();
