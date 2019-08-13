@@ -6,6 +6,7 @@
 #include <QtDebug>
 #include <QObject>
 #include <QQuickItem>
+#include <QResizeEvent>
 #include <QQuickWindow>
 
 #include "src/ui/base/diffcounter.h"
@@ -26,6 +27,7 @@ class WindowComponentPrivate : public QQuickWindow {
     bool eventFilter(QObject *obj, QEvent *ev) override;
   signals:
     void closed();
+    void resize(int height, int width);
 };
 
 /*****************************************************************************/
@@ -37,8 +39,11 @@ class WindowComponent : public QQuickItem {
   public:
     WindowComponent();
     virtual ~WindowComponent() override;
+  private slots:
+    void resizeHandler(int height, int width);
   signals:
     void closed();
+    void resize();
 };
 
 /*****************************************************************************/

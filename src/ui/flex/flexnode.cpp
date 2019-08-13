@@ -30,10 +30,67 @@ FlexNode::~FlexNode() {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::printTree() {
+    static int space=0;
+    QStringList line;
+    for (int i=space;i!=0;i--) {
+        line.append(" ");
+    }
+    line.append(nodeInfo());
+    qInfo() << line.join("");
+    space+=2;
+    QLinkedList<FlexNode*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        (*iter)->printTree();
+    }
+    space-=2;
+}
+
+/*---------------------------------------------------------------------------*/
+
+QString FlexNode::nodeInfo() {
+    return (QStringList()
+        << item->property("justifyContent").toString()
+        << item->property("flexDirection").toString()
+        << item->property("alignContent").toString()
+        << item->property("alignItems").toString()
+        << item->property("alignSelf").toString()
+        << item->property("flexWrap").toString()
+        << item->property("display").toString()
+        << item->property("minHeight").toString()
+        << item->property("minWidth").toString()
+        << item->property("maxHeight").toString()
+        << item->property("maxWidth").toString()
+    ).join(" ");
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::buildTree() {
+    std::vector<YGNodeRef> tmp(static_cast<unsigned long>(childCount));
+    QLinkedList<FlexNode*>::iterator iter;
+    int index=0;
+    for (iter=child.begin();iter!=child.end();iter++,index++) {
+        FlexNode* item = *iter;
+        tmp[static_cast<unsigned long>(index)]=item->getNode();
+        item->buildTree();
+    }
+    YGNodeSetChildren(node,tmp);
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::appendChild(FlexNode *child) {
     qDebug() << "FlexNode appendChild";
+    childCount++;
     this->child.append(child);
     child->setParent(this);
+}
+
+/*---------------------------------------------------------------------------*/
+
+YGNodeRef FlexNode::getNode() const {
+    return node;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -194,14 +251,23 @@ void FlexNode::parseOtherProps() {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::commitNewPos() {
-    item->setY(getLayoutTop());
-    item->setX(getLayoutLeft());
-    item->setHeight(getLayoutHeight());
-    item->setWidth(getLayoutWidth());
-    QLinkedList<FlexNode*>::iterator iter;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitNewPos();
-    }
+    int top = getLayoutTop();
+    int bottom = getLayoutBottom();
+    int left = getLayoutLeft();
+    int right = getLayoutRight();
+    int height = getLayoutHeight();
+    int width = getLayoutWidth();
+    qInfo() << "FlexNode commitNewPos"
+        << " top: " << top
+        << " left: " << left
+        << " right: " << right
+        << " bottom: " << bottom
+        << " height: " << height
+        << " width: " << width;
+    item->setY(top);
+    item->setX(left);
+    item->setHeight(height);
+    item->setWidth(width);
 }
 
 /*****************************************************************************/
@@ -645,6 +711,10 @@ void FlexNode::calculateLayoutLtr() {
         YGDirectionLTR
     );
     commitNewPos();
+    QLinkedList<FlexNode*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        (*iter)->calculateLayoutLtr();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -657,12 +727,45 @@ void FlexNode::calculateLayoutRtl() {
         YGDirectionRTL
     );
     commitNewPos();
+    QLinkedList<FlexNode*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        (*iter)->calculateLayoutRtl();
+    }
 }
 
 /*---------------------------------------------------------------------------*/
 
 int FlexNode::getLayoutHeight() {
     return static_cast<int>(YGNodeLayoutGetHeight(node));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::initDefaultProps(QObject *object) {
+    qDebug() << "FlexNode initDefaultProps";
+    object->setProperty("height", 0);
+    object->setProperty("width", 0);
+    object->setProperty("minHeight", 0);
+    object->setProperty("minWidth", 0);
+    object->setProperty("maxHeight", INT_MAX);
+    object->setProperty("maxWidth", INT_MAX);
+    object->setProperty("flexShrink", 0);
+    object->setProperty("flexGrow", 0);
+    object->setProperty("marginTop", 0);
+    object->setProperty("marginLeft", 0);
+    object->setProperty("marginRight", 0);
+    object->setProperty("marginBottom", 0);
+    object->setProperty("paddingTop", 0);
+    object->setProperty("paddingLeft", 0);
+    object->setProperty("paddingRight", 0);
+    object->setProperty("paddingBottom", 0);
+    object->setProperty("alignSelf", "auto");
+    object->setProperty("alignItems", "auto");
+    object->setProperty("alignContent", "auto");
+    object->setProperty("display", "flex");
+    object->setProperty("flexWrap", "noWrap");
+    object->setProperty("flexDirection", "row");
+    object->setProperty("justifyContent", "spaceBetween");
 }
 
 /*---------------------------------------------------------------------------*/

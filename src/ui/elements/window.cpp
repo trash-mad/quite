@@ -30,6 +30,17 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
             this,
             SLOT(updateFlexLayout())
         );
+        connect(
+            window,
+            SIGNAL(resize()),
+            this,
+            SLOT(updateFlexLayout())
+        );
+        /*
+         * Default props place
+         */
+        //window->setProperty("alignItems","center");
+        //window->setProperty("justifyContent","center");
     }
 }
 
@@ -59,9 +70,11 @@ void Window::updateFlexLayout() {
         qInfo() << "Window updateFlexLayout not ready";
     } else {
         qInfo() << "Window updateFlexLayout ready";
-        //FlexNode* rootNode = buildFlexTree(this);
-        //rootNode->calculateLayoutLtr();
-        //rootNode->deleteLater();
+        FlexNode* rootNode = buildFlexTree(this);
+        rootNode->printTree();
+        rootNode->buildTree();
+        rootNode->calculateLayoutLtr();
+        rootNode->deleteLater();
     }
 }
 

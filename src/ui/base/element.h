@@ -12,12 +12,12 @@
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
+#include "src/ui/flex/flexnode.h"
 #include "src/ui/base/diffcounter.h"
-
-#include <limits>
 
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
+using namespace Quite::Ui::Flex;
 
 namespace Quite {
 namespace Ui {

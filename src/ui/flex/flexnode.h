@@ -6,6 +6,9 @@
 #include <QQuickItem>
 #include <QLinkedList>
 
+#include <limits>
+#include <vector>
+
 #include "3rdparty/yoga/Yoga.h"
 
 namespace Quite {
@@ -21,13 +24,19 @@ class FlexNode : public QObject {
   private:
     QQuickItem* item;
     QLinkedList<FlexNode*> child;
+    int childCount=0;
   public:
     FlexNode(QQuickItem* item);
     virtual ~FlexNode();
   public:
+    void printTree();
+    QString nodeInfo();
+    void buildTree();
     void calculateLayoutLtr();
+    void calculateLayoutRtl();
     void appendChild(FlexNode* child);
-    Q_DECL_DEPRECATED void calculateLayoutRtl();
+  public:
+    YGNodeRef getNode() const;
   private:
     void parseFlexDirection(QString direction);
     void parseJustifyContent(QString justify);
@@ -130,6 +139,9 @@ class FlexNode : public QObject {
     int getLayoutWidth();
     int getLayoutBottom();
     int getLayoutHeight();
+
+  public:
+    static void initDefaultProps(QObject* object);
 };
 
 /*****************************************************************************/
