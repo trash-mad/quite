@@ -171,7 +171,6 @@ void Element::propsChanged() {
         QVariant value = i.value();
         item->setProperty(name.toStdString().c_str(), value);
     }
-    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -225,6 +224,7 @@ void Element::propsChangedHandler(
         DiffCounter::instance()->decrementCounter(
             QString("Merge %1").arg(QVariant(getType()).toString())
         );
+        emit update();
     } else {
         propsChanged();
     }

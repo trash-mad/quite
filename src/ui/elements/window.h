@@ -29,10 +29,16 @@ class Window : public Element {
     FlexNode* buildFlexTree(Element* current);
 
   /*
+   * Подписывается на сигнал обновления и выполняет первую рисовку
+   */
+  public:
+    void startFlexLayout();
+
+  /*
    * Слот для изменения компоновки флексбокс при обновлении дочерних
    * элементов
    */
-  public slots:
+  private slots:
     void updateFlexLayout();
 
   signals:

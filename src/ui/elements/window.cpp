@@ -64,6 +64,12 @@ FlexNode *Window::buildFlexTree(Element *current) {
 
 /*---------------------------------------------------------------------------*/
 
+void Window::startFlexLayout() {
+    qDebug() << "Window startFlexLayout";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Window::updateFlexLayout() {
     qDebug() << "Window updateFlexLayout";
     if (!DiffCounter::instance()->changesResolved()) {

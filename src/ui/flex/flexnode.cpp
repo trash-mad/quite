@@ -61,6 +61,8 @@ QString FlexNode::nodeInfo() {
         << "minWidth: " << item->property("minWidth").toString()
         << "maxHeight: " << item->property("maxHeight").toString()
         << "maxWidth: " << item->property("maxWidth").toString()
+        << "height: " << item->property("height").toString()
+        << "width: " << item->property("width").toString()
     ).join(" ");
 }
 
