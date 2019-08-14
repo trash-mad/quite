@@ -253,7 +253,6 @@ void FlexNode::parseOtherProps() {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::commitNewPos() {
-    qInfo() << "FlexNode commitNewPos";
     int top = getLayoutTop();
     int bottom = getLayoutBottom();
     int left = getLayoutLeft();
@@ -271,6 +270,16 @@ void FlexNode::commitNewPos() {
     item->setX(left);
     item->setHeight(height);
     item->setWidth(width);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::commitChildNewPos() {
+    commitNewPos();
+    QLinkedList<FlexNode*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        (*iter)->commitChildNewPos();
+    }
 }
 
 /*****************************************************************************/
@@ -716,7 +725,7 @@ void FlexNode::calculateLayoutLtr() {
     commitNewPos();
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->calculateLayoutLtr();
+        (*iter)->commitChildNewPos();
     }
 }
 

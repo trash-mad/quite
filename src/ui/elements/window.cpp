@@ -66,6 +66,7 @@ FlexNode *Window::buildFlexTree(Element *current) {
 
 void Window::startFlexLayout() {
     qDebug() << "Window startFlexLayout";
+    WindowComponent* window = qobject_cast<WindowComponent*>(getItem());
 }
 
 /*---------------------------------------------------------------------------*/

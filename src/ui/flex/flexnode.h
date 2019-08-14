@@ -48,6 +48,7 @@ class FlexNode : public QObject {
     void parseOtherProps();
   private:
     void commitNewPos();
+    void commitChildNewPos();
   public:
     /* flex */
     int getFlexGrow();
