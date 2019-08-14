@@ -6,11 +6,12 @@ namespace Flex {
 
 /*****************************************************************************/
 
-FlexNode::FlexNode(QQuickItem* item)
+FlexNode::FlexNode(QQuickItem* item, bool fill)
   : QObject (nullptr) {
     qDebug() << "FlexNode ctor";
     node = YGNodeNew();
     this->item=item;
+    this->fill=fill;
     parseJustifyContent(item->property("justifyContent").toString());
     parseFlexDirection(item->property("flexDirection").toString());
     parseAlignContent(item->property("alignContent").toString());
@@ -232,10 +233,17 @@ void FlexNode::parseFlexWrap(QString wrap) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::parseOtherProps() {
-    setMinWidth(item->property("minWidth").toInt());
-    setMinHeight(item->property("minHeight").toInt());
-    setMaxWidth(item->property("maxWidth").toInt());
-    setMaxHeight(item->property("maxHeight").toInt());
+    if (fill) {
+        setHeightPercent(100);
+        setWidthPercent(100);
+    } else {
+        setMinWidth(item->property("minWidth").toInt());
+        setMinHeight(item->property("minHeight").toInt());
+        setMaxWidth(item->property("maxWidth").toInt());
+        setMaxHeight(item->property("maxHeight").toInt());
+        setHeight(item->property("height").toInt());
+        setWidth(item->property("width").toInt());
+    }
     setFlexShrink(item->property("flexShrink").toInt());
     setFlexGrow(item->property("flexGrow").toInt());
     setMarginTop(item->property("marginTop").toInt());
@@ -246,8 +254,6 @@ void FlexNode::parseOtherProps() {
     setPaddingLeft(item->property("paddingLeft").toInt());
     setPaddingRight(item->property("paddingRight").toInt());
     setPaddingBottom(item->property("paddingBottom").toInt());
-    setHeight(item->property("height").toInt());
-    setWidth(item->property("width").toInt());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -320,6 +326,12 @@ void FlexNode::setHeight(int height) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setHeightPercent(int percent) {
+    YGNodeStyleSetHeightPercent(node,static_cast<float>(percent));
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setMaxHeight(int points) {
     YGNodeStyleSetMaxHeight(node, static_cast<float>(points));
 }
@@ -346,6 +358,12 @@ int FlexNode::getWidth() {
 
 void FlexNode::setWidth(int width) {
     YGNodeStyleSetWidth(node, static_cast<float>(width));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setWidthPercent(int percent) {
+    YGNodeStyleSetWidthPercent(node,static_cast<float>(percent));
 }
 
 /*---------------------------------------------------------------------------*/

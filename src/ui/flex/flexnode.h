@@ -21,12 +21,13 @@ class FlexNode : public QObject {
   Q_OBJECT
   private:
     YGNodeRef node;
+    bool fill=false;
   private:
     QQuickItem* item;
     QLinkedList<FlexNode*> child;
     int childCount=0;
   public:
-    FlexNode(QQuickItem* item);
+    FlexNode(QQuickItem* item, bool fill=false);
     virtual ~FlexNode();
   public:
     void printTree();
@@ -58,6 +59,7 @@ class FlexNode : public QObject {
     /* height */
     int getHeight();
     void setHeight(int height);
+    void setHeightPercent(int percent);
     int getMaxHeight();
     int getMinHeight();
     void setMaxHeight(int point);
@@ -65,6 +67,7 @@ class FlexNode : public QObject {
     /* width */
     int getWidth();
     void setWidth(int width);
+    void setWidthPercent(int percent);
     int getMaxWidth();
     int getMinWidth();
     void setMaxWidth(int point);

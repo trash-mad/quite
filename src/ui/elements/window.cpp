@@ -52,22 +52,19 @@ Window::~Window() {
 
 /*---------------------------------------------------------------------------*/
 
-FlexNode *Window::buildFlexTree(Element *current) {
-    FlexNode* node = new FlexNode(current->getItem());
+FlexNode *Window::buildFlexTree(Element *current,bool fill) {
+    FlexNode* node = new FlexNode(current->getItem(),fill);
     QLinkedList<Element*> child=current->getChild();
     QLinkedList<Element*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        node->appendChild(buildFlexTree(*iter));
+        node->appendChild(buildFlexTree(
+            *iter,
+            qobject_cast<Component*>(current)!=nullptr
+        ));
     }
     return node;
 }
 
-/*---------------------------------------------------------------------------*/
-
-void Window::startFlexLayout() {
-    qDebug() << "Window startFlexLayout";
-    WindowComponent* window = qobject_cast<WindowComponent*>(getItem());
-}
 
 /*---------------------------------------------------------------------------*/
 
