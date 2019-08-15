@@ -60,11 +60,10 @@ class ComponentNode : public Node {
   private:
     static QVector<NodeStruct> buildNodeTree(
         Node* root,
+        int& itemIndex,
         QVector<NodeStruct>& result,
         bool newTree=false,
-        NodeStruct* parent=nullptr,
-        int lastIndex=0,
-        int index=0
+        NodeStruct* parent=nullptr
     );
     static QJSValue initialRender(
         QJSEngine* eval,

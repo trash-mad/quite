@@ -68,9 +68,15 @@ void ComponentNode::setState(QJSValue state) {
     if (tryCastNode(root, node)) {
         resolveChanges();
         QVector<NodeStruct> newTree(node->getTotalChildCount());
-        ComponentNode::buildNodeTree(node, newTree, true);
+        {
+            int initialIndex=0;
+            ComponentNode::buildNodeTree(node, initialIndex, newTree, true);
+        }
         QVector<NodeStruct> tree(getChild().first()->getTotalChildCount());
-        ComponentNode::buildNodeTree(getChild().first(), tree);
+        {
+            int initialIndex=0;
+            ComponentNode::buildNodeTree(getChild().first(), initialIndex, tree);
+        }
         node->updateContext(instance);
         subtreeChanged(newTree, tree, node);
     } else {
@@ -93,35 +99,30 @@ void ComponentNode::updateContext(
 
 QVector<NodeStruct> ComponentNode::buildNodeTree(
     Node* root,
+    int& itemIndex,
     QVector<NodeStruct>& result,
     bool newTree,
-    NodeStruct* parent,
-    int lastIndex,
-    int index
+    NodeStruct* parent
 ) {
-    result[lastIndex].childCount=root->getTotalChildCount();
-    result[lastIndex].type=root->getType();
-    result[lastIndex].key=root->getKey();
-    result[lastIndex].newTree=newTree;
-    result[lastIndex].parent=parent;
-    result[lastIndex].index=index;
-    result[lastIndex].node=root;
+    result[itemIndex].childCount=root->getTotalChildCount();
+    result[itemIndex].type=root->getType();
+    result[itemIndex].key=root->getKey();
+    result[itemIndex].newTree=newTree;
+    result[itemIndex].parent=parent;
+    result[itemIndex].node=root;
 
-    int selfIndex=lastIndex;
+    parent=std::addressof(result[itemIndex]);
 
     QLinkedList<Node*> child=root->getChild();
     QLinkedList<Node*>::iterator iter;
-    int currentIndex=0;
     for (iter=child.begin();iter!=child.end();iter++) {
-        lastIndex++;
-        currentIndex++;
+        itemIndex++;
         buildNodeTree(
             (*iter),
+            itemIndex,
             result,
             newTree,
-            std::addressof(result[selfIndex]),
-            lastIndex,
-            currentIndex
+            parent
         );
     }
     return result;

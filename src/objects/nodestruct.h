@@ -25,7 +25,6 @@ class NodeStruct {
     Node* node;
     int childCount;
     bool newTree;
-    int index;
     int type;
     int key;
   public:
