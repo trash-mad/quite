@@ -828,12 +828,12 @@ void FlexNode::initDefaultProps(QObject *object) {
     object->setProperty("paddingRight", 0);
     object->setProperty("paddingBottom", 0);
     object->setProperty("alignSelf", "auto");
-    object->setProperty("alignItems", "auto");
-    object->setProperty("alignContent", "auto");
+    object->setProperty("alignItems", "stretch");
+    object->setProperty("alignContent", "stretch");
     object->setProperty("display", "flex");
     object->setProperty("flexWrap", "noWrap");
     object->setProperty("flexDirection", "row");
-    object->setProperty("justifyContent", "spaceBetween");
+    object->setProperty("justifyContent", "flexStart");
 }
 
 /*---------------------------------------------------------------------------*/
