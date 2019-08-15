@@ -163,14 +163,18 @@ QJSValue ComponentNode::initialRender(
 /*---------------------------------------------------------------------------*/
 
 bool ComponentNode::checkTree(QVector<NodeStruct>& tree) {
-    for (int i=2;i!=tree.length();i++) {
-        if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
-            return false;
-        } else {
-            continue;
+    if (tree.length()<3) {
+        return true;
+    } else {
+        for (int i=2;i!=tree.length();i++) {
+            if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
+                return false;
+            } else {
+                continue;
+            }
         }
+        return true;
     }
-    return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -292,8 +296,10 @@ void ComponentNode::subtreeChanged(
         }
         qDebug() << "Component diff render applied";
     } else {
-        incrementResolveCounter("Subtree update");
-        this->getChild().first()->deleteLater();
+        incrementResolveCounter("Subtree update delete");
+        this->getChild().first()->deleteNodeDiff();
+        incrementResolveCounter("Subtree update renderSubtree");
+        appendChild(newRoot, true);
         emit renderSubtree(newRoot);
     }
 }

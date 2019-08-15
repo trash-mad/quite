@@ -47,7 +47,7 @@ Element::Element(
     QObject* object=component.create(context);
 
     if (object==nullptr) {
-        qCritical() << "Element item creation failed";
+        qCritical() << "Element" << type << "creation failed";
     } else {
         FlexNode::initDefaultProps(object);
         item=qobject_cast<QQuickItem*>(object);

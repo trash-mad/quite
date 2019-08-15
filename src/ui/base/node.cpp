@@ -78,13 +78,17 @@ void Node::deleteNodeDiff() {
 
 /*---------------------------------------------------------------------------*/
 
-void Node::appendChild(Node *child) {
+void Node::appendChild(Node *child, bool slient) {
     qDebug() << "Node appendChild";
     this->child.append(child);
     subscribeChildNode(child);
     totalChildCount++;
-    emit incrementTotalChildCount();
-    emit childAppended(child);
+    if (!slient) {
+        emit incrementTotalChildCount();
+        emit childAppended(child);
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/

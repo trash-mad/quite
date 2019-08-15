@@ -63,7 +63,9 @@ class FlexNode : public QObject {
     int getMaxHeight();
     int getMinHeight();
     void setMaxHeight(int point);
+    void setMaxHeightPercent(int percent);
     void setMinHeight(int point);
+    void setMinHeightPercent(int percent);
     /* width */
     int getWidth();
     void setWidth(int width);
@@ -71,7 +73,9 @@ class FlexNode : public QObject {
     int getMaxWidth();
     int getMinWidth();
     void setMaxWidth(int point);
+    void setMaxWidthPercent(int percent);
     void setMinWidth(int point);
+    void setMinWidthPercent(int percent);
     /* display */
     void setDisplayNone();
     void setDisplayFlex();

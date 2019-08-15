@@ -62,7 +62,7 @@ class Node : public QObject{
    * Слоты управления древом под-нод
    */
   public slots:
-    void appendChild(Node* child);
+    void appendChild(Node* child, bool slient=false);
     void insertAfterChild(Node* after, Node* child);
   private slots:
     void childDeletedHandler(QObject* child);

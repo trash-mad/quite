@@ -56,7 +56,7 @@ QString FlexNode::nodeInfo() {
         << "alignContent: " << item->property("alignContent").toString()
         << "alignItems: " << item->property("alignItems").toString()
         << "alignSelf: " << item->property("alignSelf").toString()
-        << "alignSelf: " << item->property("flexWrap").toString()
+        << "flexWrap: " << item->property("flexWrap").toString()
         << "display: " << item->property("display").toString()
         << "minHeight: " << item->property("minHeight").toString()
         << "minWidth: " << item->property("minWidth").toString()
@@ -64,6 +64,8 @@ QString FlexNode::nodeInfo() {
         << "maxWidth: " << item->property("maxWidth").toString()
         << "height: " << item->property("height").toString()
         << "width: " << item->property("width").toString()
+        << "flexGrow: " << item->property("flexGrow").toString()
+        << "flexShrink: " << item->property("flexShrink").toString()
     ).join(" ");
 }
 
@@ -238,11 +240,17 @@ void FlexNode::parseOtherProps() {
         setWidthPercent(100);
     } else {
         setMinWidth(item->property("minWidth").toInt());
-        setMinHeight(item->property("minHeight").toInt());
+        //setMinWidthPercent(item->property("minWidthPercent").toInt());
         setMaxWidth(item->property("maxWidth").toInt());
+        //setMaxWidthPercent(item->property("maxWidthPercent").toInt());
+        setMinHeight(item->property("minHeight").toInt());
+        //setMinHeightPercent(item->property("minHeightPercent").toInt());
         setMaxHeight(item->property("maxHeight").toInt());
+        //setMaxHeightPercent(item->property("maxHeightPercent").toInt());
         setHeight(item->property("height").toInt());
+        //setHeightPercent(item->property("heightPercent").toInt());
         setWidth(item->property("width").toInt());
+        //setWidthPercent(item->property("widthPercent").toInt());
     }
     setFlexShrink(item->property("flexShrink").toInt());
     setFlexGrow(item->property("flexGrow").toInt());
@@ -338,6 +346,12 @@ void FlexNode::setMaxHeight(int points) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setMaxHeightPercent(int percent) {
+    YGNodeStyleSetMaxHeightPercent(node, static_cast<float>(percent));
+}
+
+/*---------------------------------------------------------------------------*/
+
 int FlexNode::getMaxHeight() {
     return static_cast<int>(YGNodeStyleGetMaxHeight(node).value);
 }
@@ -346,6 +360,12 @@ int FlexNode::getMaxHeight() {
 
 void FlexNode::setMinHeight(int point) {
     YGNodeStyleSetMinHeight(node, static_cast<float>(point));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setMinHeightPercent(int percent) {
+    YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -392,8 +412,20 @@ void FlexNode::setMaxWidth(int points) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setMaxWidthPercent(int percent) {
+    YGNodeStyleSetMaxWidthPercent(node, static_cast<float>(percent));
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setMinWidth(int point) {
     YGNodeStyleSetMinWidth(node, static_cast<float>(point));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setMinWidthPercent(int percent) {
+    YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -774,11 +806,17 @@ int FlexNode::getLayoutHeight() {
 void FlexNode::initDefaultProps(QObject *object) {
     qDebug() << "FlexNode initDefaultProps";
     object->setProperty("height", 0);
+    object->setProperty("heightPercent", 0);
     object->setProperty("width", 0);
+    object->setProperty("widthPercent", 0);
     object->setProperty("minHeight", 0);
+    object->setProperty("minHeightPercent", 0);
     object->setProperty("minWidth", 0);
-    object->setProperty("maxHeight", INT_MAX);
+    object->setProperty("minWidthPercent", 0);
+    object->setProperty("maxHeight",INT_MAX);
     object->setProperty("maxWidth", INT_MAX);
+    object->setProperty("maxHeightPercent",100);
+    object->setProperty("maxWidthPercent",100);
     object->setProperty("flexShrink", 0);
     object->setProperty("flexGrow", 0);
     object->setProperty("marginTop", 0);
