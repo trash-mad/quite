@@ -1,6 +1,11 @@
 import QtQuick.Controls 2.4
+import QtQuick 2.0
 
-Button {
-    text: "Button"
-    onClicked: onClick();
+Item {
+    property alias text: button.text
+    Button {
+        id: button
+        anchors.fill: parent
+        onClicked: onClick()
+    }
 }
