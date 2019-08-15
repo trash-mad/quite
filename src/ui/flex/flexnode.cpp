@@ -38,7 +38,7 @@ void FlexNode::printTree() {
         line.append(" ");
     }
     line.append(nodeInfo());
-    qInfo() << line.join("");
+    qDebug() << line.join("");
     space+=2;
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
@@ -265,7 +265,7 @@ void FlexNode::commitNewPos() {
     int right = getLayoutRight();
     int height = getLayoutHeight();
     int width = getLayoutWidth();
-    qInfo() << "FlexNode commitNewPos"
+    qDebug() << "FlexNode commitNewPos"
         << " top: " << top
         << " left: " << left
         << " right: " << right
