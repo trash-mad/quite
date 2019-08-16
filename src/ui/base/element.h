@@ -87,7 +87,10 @@ class Element : public QObject {
     void childInsertedAfterHandler(Node* after, Node* child);
     void childDeletedHandler(QObject* child);
     void childAppendedHandler(Node* child);
-    void diffDeleteHandler();
+
+
+    void childDiffDeleteHandler();
+    void diffDeleteEmit();
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы
@@ -102,6 +105,7 @@ class Element : public QObject {
    */
   signals:
     void update();
+    void diffDelete();
 };
 
 /*****************************************************************************/

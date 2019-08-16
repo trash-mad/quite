@@ -14,7 +14,12 @@ Element::Element(
 ) : QObject(parent) {
     qDebug() << "Element ctor";
     this->type=node->getEnumType();
-    connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    connect(
+        node,
+        SIGNAL(destroyed()),
+        this,
+        SLOT(deleteLater())
+    );
     connect(
         node,
         SIGNAL(propsChanged(QMap<QString,QVariant>,bool)),
@@ -37,7 +42,7 @@ Element::Element(
         node,
         SIGNAL(diffDelete()),
         this,
-        SLOT(diffDeleteHandler())
+        SLOT(diffDeleteEmit())
     );
 
     context=new QQmlContext(engine->rootContext(),this);
@@ -88,6 +93,12 @@ void Element::childInsertAfter(Node *after, Element *child) {
             );
             connect(
                 child,
+                SIGNAL(diffDelete()),
+                this,
+                SLOT(childDiffDeleteHandler())
+            );
+            connect(
+                child,
                 SIGNAL(update()),
                 this,
                 SIGNAL(update())
@@ -113,6 +124,12 @@ void Element::childAppend(Element *child) {
         SIGNAL(destroyed(QObject*)),
         this,
         SLOT(childDeletedHandler(QObject*))
+    );
+    connect(
+        child,
+        SIGNAL(diffDelete()),
+        this,
+        SLOT(childDiffDeleteHandler())
     );
     connect(
         child,
@@ -150,6 +167,12 @@ void Element::childChanged() {
             SIGNAL(destroyed(QObject*)),
             this,
             SLOT(childDeletedHandler(QObject*))
+        );
+        connect(
+            element,
+            SIGNAL(diffDelete()),
+            this,
+            SLOT(childDiffDeleteHandler())
         );
         connect(
             element,
@@ -242,7 +265,7 @@ void Element::childInsertedAfterHandler(Node *after, Node *child) {
 void Element::childDeletedHandler(QObject* child) {
     qDebug() << "Element childDeletedHandler";
     Element* item = qobject_cast<Element*>(child);
-    if (item==nullptr) {
+    if (item!=nullptr) {
         childDeleted(item);
     } else {
         qCritical() << "Element childDeletedHandler child not Element";
@@ -258,12 +281,26 @@ void Element::childAppendedHandler(Node *child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::diffDeleteHandler() {
-    qDebug() << "Element diffDeleteHandler";
-    item->setParentItem(nullptr);
+void Element::childDiffDeleteHandler() {
+    Element* sender=qobject_cast<Element*>(QObject::sender());
+    disconnect(
+        sender,
+        SIGNAL(destroyed(QObject*)),
+        this,
+        SLOT(childDeletedHandler(QObject*))
+    );
+    childDeletedHandler(sender);
     DiffCounter::instance()->decrementCounter(
         QString("Delete %1").arg(QVariant(getType()).toString()
     ));
+    emit update();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::diffDeleteEmit() {
+    qDebug() << "Element diffDeleteEmit";
+    emit diffDelete();
 }
 
 /*****************************************************************************/
