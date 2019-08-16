@@ -17,8 +17,12 @@ Node::Node(QJSValue type, QJSValue props, QJSValue child)
         QLinkedList<Node*>::iterator iter;
         for (iter=this->child.begin();iter!=this->child.end();iter++) {
             Node* node = (*iter);
-            totalChildCount+=node->getTotalChildCount();
-            subscribeChildNode(node);
+            connect(
+                node,
+                SIGNAL(destroyed(QObject*)),
+                this,
+                SLOT(childDeletedHandler(QObject*))
+            );
         }
     }
     {
@@ -46,30 +50,6 @@ Node::~Node() {
 
 /*---------------------------------------------------------------------------*/
 
-void Node::subscribeChildNode(Node *node) {
-    qDebug() << "Node subscribeChildNode";
-    connect(
-        node,
-        SIGNAL(destroyed(QObject*)),
-        this,
-        SLOT(childDeletedHandler(QObject*))
-    );
-    connect(
-        node,
-        SIGNAL(incrementTotalChildCount()),
-        this,
-        SLOT(incrementTotalChildCountHandler())
-    );
-    connect(
-        node,
-        SIGNAL(decrementTotalChildCount()),
-        this,
-        SLOT(decrementTotalChildCountHandler())
-    );
-}
-
-/*---------------------------------------------------------------------------*/
-
 void Node::deleteNodeDiff() {
     qDebug() << "Node deleteNodeDiff";
     emit diffDelete();
@@ -81,10 +61,13 @@ void Node::deleteNodeDiff() {
 void Node::appendChild(Node *child, bool slient) {
     qDebug() << "Node appendChild";
     this->child.append(child);
-    subscribeChildNode(child);
-    totalChildCount++;
+    connect(
+        child,
+        SIGNAL(destroyed(QObject*)),
+        this,
+        SLOT(childDeletedHandler(QObject*))
+    );
     if (!slient) {
-        emit incrementTotalChildCount();
         emit childAppended(child);
     } else {
         return;
@@ -105,9 +88,12 @@ void Node::insertAfterChild(Node *after, Node *child) {
             } else {
                 this->child.insert(iter,child);
             }
-            subscribeChildNode(child);
-            totalChildCount++;
-            emit incrementTotalChildCount();
+            connect(
+                child,
+                SIGNAL(destroyed(QObject*)),
+                this,
+                SLOT(childDeletedHandler(QObject*))
+            );
             emit childInsertedAfter(after, child);
             return;
         } else {
@@ -125,8 +111,6 @@ void Node::childDeletedHandler(QObject *child) {
     for (iter=this->child.begin();iter!=this->child.end();iter++) {
         if (child==(*iter)) {
             this->child.erase(iter);
-            totalChildCount--;
-            emit decrementTotalChildCount();
             break;
         } else {
             continue;
@@ -252,12 +236,6 @@ QLinkedList<Node *> Node::getChild() const {
 
 /*---------------------------------------------------------------------------*/
 
-int Node::getTotalChildCount() const {
-    return totalChildCount;
-}
-
-/*---------------------------------------------------------------------------*/
-
 NodeType Node::getEnumType() const {
     return type;
 }
@@ -345,20 +323,6 @@ NodeType Node::castNodeType(QString type) {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;
     }
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Node::incrementTotalChildCountHandler() {
-    totalChildCount++;
-    emit incrementTotalChildCount();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Node::decrementTotalChildCountHandler() {
-    totalChildCount--;
-    emit decrementTotalChildCount();
 }
 
 /*****************************************************************************/

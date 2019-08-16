@@ -14,13 +14,15 @@ SampleComponent.prototype.render=function() {
         ), 
         Quite.createElement("Rectangle", {color: "whitesmoke", flexDirection: "row", paddingTop: 5},
             this.state.rects.map((_, index)=>Quite.createElement("Rectangle", {
-                key: index,
-                height: 50, 
-                width: 50, 
-                color: "cyan", 
-                marginRight: 5
-            }))
-        )
+                    key: index,
+                    height: 50, 
+                    width: 50, 
+                    color: "cyan", 
+                    marginRight: 5
+            }/*,
+                Quite.createElement("Rectangle", {minHeight:15, minWidth:15, color:"red"})*/
+            ))
+        ),
     );
 }
 

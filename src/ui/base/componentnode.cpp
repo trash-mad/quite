@@ -67,12 +67,12 @@ void ComponentNode::setState(QJSValue state) {
     Node* node = nullptr;
     if (tryCastNode(root, node)) {
         resolveChanges();
-        QVector<NodeStruct> newTree(node->getTotalChildCount());
+        QVector<NodeStruct> newTree(countTotalChild(node)+1);
         {
             int initialIndex=0;
             ComponentNode::buildNodeTree(node, initialIndex, newTree, true);
         }
-        QVector<NodeStruct> tree(getChild().first()->getTotalChildCount());
+        QVector<NodeStruct> tree(countTotalChild(getChild().first())+1);
         {
             int initialIndex=0;
             ComponentNode::buildNodeTree(getChild().first(), initialIndex, tree);
@@ -104,7 +104,6 @@ QVector<NodeStruct> ComponentNode::buildNodeTree(
     bool newTree,
     NodeStruct* parent
 ) {
-    result[itemIndex].childCount=root->getTotalChildCount();
     result[itemIndex].type=root->getType();
     result[itemIndex].key=root->getKey();
     result[itemIndex].newTree=newTree;
@@ -159,6 +158,18 @@ QJSValue ComponentNode::initialRender(
         }
     }
     return result;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int ComponentNode::countTotalChild(Node *root) {
+    QLinkedList<Node*> child=root->getChild();
+    QLinkedList<Node*>::iterator iter;
+    int total=child.count();
+    for (iter=child.begin();iter!=child.end();iter++) {
+        total+=countTotalChild(*iter);
+    }
+    return total;
 }
 
 /*---------------------------------------------------------------------------*/

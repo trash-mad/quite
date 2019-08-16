@@ -75,6 +75,7 @@ class ComponentNode : public Node {
    * Методы для сравнения двух древ
    */
   private:
+    int countTotalChild(Node* root);
     bool checkTree(QVector<NodeStruct>& tree);
     bool tryInsertAfterChild(
         std::vector<NodeStruct>& merged,
