@@ -37,6 +37,9 @@ class NodeStruct {
     friend inline bool operator==(const NodeStruct &a, const NodeStruct &b) {
         return NodeStruct::equals(std::addressof(a),std::addressof(b));
     }
+    friend inline bool operator!=(const NodeStruct &a, const NodeStruct &b) {
+        return !NodeStruct::equals(std::addressof(a),std::addressof(b));
+    }
     friend std::ostream& operator<<(std::ostream& os,const NodeStruct& a) {
         return os << NodeStruct::getInfo(a).toStdString();
     }

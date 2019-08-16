@@ -77,6 +77,11 @@ class ComponentNode : public Node {
   private:
     int countTotalChild(Node* root);
     bool checkTree(QVector<NodeStruct>& tree);
+    void processDiffChild(
+        std::vector<NodeStruct> &merged,
+        NodeStruct item,
+        int index
+    );
     bool tryInsertAfterChild(
         std::vector<NodeStruct>& merged,
         NodeStruct child,

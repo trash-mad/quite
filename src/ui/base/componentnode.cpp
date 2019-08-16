@@ -191,6 +191,26 @@ bool ComponentNode::checkTree(QVector<NodeStruct>& tree) {
 
 /*---------------------------------------------------------------------------*/
 
+void ComponentNode::processDiffChild(
+    std::vector<NodeStruct> &merged,
+    NodeStruct item,
+    int index
+) {
+    qDebug() << "ComponentNode processDiffChild";
+    if (tryInsertAfterChild(merged,item,index)) {
+        return;
+    } else if (tryAppendChild(merged,item,index)) {
+        return;
+    } else {
+        incrementResolveCounter(QString("Append %1").arg(
+            QVariant(item.node->getEnumType()).toString()
+        ));
+        this->appendChild(item.node);
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 bool ComponentNode::tryInsertAfterChild(
     std::vector<NodeStruct> &merged,
     NodeStruct child,
@@ -274,29 +294,55 @@ void ComponentNode::subtreeChanged(
         std::vector<std::pair<NodeStruct,dtl::elemInfo>> changes = ses.getSequence();
         auto merged = d.patch(treeStd);
         std::vector<std::pair<NodeStruct,dtl::elemInfo>>::iterator iter;
-        NodeStruct* current=nullptr;
+        QList<NodeStruct*> parent;
         for (iter=changes.begin();iter!=changes.end();iter++) {
             dtl::edit_t type = iter->second.type;
             if (type==dtl::SES_ADD) {
                 int index = static_cast<int>(iter->second.afterIdx)-1;
+                NodeStruct* current=std::addressof(iter->first);
                 /*
-                 * Skip node child if was appended/inserted
+                 * Достаточно сложный к пониманию сегмент кода...
+                 *
+                 *  - метод processDiffChild(merged,iter->first,index);
+                 *    идет по вектору изменений по направлению к индексу 0 для
+                 *    добавления новой ноды либо между, либо как первую дочернюю
+                 *
+                 *  - данный сегмент кода пропускает дочернии ноды для текущей
+                 *    сохраняя ВЛОЖЕННЫХ родителей в список current и пропуская
+                 *    некоторое кол-во элементов
                  */
-                if (current!=nullptr&&*iter->first.parent==*current) {
-                    continue;
+
+                if (parent.length()==0) {
+                    /*
+                     * Первый элемент последовательности, просто добавляе
+                     */
+                    parent.append(current);
+                    processDiffChild(merged,iter->first,index);
+                    qInfo() << "append" << iter->first.key;
                 } else {
-                    current=nullptr;
-                    if (tryInsertAfterChild(merged,iter->first,index)) {
-                        current=std::addressof(iter->first);
-                        continue;
-                    } else if (tryAppendChild(merged,iter->first,index)) {
-                        current=std::addressof(iter->first);
+                    if (*current->parent!=*parent.last()) {
+                        /*
+                         * Конец потомков текущего родителя, идем
+                         * выше по списку родителей
+                         */
+                        qInfo() << "not parent" << iter->first.key;
+                        while (parent.length()!=1) {
+                            parent.removeLast();
+                            if (*current->parent==*parent.last()) {
+                                qInfo() << "parent found" << parent.last()->key;
+                                break;
+                            } else {
+                                qInfo() << "not parent" << parent.last()->key;
+                                continue;
+                            }
+                        }
                         continue;
                     } else {
-                        incrementResolveCounter(QString("Append %1").arg(
-                            QVariant(iter->first.node->getEnumType()).toString()
-                        ));
-                        this->appendChild(iter->first.node);
+                        /*
+                         * Эта нода уже потомок, её не нужно обрабатывать
+                         */
+                        qInfo() << "skip" << iter->first.key;
+                        continue;
                     }
                 }
             } else if (type==dtl::SES_COMMON) {

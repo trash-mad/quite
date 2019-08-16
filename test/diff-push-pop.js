@@ -14,13 +14,18 @@ SampleComponent.prototype.render=function() {
         ), 
         Quite.createElement("Rectangle", {color: "whitesmoke", flexDirection: "row", paddingTop: 5},
             this.state.rects.map((_, index)=>Quite.createElement("Rectangle", {
-                    key: index,
-                    height: 50, 
-                    width: 50, 
-                    color: "cyan", 
-                    marginRight: 5
-            },
-                Quite.createElement("Rectangle", {minHeight:15, minWidth:15, color:"red"})
+                        key: index+1,
+                        height: 50, 
+                        width: 50, 
+                        color: "cyan", 
+                        marginRight: 5
+                    },
+                Quite.createElement("Rectangle", {key:59,minHeight:15, minWidth:15, color:"red"},
+                    Quite.createElement("Rectangle", {key:60,minHeight:15, minWidth:15, color:"red"}),
+                    Quite.createElement("Rectangle", {key:61,minHeight:15, minWidth:15, color:"red"}),
+                    Quite.createElement("Rectangle", {key:62,minHeight:15, minWidth:15, color:"red"})
+                ),
+                Quite.createElement("Rectangle", {key: 88, minHeight:63, minWidth:15, color:"red"})
             ))
         ),
     );
