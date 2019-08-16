@@ -45,17 +45,6 @@ void ComponentNode::incrementResolveCounter(QString from) {
 
 /*---------------------------------------------------------------------------*/
 
-void ComponentNode::resolveChanges() {
-    qDebug() << "ComponentNode resolveChanges exec";
-    while (!DiffCounter::instance()->changesResolved()) {
-        QCoreApplication::processEvents();
-        QThread::msleep(50);
-    }
-    qDebug() << "ComponentNode resolveChanges resolve";
-}
-
-/*---------------------------------------------------------------------------*/
-
 void ComponentNode::setState(QJSValue state) {
     instance.setProperty("state", state);
     QJSValue root = render.callWithInstance(
@@ -66,19 +55,27 @@ void ComponentNode::setState(QJSValue state) {
     );
     Node* node = nullptr;
     if (tryCastNode(root, node)) {
-        resolveChanges();
-        QVector<NodeStruct> newTree(countTotalChild(node)+1);
-        {
-            int initialIndex=0;
-            ComponentNode::buildNodeTree(node, initialIndex, newTree, true);
+        if (!DiffCounter::instance()->changesResolved()) {
+            qDebug() << "ComponentNode setState scheduled";
+            QTimer::singleShot(50, [this,state](){
+                qDebug() << "ComponentNode setState exec";
+                setState(state);
+            });
+            return;
+        } else {
+            QVector<NodeStruct> newTree(countTotalChild(node)+1);
+            {
+                int initialIndex=0;
+                ComponentNode::buildNodeTree(node, initialIndex, newTree, true);
+            }
+            QVector<NodeStruct> tree(countTotalChild(getChild().first())+1);
+            {
+                int initialIndex=0;
+                ComponentNode::buildNodeTree(getChild().first(), initialIndex, tree);
+            }
+            node->updateContext(instance);
+            subtreeChanged(newTree, tree, node);
         }
-        QVector<NodeStruct> tree(countTotalChild(getChild().first())+1);
-        {
-            int initialIndex=0;
-            ComponentNode::buildNodeTree(getChild().first(), initialIndex, tree);
-        }
-        node->updateContext(instance);
-        subtreeChanged(newTree, tree, node);
     } else {
         qCritical() << "ComponentNode setState render is not Node*";
     }

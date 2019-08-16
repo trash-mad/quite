@@ -1,6 +1,7 @@
 #ifndef COMPONENTNODE_H
 #define COMPONENTNODE_H
 
+#include <QTimer>
 #include <QVector>
 #include <QtDebug>
 #include <QObject>
@@ -42,7 +43,6 @@ class ComponentNode : public Node {
    */
   private:
     void incrementResolveCounter(QString from);
-    void resolveChanges();
 
   /*
    * Слот setState для начала обновления древа
