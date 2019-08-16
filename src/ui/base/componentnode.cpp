@@ -318,21 +318,21 @@ void ComponentNode::subtreeChanged(
                      */
                     parent.append(current);
                     processDiffChild(merged,iter->first,index);
-                    qInfo() << "append" << iter->first.key;
+                    qDebug() << "append" << iter->first.key;
                 } else {
                     if (*current->parent!=*parent.last()) {
                         /*
                          * Конец потомков текущего родителя, идем
                          * выше по списку родителей
                          */
-                        qInfo() << "not parent" << iter->first.key;
+                        qDebug() << "not parent" << iter->first.key;
                         while (parent.length()!=1) {
                             parent.removeLast();
                             if (*current->parent==*parent.last()) {
-                                qInfo() << "parent found" << parent.last()->key;
+                                qDebug() << "parent found" << parent.last()->key;
                                 break;
                             } else {
-                                qInfo() << "not parent" << parent.last()->key;
+                                qDebug() << "not parent" << parent.last()->key;
                                 continue;
                             }
                         }
@@ -340,12 +340,15 @@ void ComponentNode::subtreeChanged(
                     } else {
                         /*
                          * Эта нода уже потомок, её не нужно обрабатывать
+                         * каждая нода имеет потенциал быть родителем
                          */
-                        qInfo() << "skip" << iter->first.key;
+                        qDebug() << "skip" << iter->first.key;
+                        parent.append(current);
                         continue;
                     }
                 }
             } else if (type==dtl::SES_COMMON) {
+                qDebug() << "common" << iter->first.key;
                 int afterIndex=static_cast<int>(iter->second.afterIdx)-1;
                 int beforeIndex=static_cast<int>(iter->second.beforeIdx)-1;
                 NodeStruct item = tree.at(beforeIndex);
@@ -355,6 +358,7 @@ void ComponentNode::subtreeChanged(
                 ));
                 item.node->mergeProps(newItem.node);
             } else if (type==dtl::SES_DELETE) {
+                qDebug() << "delete" << iter->first.key;
                 incrementResolveCounter(QString("Delete %1").arg(
                     QVariant(iter->first.node->getEnumType()).toString()
                 ));

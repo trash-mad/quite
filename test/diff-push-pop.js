@@ -23,7 +23,9 @@ SampleComponent.prototype.render=function() {
                 Quite.createElement("Rectangle", {key:59,minHeight:15, minWidth:15, color:"red"},
                     Quite.createElement("Rectangle", {key:60,minHeight:15, minWidth:15, color:"red"}),
                     Quite.createElement("Rectangle", {key:61,minHeight:15, minWidth:15, color:"red"}),
-                    Quite.createElement("Rectangle", {key:62,minHeight:15, minWidth:15, color:"red"})
+                    Quite.createElement("Rectangle", {key:62,minHeight:15, minWidth:15, color:"red"},
+                        Quite.createElement("Rectangle", {key:63,minHeight:15, minWidth:15, color:"red"})
+                    )
                 ),
                 Quite.createElement("Rectangle", {key: 88, minHeight:63, minWidth:15, color:"red"})
             ))

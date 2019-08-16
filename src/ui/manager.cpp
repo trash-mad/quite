@@ -31,6 +31,7 @@ Element *Manager::renderElement(Node *node, Element *parent) {
     }
     while (!DiffCounter::instance()->tryIncrementCounter("InitialProps")) {
         QCoreApplication::processEvents();
+        QThread::msleep(50);
     }
     QMetaObject::invokeMethod(
         node,
