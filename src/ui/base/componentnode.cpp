@@ -274,19 +274,30 @@ void ComponentNode::subtreeChanged(
         std::vector<std::pair<NodeStruct,dtl::elemInfo>> changes = ses.getSequence();
         auto merged = d.patch(treeStd);
         std::vector<std::pair<NodeStruct,dtl::elemInfo>>::iterator iter;
+        NodeStruct* current=nullptr;
         for (iter=changes.begin();iter!=changes.end();iter++) {
             dtl::edit_t type = iter->second.type;
             if (type==dtl::SES_ADD) {
                 int index = static_cast<int>(iter->second.afterIdx)-1;
-                if (tryInsertAfterChild(merged,iter->first,index)) {
-                    continue;
-                } else if (tryAppendChild(merged,iter->first,index)) {
+                /*
+                 * Skip node child if was appended/inserted
+                 */
+                if (current!=nullptr&&*iter->first.parent==*current) {
                     continue;
                 } else {
-                    incrementResolveCounter(QString("Append %1").arg(
-                        QVariant(iter->first.node->getEnumType()).toString()
-                    ));
-                    this->appendChild(iter->first.node);
+                    current=nullptr;
+                    if (tryInsertAfterChild(merged,iter->first,index)) {
+                        current=std::addressof(iter->first);
+                        continue;
+                    } else if (tryAppendChild(merged,iter->first,index)) {
+                        current=std::addressof(iter->first);
+                        continue;
+                    } else {
+                        incrementResolveCounter(QString("Append %1").arg(
+                            QVariant(iter->first.node->getEnumType()).toString()
+                        ));
+                        this->appendChild(iter->first.node);
+                    }
                 }
             } else if (type==dtl::SES_COMMON) {
                 int afterIndex=static_cast<int>(iter->second.afterIdx)-1;

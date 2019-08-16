@@ -19,8 +19,8 @@ SampleComponent.prototype.render=function() {
                     width: 50, 
                     color: "cyan", 
                     marginRight: 5
-            }/*,
-                Quite.createElement("Rectangle", {minHeight:15, minWidth:15, color:"red"})*/
+            },
+                Quite.createElement("Rectangle", {minHeight:15, minWidth:15, color:"red"})
             ))
         ),
     );
