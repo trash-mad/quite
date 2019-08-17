@@ -21,8 +21,8 @@ class DiffCounter : public QObject {
     explicit DiffCounter();
     virtual ~DiffCounter();
   public:
-    bool tryIncrementCounter(QString from);
-    void decrementCounter(QString from);
+    bool tryIncrementCounter();
+    void decrementCounter();
     Q_DECL_DEPRECATED bool tryBeginRender();
     Q_DECL_DEPRECATED void endRender();
     bool changesResolved();

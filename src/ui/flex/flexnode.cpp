@@ -304,26 +304,8 @@ void FlexNode::setFlexGrow(int v) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getFlexGrow() {
-    return static_cast<int>(YGNodeStyleGetFlexGrow(node));
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getFlexShrink() {
-    return static_cast<int>(YGNodeStyleGetFlexShrink(node));
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setFlexShrink(int v){
     YGNodeStyleSetFlexShrink(node, static_cast<float>(v));
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getHeight() {
-    return static_cast<int>(YGNodeStyleGetHeight(node).value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -352,12 +334,6 @@ void FlexNode::setMaxHeightPercent(int percent) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getMaxHeight() {
-    return static_cast<int>(YGNodeStyleGetMaxHeight(node).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setMinHeight(int point) {
     YGNodeStyleSetMinHeight(node, static_cast<float>(point));
 }
@@ -370,12 +346,6 @@ void FlexNode::setMinHeightPercent(int percent) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getWidth() {
-    return static_cast<int>(YGNodeStyleGetWidth(node).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setWidth(int width) {
     YGNodeStyleSetWidth(node, static_cast<float>(width));
 }
@@ -384,24 +354,6 @@ void FlexNode::setWidth(int width) {
 
 void FlexNode::setWidthPercent(int percent) {
     YGNodeStyleSetWidthPercent(node,static_cast<float>(percent));
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getMaxWidth() {
-    return static_cast<int>(YGNodeStyleGetMaxWidth(node).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getMinWidth() {
-    return static_cast<int>(YGNodeStyleGetMinWidth(node).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getMinHeight() {
-    return static_cast<int>(YGNodeStyleGetMinHeight(node).value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -658,20 +610,8 @@ void FlexNode::setMarginTop(int point) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getMarginTop() {
-    return static_cast<int>(YGNodeStyleGetMargin(node, YGEdgeTop).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setMarginLeft(int point) {
     YGNodeStyleSetMargin(node, YGEdgeLeft, static_cast<float>(point));
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getMarginLeft() {
-    return static_cast<int>(YGNodeStyleGetMargin(node, YGEdgeLeft).value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -682,26 +622,8 @@ void FlexNode::setMarginRight(int point) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getMarginRight() {
-    return static_cast<int>(YGNodeStyleGetMargin(node, YGEdgeRight).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setMarginBottom(int point) {
     YGNodeStyleSetMargin(node, YGEdgeBottom, static_cast<float>(point));
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getPaddingTop() {
-    return static_cast<int>(YGNodeStyleGetPadding(node, YGEdgeTop).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getMarginBottom() {
-    return static_cast<int>(YGNodeStyleGetMargin(node, YGEdgeBottom).value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -716,24 +638,12 @@ void FlexNode::setPaddingTop(int point) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getPaddingLeft() {
-    return static_cast<int>(YGNodeStyleGetPadding(node, YGEdgeLeft).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setPaddingLeft(int point) {
     YGNodeStyleSetPadding(
         node,
         YGEdgeLeft,
         static_cast<float>(point)
     );
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getPaddingRight() {
-    return static_cast<int>(YGNodeStyleGetPadding(node, YGEdgeRight).value);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -748,12 +658,6 @@ void FlexNode::setPaddingRight(int point) {
 
 /*---------------------------------------------------------------------------*/
 
-int FlexNode::getPaddingBottom() {
-    return static_cast<int>(YGNodeStyleGetPadding(node, YGEdgeBottom).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
 void FlexNode::setPaddingBottom(int point) {
     YGNodeStyleSetPadding(
         node,
@@ -762,6 +666,17 @@ void FlexNode::setPaddingBottom(int point) {
     );
 }
 
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getHeight() {
+    return static_cast<int>(YGNodeStyleGetHeight(node).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getWidth() {
+    return static_cast<int>(YGNodeStyleGetWidth(node).value);
+}
 
 /*---------------------------------------------------------------------------*/
 

@@ -29,7 +29,7 @@ Element *Manager::renderElement(Node *node, Element *parent) {
                 qCritical() << "Manager can't render node" << type;
         }
     }
-    while (!DiffCounter::instance()->tryIncrementCounter("InitialProps")) {
+    while (!DiffCounter::instance()->tryIncrementCounter()) {
         QCoreApplication::processEvents();
         QThread::msleep(50);
     }
@@ -118,9 +118,7 @@ void Manager::renderSubtreeHandler(Node *child) {
     QLinkedList<Element*> tree;
     tree.append(renderElementTree(child,component));
     component->receiveSubtree(tree);
-    DiffCounter::instance()->decrementCounter(QString("Subtree %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -129,9 +127,7 @@ void Manager::insertAfterChildHandler(Node *after, Node *child) {
     qDebug() << "Manager insertAfterChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childInsertAfter(after, renderElementTree(child, sender));
-    DiffCounter::instance()->decrementCounter(QString("Insert %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -140,9 +136,7 @@ void Manager::appendChildHandler(Node *child) {
     qDebug() << "Manager appendChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childAppend(renderElementTree(child, sender));
-    DiffCounter::instance()->decrementCounter(QString("Append %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/

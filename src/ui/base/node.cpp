@@ -154,9 +154,7 @@ void Node::mergeProps(Node *node) {
         /*
          * Рендеринг не нужен, подчищаем очередь
          */
-        DiffCounter::instance()->decrementCounter(QString("Merge %1").arg(
-            QVariant(getType()).toString()
-        ));
+        DiffCounter::instance()->decrementCounter();
         return;
     }
 }

@@ -52,26 +52,18 @@ class FlexNode : public QObject {
     void commitChildNewPos();
   public:
     /* flex */
-    int getFlexGrow();
-    int getFlexShrink();
     void setFlexGrow(int v);
     void setFlexShrink(int v);
     /* height */
-    int getHeight();
     void setHeight(int height);
     void setHeightPercent(int percent);
-    int getMaxHeight();
-    int getMinHeight();
     void setMaxHeight(int point);
     void setMaxHeightPercent(int percent);
     void setMinHeight(int point);
     void setMinHeightPercent(int percent);
     /* width */
-    int getWidth();
     void setWidth(int width);
     void setWidthPercent(int percent);
-    int getMaxWidth();
-    int getMinWidth();
     void setMaxWidth(int point);
     void setMaxWidthPercent(int percent);
     void setMinWidth(int point);
@@ -123,24 +115,18 @@ class FlexNode : public QObject {
     void setNoWrap();
     void setWrapReverser();
     /* margin */
-    int getMarginTop();
-    int getMarginLeft();
-    int getMarginRight();
-    int getMarginBottom();
     void setMarginTop(int point);
     void setMarginLeft(int point);
     void setMarginRight(int point);
     void setMarginBottom(int point);
     /* padding */
-    int getPaddingTop();
-    int getPaddingLeft();
-    int getPaddingRight();
-    int getPaddingBottom();
     void setPaddingTop(int point);
     void setPaddingLeft(int point);
     void setPaddingRight(int point);
     void setPaddingBottom(int point);
     /* calculate */
+    int getHeight();
+    int getWidth();
     int getLayoutTop();
     int getLayoutLeft();
     int getLayoutRight();

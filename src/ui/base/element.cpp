@@ -244,9 +244,7 @@ void Element::propsChangedHandler(
     this->props=commitProps;
     if (merge) {
         propsChanged();
-        DiffCounter::instance()->decrementCounter(
-            QString("Merge %1").arg(QVariant(getType()).toString())
-        );
+        DiffCounter::instance()->decrementCounter();
         emit update();
     } else {
         propsChanged();
@@ -290,9 +288,7 @@ void Element::childDiffDeleteHandler() {
         SLOT(childDeletedHandler(QObject*))
     );
     childDeletedHandler(sender);
-    DiffCounter::instance()->decrementCounter(
-        QString("Delete %1").arg(QVariant(getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
     emit update();
 }
 

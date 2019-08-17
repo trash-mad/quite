@@ -43,7 +43,7 @@ class ComponentNode : public Node {
    * пока Element не отчитаются о применении изменений
    */
   private:
-    void incrementResolveCounter(QString from);
+    void incrementResolveCounter();
 
   /*
    * Слот setState для начала обновления древа

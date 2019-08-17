@@ -18,9 +18,8 @@ DiffCounter::~DiffCounter() {
 
 /*---------------------------------------------------------------------------*/
 
-bool DiffCounter::tryIncrementCounter(QString from) {
-    qDebug() << "DiffCounter tryIncrementCounter from"
-        << from << "counter" << resolveCounter;
+bool DiffCounter::tryIncrementCounter() {
+    qDebug() << "DiffCounter tryIncrementCounter" << resolveCounter;
     locker.lock();
     bool result;
     if (rendering) {
@@ -35,9 +34,8 @@ bool DiffCounter::tryIncrementCounter(QString from) {
 
 /*---------------------------------------------------------------------------*/
 
-void DiffCounter::decrementCounter(QString from) {
-    qDebug() << "DiffCounter decrementCounter from"
-        <<from<<"counter"<<resolveCounter;
+void DiffCounter::decrementCounter() {
+    qDebug() << "DiffCounter decrementCounter" << resolveCounter;
     locker.lock();
     if (resolveCounter==0) {
         qCritical() << "DiffCounter decrementCounter < 0";
