@@ -31,6 +31,7 @@ namespace Base {
 class ComponentNode : public Node {
   Q_OBJECT
   private:
+    QTimer* scheduleTimer;
     QJSValue instance;
     QJSValue render;
   public:

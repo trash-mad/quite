@@ -20,6 +20,7 @@ ComponentNode::ComponentNode(
         "setState",
         eval->newQObject(this).property("setState")
     );
+    this->scheduleTimer=new QTimer(this);
     this->instance=instance;
     this->render=render;
 
@@ -30,6 +31,8 @@ ComponentNode::ComponentNode(
 
 ComponentNode::~ComponentNode() {
     qDebug() << "ComponentNode dtor";
+    scheduleTimer->stop();
+    scheduleTimer->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -57,10 +60,17 @@ void ComponentNode::setState(QJSValue state) {
     if (tryCastNode(root, node)) {
         if (!DiffCounter::instance()->changesResolved()) {
             qDebug() << "ComponentNode setState scheduled";
-            QTimer::singleShot(50, [this,state](){
+            scheduleTimer->stop();
+            scheduleTimer->deleteLater();
+            scheduleTimer=new QTimer(this);
+            scheduleTimer->setSingleShot(true);
+
+            connect(scheduleTimer, &QTimer::timeout, [this,state]() {
                 qDebug() << "ComponentNode setState exec";
                 setState(state);
             });
+
+            scheduleTimer->start(50);
             return;
         } else {
             QVector<NodeStruct> newTree(countTotalChild(node)+1);
@@ -323,17 +333,33 @@ void ComponentNode::subtreeChanged(
                          * выше по списку родителей
                          */
                         qDebug() << "not parent" << iter->first.key;
+                        bool found=false;
                         while (parent.length()!=1) {
                             parent.removeLast();
                             if (*current->parent==*parent.last()) {
-                                qDebug() << "parent found" << parent.last()->key;
+                                qDebug()
+                                    << "parent found"
+                                    << parent.last()->key;
+                                found=true;
                                 break;
                             } else {
-                                qDebug() << "not parent" << parent.last()->key;
+                                qDebug()
+                                    << "not parent"
+                                    << parent.last()->key;
                                 continue;
                             }
                         }
-                        continue;
+                        if (!found) {
+                            /*
+                             * Родитель не найден. Удаляем последнего родителя
+                             * и выполняем итерацию по-новой
+                             */
+                            parent.removeLast();
+                            iter--;
+                            continue;
+                        } else {
+                            continue;
+                        }
                     } else {
                         /*
                          * Эта нода уже потомок, её не нужно обрабатывать
