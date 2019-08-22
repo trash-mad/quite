@@ -9,23 +9,36 @@ Element *Manager::renderElement(Node *node, Element *parent) {
     qDebug() << "WindowManager renderComponent";
     Element* element = nullptr;
     NodeType type = node->getEnumType();
-
     if (type==NodeType::ComponentType) {
          element = renderComponent(node, parent);
+    } else if (type==NodeType::WindowType) {
+        element = renderWindow(node, parent);
     } else {
-        if(type==NodeType::WindowType) {
-            element = new Window(node, &engine, parent);
-            connect(element,SIGNAL(windowClosed()),this,SIGNAL(closed()));
-        } else if (type==NodeType::RectangleType) {
-            element = new Quite::Ui::Elements::Rectangle(node, &engine, parent);
-        } else if (type==NodeType::ButtonType) {
-            element = new Button(node, &engine, parent);
-        } else {
-            qCritical() << "Manager can't render node" << type;
+        switch (type) {
+            case NodeType::RectangleType:
+                element = new Quite::Ui::Elements::Rectangle(
+                    node,
+                    &engine,
+                    parent
+                );
+                break;
+            case NodeType::ButtonType:
+                element = new Button(node, &engine, parent);
+                break;
+            default:
+                qCritical() << "Manager can't render node" << type;
         }
-
-        QMetaObject::invokeMethod(node, "commitProps", Qt::BlockingQueuedConnection);
     }
+    while (!DiffCounter::instance()->tryIncrementCounter()) {
+        QCoreApplication::processEvents();
+        QThread::msleep(50);
+    }
+    QMetaObject::invokeMethod(
+        node,
+        "commitProps",
+        Qt::BlockingQueuedConnection,
+        Q_ARG(bool,true)
+    );
     connect(
         element,
         SIGNAL(invoke(Invoke*)),
@@ -66,6 +79,19 @@ Component *Manager::renderComponent(Node* node, Element *parent) {
 
 /*---------------------------------------------------------------------------*/
 
+Window* Manager::renderWindow(Node *node, Element *parent) {
+    Window* window = new Window(node, &engine, parent);
+    connect(
+        window,
+        SIGNAL(closed()),
+        this,
+        SIGNAL(closed())
+    );
+    return window;
+}
+
+/*---------------------------------------------------------------------------*/
+
 Element* Manager::renderElementTree(Node *node, Element* parent) {
     Element* element = nullptr;
     QLinkedList<Element*> child;
@@ -92,9 +118,7 @@ void Manager::renderSubtreeHandler(Node *child) {
     QLinkedList<Element*> tree;
     tree.append(renderElementTree(child,component));
     component->receiveSubtree(tree);
-    DiffCounter::instance()->decrementCounter(QString("Subtree %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -103,9 +127,7 @@ void Manager::insertAfterChildHandler(Node *after, Node *child) {
     qDebug() << "Manager insertAfterChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childInsertAfter(after, renderElementTree(child, sender));
-    DiffCounter::instance()->decrementCounter(QString("Insert %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -114,9 +136,7 @@ void Manager::appendChildHandler(Node *child) {
     qDebug() << "Manager appendChildHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
     sender->childAppend(renderElementTree(child, sender));
-    DiffCounter::instance()->decrementCounter(QString("Append %1").arg(
-        QVariant(child->getType()).toString()
-    ));
+    DiffCounter::instance()->decrementCounter();
 }
 
 /*---------------------------------------------------------------------------*/

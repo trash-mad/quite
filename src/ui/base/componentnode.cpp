@@ -20,6 +20,7 @@ ComponentNode::ComponentNode(
         "setState",
         eval->newQObject(this).property("setState")
     );
+    this->scheduleTimer=new QTimer(this);
     this->instance=instance;
     this->render=render;
 
@@ -30,28 +31,19 @@ ComponentNode::ComponentNode(
 
 ComponentNode::~ComponentNode() {
     qDebug() << "ComponentNode dtor";
+    scheduleTimer->stop();
+    scheduleTimer->deleteLater();
 }
 
 /*---------------------------------------------------------------------------*/
 
-void ComponentNode::incrementResolveCounter(QString from) {
+void ComponentNode::incrementResolveCounter() {
     qDebug() << "ComponentNode incrementResolveCounter exec";
-    while (!DiffCounter::instance()->tryIncrementCounter(from)) {
+    while (!DiffCounter::instance()->tryIncrementCounter()) {
         QCoreApplication::processEvents();
         QThread::msleep(50);
     }
     qDebug() << "ComponentNode incrementResolveCounter resolve";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void ComponentNode::resolveChanges() {
-    qDebug() << "ComponentNode resolveChanges exec";
-    while (!DiffCounter::instance()->changesResolved()) {
-        QCoreApplication::processEvents();
-        QThread::msleep(50);
-    }
-    qDebug() << "ComponentNode resolveChanges resolve";
 }
 
 /*---------------------------------------------------------------------------*/
@@ -66,13 +58,34 @@ void ComponentNode::setState(QJSValue state) {
     );
     Node* node = nullptr;
     if (tryCastNode(root, node)) {
-        resolveChanges();
-        QVector<NodeStruct> newTree(node->getTotalChildCount());
-        ComponentNode::buildNodeTree(node, newTree, true);
-        QVector<NodeStruct> tree(getChild().first()->getTotalChildCount());
-        ComponentNode::buildNodeTree(getChild().first(), tree);
-        node->updateContext(instance);
-        subtreeChanged(newTree, tree, node);
+        if (!DiffCounter::instance()->changesResolved()) {
+            qDebug() << "ComponentNode setState scheduled";
+            scheduleTimer->stop();
+            scheduleTimer->deleteLater();
+            scheduleTimer=new QTimer(this);
+            scheduleTimer->setSingleShot(true);
+
+            connect(scheduleTimer, &QTimer::timeout, [this,state]() {
+                qDebug() << "ComponentNode setState exec";
+                setState(state);
+            });
+
+            scheduleTimer->start(50);
+            return;
+        } else {
+            QVector<NodeStruct> newTree(countTotalChild(node)+1);
+            {
+                int initialIndex=0;
+                ComponentNode::buildNodeTree(node, initialIndex, newTree, true);
+            }
+            QVector<NodeStruct> tree(countTotalChild(getChild().first())+1);
+            {
+                int initialIndex=0;
+                ComponentNode::buildNodeTree(getChild().first(), initialIndex, tree);
+            }
+            node->updateContext(instance);
+            subtreeChanged(newTree, tree, node);
+        }
     } else {
         qCritical() << "ComponentNode setState render is not Node*";
     }
@@ -93,35 +106,29 @@ void ComponentNode::updateContext(
 
 QVector<NodeStruct> ComponentNode::buildNodeTree(
     Node* root,
+    int& itemIndex,
     QVector<NodeStruct>& result,
     bool newTree,
-    NodeStruct* parent,
-    int lastIndex,
-    int index
+    NodeStruct* parent
 ) {
-    result[lastIndex].childCount=root->getTotalChildCount();
-    result[lastIndex].type=root->getType();
-    result[lastIndex].key=root->getKey();
-    result[lastIndex].newTree=newTree;
-    result[lastIndex].parent=parent;
-    result[lastIndex].index=index;
-    result[lastIndex].node=root;
+    result[itemIndex].type=root->getType();
+    result[itemIndex].key=root->getKey();
+    result[itemIndex].newTree=newTree;
+    result[itemIndex].parent=parent;
+    result[itemIndex].node=root;
 
-    int selfIndex=lastIndex;
+    parent=std::addressof(result[itemIndex]);
 
     QLinkedList<Node*> child=root->getChild();
     QLinkedList<Node*>::iterator iter;
-    int currentIndex=0;
     for (iter=child.begin();iter!=child.end();iter++) {
-        lastIndex++;
-        currentIndex++;
+        itemIndex++;
         buildNodeTree(
             (*iter),
+            itemIndex,
             result,
             newTree,
-            std::addressof(result[selfIndex]),
-            lastIndex,
-            currentIndex
+            parent
         );
     }
     return result;
@@ -162,15 +169,49 @@ QJSValue ComponentNode::initialRender(
 
 /*---------------------------------------------------------------------------*/
 
-bool ComponentNode::checkTree(QVector<NodeStruct>& tree) {
-    for (int i=2;i!=tree.length();i++) {
-        if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
-            return false;
-        } else {
-            continue;
-        }
+int ComponentNode::countTotalChild(Node *root) {
+    QLinkedList<Node*> child=root->getChild();
+    QLinkedList<Node*>::iterator iter;
+    int total=child.count();
+    for (iter=child.begin();iter!=child.end();iter++) {
+        total+=countTotalChild(*iter);
     }
-    return true;
+    return total;
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool ComponentNode::checkTree(QVector<NodeStruct>& tree) {
+    if (tree.length()<3) {
+        return true;
+    } else {
+        for (int i=2;i!=tree.length();i++) {
+            if (tree[i]==tree[i-1]&&tree[i]==tree[i-2]) {
+                return false;
+            } else {
+                continue;
+            }
+        }
+        return true;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void ComponentNode::processDiffChild(
+    std::vector<NodeStruct> &merged,
+    NodeStruct item,
+    int index
+) {
+    qDebug() << "ComponentNode processDiffChild";
+    if (tryInsertAfterChild(merged,item,index)) {
+        return;
+    } else if (tryAppendChild(merged,item,index)) {
+        return;
+    } else {
+        incrementResolveCounter();
+        this->appendChild(item.node);
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -183,9 +224,7 @@ bool ComponentNode::tryInsertAfterChild(
     qDebug() << "ComponentNode tryInsertAfterChild";
     auto afterIndex = static_cast<unsigned long long>(lastIndex)-1;
     if (merged[afterIndex].parent==child.parent) {
-        incrementResolveCounter(QString("tryInsert %1").arg(
-            QVariant(child.node->getEnumType()).toString()
-        ));
+        incrementResolveCounter();
         merged[afterIndex].parent->node->insertAfterChild(
             merged[afterIndex].node,
             child.node
@@ -207,9 +246,7 @@ bool ComponentNode::tryAppendChild(
     for (int i=lastIndex;i>=0;i--) {
         auto index=static_cast<unsigned long long>(i);
         if (*child.parent==merged[index]) {
-            incrementResolveCounter(QString("tryAppend %1").arg(
-                QVariant(merged[index].node->getEnumType()).toString()
-            ));
+            incrementResolveCounter();
             merged[index].node->appendChild(
                 child.node
             );
@@ -258,33 +295,89 @@ void ComponentNode::subtreeChanged(
         std::vector<std::pair<NodeStruct,dtl::elemInfo>> changes = ses.getSequence();
         auto merged = d.patch(treeStd);
         std::vector<std::pair<NodeStruct,dtl::elemInfo>>::iterator iter;
+        QList<NodeStruct*> parent;
         for (iter=changes.begin();iter!=changes.end();iter++) {
             dtl::edit_t type = iter->second.type;
             if (type==dtl::SES_ADD) {
                 int index = static_cast<int>(iter->second.afterIdx)-1;
-                if (tryInsertAfterChild(merged,iter->first,index)) {
-                    continue;
-                } else if (tryAppendChild(merged,iter->first,index)) {
-                    continue;
+                NodeStruct* current=std::addressof(iter->first);
+                /*
+                 * Достаточно сложный к пониманию сегмент кода...
+                 *
+                 *  - метод processDiffChild(merged,iter->first,index);
+                 *    идет по вектору изменений по направлению к индексу 0 для
+                 *    добавления новой ноды либо между, либо как первую дочернюю
+                 *
+                 *  - данный сегмент кода пропускает дочернии ноды для текущей
+                 *    сохраняя ВЛОЖЕННЫХ родителей в список current и пропуская
+                 *    некоторое кол-во элементов
+                 */
+
+                if (parent.length()==0) {
+                    /*
+                     * Первый элемент последовательности, просто добавляе
+                     */
+                    parent.append(current);
+                    processDiffChild(merged,iter->first,index);
+                    qDebug() << "append" << iter->first.key;
                 } else {
-                    incrementResolveCounter(QString("Append %1").arg(
-                        QVariant(iter->first.node->getEnumType()).toString()
-                    ));
-                    this->appendChild(iter->first.node);
+                    if (*current->parent!=*parent.last()) {
+                        /*
+                         * Конец потомков текущего родителя, идем
+                         * выше по списку родителей
+                         */
+                        qDebug() << "not parent" << iter->first.key;
+                        bool found=false;
+                        while (parent.length()!=1) {
+                            parent.removeLast();
+                            if (*current->parent==*parent.last()) {
+                                qDebug()
+                                    << "parent found"
+                                    << parent.last()->key;
+                                found=true;
+                                break;
+                            } else {
+                                qDebug()
+                                    << "not parent"
+                                    << parent.last()->key;
+                                continue;
+                            }
+                        }
+                        if (!found) {
+                            /*
+                             * Родитель не найден. Удаляем последнего родителя
+                             * и выполняем итерацию по-новой
+                             */
+                            qDebug()
+                                << "parent not found"
+                                << iter->first.key;
+                            parent.removeLast();
+                            iter--;
+                            continue;
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        /*
+                         * Эта нода уже потомок, её не нужно обрабатывать
+                         * каждая нода имеет потенциал быть родителем
+                         */
+                        qDebug() << "skip" << iter->first.key;
+                        parent.append(current);
+                        continue;
+                    }
                 }
             } else if (type==dtl::SES_COMMON) {
+                qDebug() << "common" << iter->first.key;
                 int afterIndex=static_cast<int>(iter->second.afterIdx)-1;
                 int beforeIndex=static_cast<int>(iter->second.beforeIdx)-1;
                 NodeStruct item = tree.at(beforeIndex);
                 NodeStruct newItem = newTree.at(afterIndex);
-                incrementResolveCounter(QString("MergeProps %1").arg(
-                    QVariant(item.node->getEnumType()).toString()
-                ));
+                incrementResolveCounter();
                 item.node->mergeProps(newItem.node);
             } else if (type==dtl::SES_DELETE) {
-                incrementResolveCounter(QString("Delete %1").arg(
-                    QVariant(iter->first.node->getEnumType()).toString()
-                ));
+                qDebug() << "delete" << iter->first.key;
+                incrementResolveCounter();
                 iter->first.node->deleteNodeDiff();
             } else {
                 qCritical() << "Invalid change type";
@@ -292,8 +385,10 @@ void ComponentNode::subtreeChanged(
         }
         qDebug() << "Component diff render applied";
     } else {
-        incrementResolveCounter("Subtree update");
-        this->getChild().first()->deleteLater();
+        incrementResolveCounter();
+        this->getChild().first()->deleteNodeDiff();
+        incrementResolveCounter();
+        appendChild(newRoot, true);
         emit renderSubtree(newRoot);
     }
 }

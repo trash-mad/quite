@@ -1,6 +1,7 @@
 #ifndef COMPONENTNODE_H
 #define COMPONENTNODE_H
 
+#include <QTimer>
 #include <QVector>
 #include <QtDebug>
 #include <QObject>
@@ -30,6 +31,7 @@ namespace Base {
 class ComponentNode : public Node {
   Q_OBJECT
   private:
+    QTimer* scheduleTimer;
     QJSValue instance;
     QJSValue render;
   public:
@@ -41,8 +43,7 @@ class ComponentNode : public Node {
    * пока Element не отчитаются о применении изменений
    */
   private:
-    void incrementResolveCounter(QString from);
-    void resolveChanges();
+    void incrementResolveCounter();
 
   /*
    * Слот setState для начала обновления древа
@@ -60,11 +61,10 @@ class ComponentNode : public Node {
   private:
     static QVector<NodeStruct> buildNodeTree(
         Node* root,
+        int& itemIndex,
         QVector<NodeStruct>& result,
         bool newTree=false,
-        NodeStruct* parent=nullptr,
-        int lastIndex=0,
-        int index=0
+        NodeStruct* parent=nullptr
     );
     static QJSValue initialRender(
         QJSEngine* eval,
@@ -76,7 +76,13 @@ class ComponentNode : public Node {
    * Методы для сравнения двух древ
    */
   private:
+    int countTotalChild(Node* root);
     bool checkTree(QVector<NodeStruct>& tree);
+    void processDiffChild(
+        std::vector<NodeStruct> &merged,
+        NodeStruct item,
+        int index
+    );
     bool tryInsertAfterChild(
         std::vector<NodeStruct>& merged,
         NodeStruct child,

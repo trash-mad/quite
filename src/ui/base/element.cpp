@@ -14,7 +14,12 @@ Element::Element(
 ) : QObject(parent) {
     qDebug() << "Element ctor";
     this->type=node->getEnumType();
-    connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    connect(
+        node,
+        SIGNAL(destroyed()),
+        this,
+        SLOT(deleteLater())
+    );
     connect(
         node,
         SIGNAL(propsChanged(QMap<QString,QVariant>,bool)),
@@ -37,27 +42,20 @@ Element::Element(
         node,
         SIGNAL(diffDelete()),
         this,
-        SLOT(diffDeleteHandler())
+        SLOT(diffDeleteEmit())
     );
 
     context=new QQmlContext(engine->rootContext(),this);
     context->setContextObject(this);
 
     QQmlComponent component(engine, uri);
-    QObject* object=component.beginCreate(context);
-    component.completeCreate();
+    QObject* object=component.create(context);
 
-    WindowComponent* window = qobject_cast<WindowComponent*>(object);
-    if (window==nullptr) {
-        item=qobject_cast<QQuickItem*>(object);
+    if (object==nullptr) {
+        qCritical() << "Element" << type << "creation failed";
     } else {
-        item=window->contentItem();
-        connect(
-            window,
-            SIGNAL(closed()),
-            this,
-            SIGNAL(windowClosed())
-        );
+        FlexNode::initDefaultProps(object);
+        item=qobject_cast<QQuickItem*>(object);
     }
 }
 
@@ -93,6 +91,19 @@ void Element::childInsertAfter(Node *after, Element *child) {
                 this,
                 SLOT(childDeletedHandler(QObject*))
             );
+            connect(
+                child,
+                SIGNAL(diffDelete()),
+                this,
+                SLOT(childDiffDeleteHandler())
+            );
+            connect(
+                child,
+                SIGNAL(update()),
+                this,
+                SIGNAL(update())
+            );
+            emit update();
             return;
         } else {
             elemIter++;
@@ -114,6 +125,19 @@ void Element::childAppend(Element *child) {
         this,
         SLOT(childDeletedHandler(QObject*))
     );
+    connect(
+        child,
+        SIGNAL(diffDelete()),
+        this,
+        SLOT(childDiffDeleteHandler())
+    );
+    connect(
+        child,
+        SIGNAL(update()),
+        this,
+        SIGNAL(update())
+    );
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -121,6 +145,13 @@ void Element::childAppend(Element *child) {
 void Element::childDeleted(Element *child) {
     qDebug() << "Element default childDeleted";
     this->child.removeOne(child);
+    disconnect(
+        child,
+        SIGNAL(update()),
+        this,
+        SIGNAL(update())
+    );
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -137,7 +168,20 @@ void Element::childChanged() {
             this,
             SLOT(childDeletedHandler(QObject*))
         );
+        connect(
+            element,
+            SIGNAL(diffDelete()),
+            this,
+            SLOT(childDiffDeleteHandler())
+        );
+        connect(
+            element,
+            SIGNAL(update()),
+            this,
+            SIGNAL(update())
+        );
     }
+    emit update();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -200,9 +244,8 @@ void Element::propsChangedHandler(
     this->props=commitProps;
     if (merge) {
         propsChanged();
-        DiffCounter::instance()->decrementCounter(
-            QString("Merge %1").arg(QVariant(getType()).toString())
-        );
+        DiffCounter::instance()->decrementCounter();
+        emit update();
     } else {
         propsChanged();
     }
@@ -220,7 +263,7 @@ void Element::childInsertedAfterHandler(Node *after, Node *child) {
 void Element::childDeletedHandler(QObject* child) {
     qDebug() << "Element childDeletedHandler";
     Element* item = qobject_cast<Element*>(child);
-    if (item==nullptr) {
+    if (item!=nullptr) {
         childDeleted(item);
     } else {
         qCritical() << "Element childDeletedHandler child not Element";
@@ -236,12 +279,24 @@ void Element::childAppendedHandler(Node *child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::diffDeleteHandler() {
-    qDebug() << "Element diffDeleteHandler";
-    item->setParentItem(nullptr);
-    DiffCounter::instance()->decrementCounter(
-        QString("Delete %1").arg(QVariant(getType()).toString()
-    ));
+void Element::childDiffDeleteHandler() {
+    Element* sender=qobject_cast<Element*>(QObject::sender());
+    disconnect(
+        sender,
+        SIGNAL(destroyed(QObject*)),
+        this,
+        SLOT(childDeletedHandler(QObject*))
+    );
+    childDeletedHandler(sender);
+    DiffCounter::instance()->decrementCounter();
+    emit update();
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::diffDeleteEmit() {
+    qDebug() << "Element diffDeleteEmit";
+    emit diffDelete();
 }
 
 /*****************************************************************************/

@@ -12,12 +12,12 @@
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
+#include "src/ui/flex/flexnode.h"
 #include "src/ui/base/diffcounter.h"
-#include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
-using namespace Quite::Ui::Components;
+using namespace Quite::Ui::Flex;
 
 namespace Quite {
 namespace Ui {
@@ -87,7 +87,10 @@ class Element : public QObject {
     void childInsertedAfterHandler(Node* after, Node* child);
     void childDeletedHandler(QObject* child);
     void childAppendedHandler(Node* child);
-    void diffDeleteHandler();
+
+
+    void childDiffDeleteHandler();
+    void diffDeleteEmit();
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы
@@ -96,7 +99,13 @@ class Element : public QObject {
     void insertAfterChild(Node* after, Node* child);
     void appendChild(Node* child);
     void invoke(Invoke* method);
-    void windowClosed();
+
+  /*
+   * Сигнал для уведомления о изменении свойств/потомков
+   */
+  signals:
+    void update();
+    void diffDelete();
 };
 
 /*****************************************************************************/

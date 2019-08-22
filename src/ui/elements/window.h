@@ -5,9 +5,16 @@
 #include <QObject>
 #include <QVariant>
 
+#include "src/ui/component.h"
 #include "src/ui/base/element.h"
+#include "src/ui/flex/flexnode.h"
+#include "src/ui/base/diffcounter.h"
+#include "src/ui/components/windowcomponent.h"
 
+using namespace Quite::Ui;
+using namespace Quite::Ui::Flex;
 using namespace Quite::Ui::Base;
+using namespace Quite::Ui::Components;
 
 namespace Quite {
 namespace Ui {
@@ -20,6 +27,18 @@ class Window : public Element {
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
+  private:
+    FlexNode* buildFlexTree(Element* current,bool fill=false);
+
+  /*
+   * Слот для изменения компоновки флексбокс при обновлении дочерних
+   * элементов
+   */
+  private slots:
+    void updateFlexLayout();
+
+  signals:
+    void closed();
 };
 
 /*****************************************************************************/

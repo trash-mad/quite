@@ -41,16 +41,12 @@ class Node : public QObject{
   private:
     QMap<QString, QJSValue> props;
     QLinkedList<Node*> child;
-    int totalChildCount = 1;
     QJSValue context;
     NodeType type;
     int key=0;
   public:
     explicit Node(QJSValue type, QJSValue props, QJSValue child);
     ~Node();
-
-  private:
-    void subscribeChildNode(Node* node);
 
   /*
    * Отдельный слот для удаления ноды в порядке diff изменений
@@ -62,7 +58,7 @@ class Node : public QObject{
    * Слоты управления древом под-нод
    */
   public slots:
-    void appendChild(Node* child);
+    void appendChild(Node* child, bool slient=false);
     void insertAfterChild(Node* after, Node* child);
   private slots:
     void childDeletedHandler(QObject* child);
@@ -82,7 +78,6 @@ class Node : public QObject{
   public:
     QMap<QString,QJSValue> getProps() const;
     QLinkedList<Node*> getChild() const;
-    int getTotalChildCount() const;
     NodeType getEnumType() const;
     int getType() const;
     int getKey() const;
@@ -105,19 +100,9 @@ class Node : public QObject{
     void childAppended(Node* child);
 
   /*
-   * Управление колличеством дочерних нод
-   */
-  private slots:
-    void incrementTotalChildCountHandler();
-    void decrementTotalChildCountHandler();
-
-  /*
-   * Управление колличеством дочерних нод
    * Сигнал удаления с пометкой декремента diff счетчика
    */
   signals:
-    void incrementTotalChildCount();
-    void decrementTotalChildCount();
     void diffDelete();
 };
 

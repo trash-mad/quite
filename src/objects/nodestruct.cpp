@@ -9,8 +9,6 @@ NodeStruct::NodeStruct() {
     parent = nullptr;
     node = nullptr;
     newTree = false;
-    childCount = -1;
-    index = -1;
     type = -1;
     key = -1;
 }
@@ -38,10 +36,8 @@ QString NodeStruct::getInfo(const NodeStruct &that) {
     tmp << "NodeStruct"
     << "node:" << nodePointer
     << "newTree:" << QVariant(that.newTree).toString()
-    << "childCount" << QVariant(that.childCount).toString()
     << "type" << QVariant(that.type).toString()
-    << "key" << QVariant(that.key).toString()
-    << "index" << QVariant(that.index).toString();
+    << "key" << QVariant(that.key).toString();
     return tmp.join(' ');
 }
 

@@ -23,9 +23,7 @@ class NodeStruct {
     NodeStruct();
     NodeStruct* parent;
     Node* node;
-    int childCount;
     bool newTree;
-    int index;
     int type;
     int key;
   public:
@@ -38,6 +36,9 @@ class NodeStruct {
     static QString getInfo(const NodeStruct& that);
     friend inline bool operator==(const NodeStruct &a, const NodeStruct &b) {
         return NodeStruct::equals(std::addressof(a),std::addressof(b));
+    }
+    friend inline bool operator!=(const NodeStruct &a, const NodeStruct &b) {
+        return !NodeStruct::equals(std::addressof(a),std::addressof(b));
     }
     friend std::ostream& operator<<(std::ostream& os,const NodeStruct& a) {
         return os << NodeStruct::getInfo(a).toStdString();

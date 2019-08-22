@@ -10,9 +10,10 @@ lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
 SOURCES += src/main.cpp \
-    src/objects/invoke.cpp \
-    src/ui/components/windowcomponent.cpp \
-    src/ui/rendersynchronizer.cpp
+    src/ui/flex/flexnode.cpp
+SOURCES += src/objects/invoke.cpp
+SOURCES += src/ui/base/diffcounter.cpp
+SOURCES += src/ui/components/windowcomponent.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/objects/nodestruct.cpp
 SOURCES += src/ui/base/componentnode.cpp
@@ -41,17 +42,10 @@ SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h \
-    src/objects/invoke.h \
-    src/ui/components/windowcomponent.h \
-    src/ui/rendersynchronizer.h
-HEADERS += 3rdparty/dtl/Diff.hpp
-HEADERS += 3rdparty/dtl/Diff3.hpp
-HEADERS += 3rdparty/dtl/Lcs.hpp
-HEADERS += 3rdparty/dtl/Sequence.hpp
-HEADERS += 3rdparty/dtl/Ses.hpp
-HEADERS += 3rdparty/dtl/dtl.hpp
-HEADERS += 3rdparty/dtl/functors.hpp
-HEADERS += 3rdparty/dtl/variables.hpp
+    src/ui/flex/flexnode.h
+HEADERS += src/objects/invoke.h
+HEADERS += src/ui/base/diffcounter.h
+HEADERS += src/ui/components/windowcomponent.h
 HEADERS += src/ui/elements/button.h
 HEADERS += src/ui/elements/rectangle.h
 HEADERS += src/ui/elements/window.h
@@ -77,5 +71,47 @@ HEADERS += src/extensions/timerextension.h
 HEADERS += src/events/installextension.h
 HEADERS += src/events/importmodule.h
 HEADERS += src/events/throwerror.h
+
+SOURCES += 3rdparty/yoga/Utils.cpp
+SOURCES += 3rdparty/yoga/YGConfig.cpp
+SOURCES += 3rdparty/yoga/YGEnums.cpp
+SOURCES += 3rdparty/yoga/YGLayout.cpp
+SOURCES += 3rdparty/yoga/YGMarker.cpp
+SOURCES += 3rdparty/yoga/YGNode.cpp
+SOURCES += 3rdparty/yoga/YGNodePrint.cpp
+SOURCES += 3rdparty/yoga/YGStyle.cpp
+SOURCES += 3rdparty/yoga/YGValue.cpp
+SOURCES += 3rdparty/yoga/Yoga.cpp
+SOURCES +=
+SOURCES +=
+SOURCES +=
+SOURCES +=
+
+HEADERS += 3rdparty/yoga/CompactValue.h
+HEADERS += 3rdparty/yoga/Utils.h
+HEADERS += 3rdparty/yoga/YGConfig.h
+HEADERS += 3rdparty/yoga/YGEnums.h
+HEADERS += 3rdparty/yoga/YGFloatOptional.h
+HEADERS += 3rdparty/yoga/YGLayout.h
+HEADERS += 3rdparty/yoga/YGMacros.h
+HEADERS += 3rdparty/yoga/YGMarker.h
+HEADERS += 3rdparty/yoga/YGNode.h
+HEADERS += 3rdparty/yoga/YGNodePrint.h
+HEADERS += 3rdparty/yoga/YGStyle.h
+HEADERS += 3rdparty/yoga/YGValue.h
+HEADERS += 3rdparty/yoga/Yoga-internal.h
+HEADERS += 3rdparty/yoga/Yoga.h
+HEADERS +=
+HEADERS += 3rdparty/yoga/instrumentation.h
+HEADERS +=
+HEADERS +=
+HEADERS += 3rdparty/dtl/Diff.hpp
+HEADERS += 3rdparty/dtl/Diff3.hpp
+HEADERS += 3rdparty/dtl/Lcs.hpp
+HEADERS += 3rdparty/dtl/Sequence.hpp
+HEADERS += 3rdparty/dtl/Ses.hpp
+HEADERS += 3rdparty/dtl/dtl.hpp
+HEADERS += 3rdparty/dtl/functors.hpp
+HEADERS += 3rdparty/dtl/variables.hpp
 
 RESOURCES += res.qrc

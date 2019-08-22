@@ -40,6 +40,7 @@ class Manager : public QObject {
     void renderUi(Node* rootNode);
   private:
     Component* renderComponent(Node* node, Element* parent);
+    Window* renderWindow(Node* node, Element* parent);
     Element* renderElement(Node* node, Element* parent = nullptr);
     Element* renderElementTree(Node* node, Element* parent = nullptr);
   /*
