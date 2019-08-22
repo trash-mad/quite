@@ -7,8 +7,8 @@ function SampleComponent(props) {
 }
 
 SampleComponent.prototype.render=function() {
-    return Quite.createElement("Rectangle", {color: "whitesmoke", flexDirection: "column", marginTop: 5, marginLeft: 5},
-        Quite.createElement("Rectangle", {color: "whitesmoke", flexDirection: "row", minHight: 50, paddingTop: 5},
+    return Quite.createElement("Rectangle", {color: "white", flexDirection: "column", marginTop: 5, marginLeft: 5},
+        Quite.createElement("Rectangle", {height: 55, color: "whitesmoke", flexDirection: "row", minHight: 50, paddingTop: 5},
             Quite.createElement("Button", {text: "Add rect", height: 50, width: 125, marginRight:5, onClick: this.addRect}),
             Quite.createElement("Button", {text: "Remove rect", height: 50, width: 125, onClick: this.removeRect}),
         ), 
@@ -49,7 +49,7 @@ SampleComponent.prototype.removeRect=function() {
 
 function test() {
     return  Quite.createElement("Window", null,
-        Quite.createElement(SampleComponent, {minWidth: 250})
+        Quite.createElement(SampleComponent, {heightPercent: 100, widthPercent: 100})
     );
 }
 

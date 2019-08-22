@@ -235,33 +235,85 @@ void FlexNode::parseFlexWrap(QString wrap) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::parseOtherProps() {
+
+    int minWidth=item->property("minWidth").toInt();
+    int minWidthPercent=item->property("minWidthPercent").toInt();
+    int maxWidth=item->property("maxWidth").toInt();
+    int maxWidthPercent=item->property("maxWidthPercent").toInt();
+    int minHeight=item->property("minHeight").toInt();
+    int minHeightPercent=item->property("minHeightPercent").toInt();
+    int maxHeight=item->property("maxHeight").toInt();
+    int maxHeightPercent=item->property("maxHeightPercent").toInt();
+    int height=item->property("height").toInt();
+    int heightPercent=item->property("heightPercent").toInt();
+    int width=item->property("width").toInt();
+    int widthPercent=item->property("widthPercent").toInt();
+
+    int margin=item->property("margin").toInt();
+    int marginPercent=item->property("marginPercent").toInt();
+    int padding=item->property("padding").toInt();
+    int paddingPercent=item->property("paddingPercent").toInt();
+
+    int marginTop=item->property("marginTop").toInt();
+    int marginTopPercent=item->property("marginTopPercent").toInt();
+    int marginLeft=item->property("marginLeft").toInt();
+    int marginLeftPercent=item->property("marginLeftPercent").toInt();
+    int marginRight=item->property("marginRight").toInt();
+    int marginRightPercent=item->property("marginRightPercent").toInt();
+    int marginBottom=item->property("marginBottom").toInt();
+    int marginBottomPercent=item->property("marginBottomPercent").toInt();
+
+    int paddingTop=item->property("paddingTop").toInt();
+    int paddingTopPercent=item->property("paddingTopPercent").toInt();
+    int paddingLeft=item->property("paddingLeft").toInt();
+    int paddingLeftPercent=item->property("paddingLeftPercent").toInt();
+    int paddingRight=item->property("paddingRight").toInt();
+    int paddingRightPercent=item->property("paddingRightPercent").toInt();
+    int paddingBottom=item->property("paddingBottom").toInt();
+    int paddingBottomPercent=item->property("paddingBottomPercent").toInt();
+
     if (fill) {
         setHeightPercent(100);
         setWidthPercent(100);
     } else {
-        setMinWidth(item->property("minWidth").toInt());
-        //setMinWidthPercent(item->property("minWidthPercent").toInt());
-        setMaxWidth(item->property("maxWidth").toInt());
-        //setMaxWidthPercent(item->property("maxWidthPercent").toInt());
-        setMinHeight(item->property("minHeight").toInt());
-        //setMinHeightPercent(item->property("minHeightPercent").toInt());
-        setMaxHeight(item->property("maxHeight").toInt());
-        //setMaxHeightPercent(item->property("maxHeightPercent").toInt());
-        setHeight(item->property("height").toInt());
-        //setHeightPercent(item->property("heightPercent").toInt());
-        setWidth(item->property("width").toInt());
-        //setWidthPercent(item->property("widthPercent").toInt());
+        setMinWidth(minWidth);
+        setMinWidthPercent(minWidthPercent);
+        setMaxWidth(maxWidth);
+        setMaxWidthPercent(maxWidthPercent);
+        setMinHeight(minHeight);
+        setMinHeightPercent(minHeightPercent);
+        setMaxHeight(maxHeight);
+        setMaxHeightPercent(maxHeightPercent);
+        setHeight(height);
+        setHeightPercent(heightPercent);
+        setWidth(width);
+        setWidthPercent(widthPercent);
     }
     setFlexShrink(item->property("flexShrink").toInt());
     setFlexGrow(item->property("flexGrow").toInt());
-    setMarginTop(item->property("marginTop").toInt());
-    setMarginLeft(item->property("marginLeft").toInt());
-    setMarginRight(item->property("marginRight").toInt());
-    setMarginBottom(item->property("marginBottom").toInt());
-    setPaddingTop(item->property("paddingTop").toInt());
-    setPaddingLeft(item->property("paddingLeft").toInt());
-    setPaddingRight(item->property("paddingRight").toInt());
-    setPaddingBottom(item->property("paddingBottom").toInt());
+
+    if (!(setPaddingTotal(padding)||setPaddingTotalPercent(paddingPercent))) {
+        setPaddingTop(paddingTop);
+        setPaddingTopPercent(paddingTopPercent);
+        setPaddingLeft(paddingLeft);
+        setPaddingLeftPercent(paddingLeftPercent);
+        setPaddingRight(paddingRight);
+        setPaddingRightPercent(paddingRightPercent);
+        setPaddingBottom(paddingBottom);
+        setPaddingBottomPercent(paddingBottomPercent);
+    }
+
+    if (!(setMarginTotal(margin)||setMarginTotalPercent(marginPercent))) {
+        setMarginTop(marginTop);
+        setMarginTopPercent(marginTopPercent);
+        setMarginLeft(marginLeft);
+        setMarginLeftPercent(marginLeftPercent);
+        setMarginRight(marginRight);
+        setMarginRightPercent(marginRightPercent);
+        setMarginBottom(marginBottom);
+        setMarginBottomPercent(marginBottomPercent);
+    }
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -317,7 +369,11 @@ void FlexNode::setHeight(int height) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setHeightPercent(int percent) {
-    YGNodeStyleSetHeightPercent(node,static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetHeightPercent(node,static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -329,7 +385,11 @@ void FlexNode::setMaxHeight(int points) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setMaxHeightPercent(int percent) {
-    YGNodeStyleSetMaxHeightPercent(node, static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetMaxHeightPercent(node, static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -341,7 +401,11 @@ void FlexNode::setMinHeight(int point) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setMinHeightPercent(int percent) {
-    YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -353,7 +417,11 @@ void FlexNode::setWidth(int width) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setWidthPercent(int percent) {
-    YGNodeStyleSetWidthPercent(node,static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetWidthPercent(node,static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -365,7 +433,11 @@ void FlexNode::setMaxWidth(int points) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setMaxWidthPercent(int percent) {
-    YGNodeStyleSetMaxWidthPercent(node, static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetMaxWidthPercent(node, static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -377,7 +449,11 @@ void FlexNode::setMinWidth(int point) {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::setMinWidthPercent(int percent) {
-    YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
+    if (percent!=-1) {
+        YGNodeStyleSetMinHeightPercent(node, static_cast<float>(percent));
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -604,8 +680,52 @@ void FlexNode::setWrapReverser() {
 
 /*---------------------------------------------------------------------------*/
 
+bool FlexNode::setMarginTotal(int point) {
+    if (point!=-1) {
+        YGNodeStyleSetMargin(
+            node,
+            YGEdgeAll,
+            static_cast<float>(point)
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool FlexNode::setMarginTotalPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetMarginPercent(
+            node,
+            YGEdgeAll,
+            static_cast<float>(percent)
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setMarginTop(int point) {
     YGNodeStyleSetMargin(node, YGEdgeTop, static_cast<float>(point));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setMarginTopPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetMarginPercent(
+            node,
+            YGEdgeTop,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -616,14 +736,86 @@ void FlexNode::setMarginLeft(int point) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setMarginLeftPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetMarginPercent(
+            node,
+            YGEdgeLeft,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setMarginRight(int point) {
     YGNodeStyleSetMargin(node, YGEdgeRight, static_cast<float>(point));
 }
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setMarginRightPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetMarginPercent(
+            node,
+            YGEdgeRight,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setMarginBottom(int point) {
     YGNodeStyleSetMargin(node, YGEdgeBottom, static_cast<float>(point));
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setMarginBottomPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetMarginPercent(
+            node,
+            YGEdgeBottom,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool FlexNode::setPaddingTotal(int point) {
+    if (point!=-1) {
+        YGNodeStyleSetPadding(
+            node,
+            YGEdgeAll,
+            static_cast<float>(point)
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
+bool FlexNode::setPaddingTotalPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetPaddingPercent(
+            node,
+            YGEdgeAll,
+            static_cast<float>(percent)
+        );
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -638,12 +830,40 @@ void FlexNode::setPaddingTop(int point) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setPaddingTopPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetPaddingPercent(
+            node,
+            YGEdgeTop,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setPaddingLeft(int point) {
     YGNodeStyleSetPadding(
         node,
         YGEdgeLeft,
         static_cast<float>(point)
     );
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setPaddingLeftPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetPaddingPercent(
+            node,
+            YGEdgeLeft,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -658,12 +878,40 @@ void FlexNode::setPaddingRight(int point) {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::setPaddingRightPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetPaddingPercent(
+            node,
+            YGEdgeRight,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::setPaddingBottom(int point) {
     YGNodeStyleSetPadding(
         node,
         YGEdgeBottom,
         static_cast<float>(point)
     );
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setPaddingBottomPercent(int percent) {
+    if (percent!=-1) {
+        YGNodeStyleSetPaddingPercent(
+            node,
+            YGEdgeBottom,
+            static_cast<float>(percent)
+        );
+    } else {
+        return;
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -721,27 +969,39 @@ int FlexNode::getLayoutHeight() {
 void FlexNode::initDefaultProps(QObject *object) {
     qDebug() << "FlexNode initDefaultProps";
     object->setProperty("height", 0);
-    object->setProperty("heightPercent", 0);
+    object->setProperty("heightPercent", -1);
     object->setProperty("width", 0);
-    object->setProperty("widthPercent", 0);
+    object->setProperty("widthPercent", -1);
     object->setProperty("minHeight", 0);
-    object->setProperty("minHeightPercent", 0);
+    object->setProperty("minHeightPercent", -1);
     object->setProperty("minWidth", 0);
-    object->setProperty("minWidthPercent", 0);
+    object->setProperty("minWidthPercent", -1);
     object->setProperty("maxHeight",INT_MAX);
+    object->setProperty("maxHeightPercent",-1);
     object->setProperty("maxWidth", INT_MAX);
-    object->setProperty("maxHeightPercent",100);
-    object->setProperty("maxWidthPercent",100);
+    object->setProperty("maxWidthPercent",-1);
     object->setProperty("flexShrink", 0);
     object->setProperty("flexGrow", 0);
+    object->setProperty("margin", -1);
+    object->setProperty("marginPercent", -1);
     object->setProperty("marginTop", 0);
+    object->setProperty("marginTopPercent", -1);
     object->setProperty("marginLeft", 0);
+    object->setProperty("marginLeftPercent", -1);
     object->setProperty("marginRight", 0);
+    object->setProperty("marginRightPercent", -1);
     object->setProperty("marginBottom", 0);
+    object->setProperty("marginBottomPercent", -1);
+    object->setProperty("padding", -1);
+    object->setProperty("paddingPercent", -1);
     object->setProperty("paddingTop", 0);
+    object->setProperty("paddingTopPercent", -1);
     object->setProperty("paddingLeft", 0);
+    object->setProperty("paddingLeftPercent", -1);
     object->setProperty("paddingRight", 0);
+    object->setProperty("paddingRightPercent", -1);
     object->setProperty("paddingBottom", 0);
+    object->setProperty("paddingBottomPercent", -1);
     object->setProperty("alignSelf", "auto");
     object->setProperty("alignItems", "stretch");
     object->setProperty("alignContent", "stretch");
@@ -792,7 +1052,6 @@ void FlexNode::setJustifySpaceAround() {
 void FlexNode::setJustifySpaceEvenly() {
     YGNodeStyleSetJustifyContent(node, YGJustifySpaceEvenly);
 }
-
 
 /*****************************************************************************/
 

@@ -115,15 +115,27 @@ class FlexNode : public QObject {
     void setNoWrap();
     void setWrapReverser();
     /* margin */
+    bool setMarginTotal(int point);
+    bool setMarginTotalPercent(int percent);
     void setMarginTop(int point);
+    void setMarginTopPercent(int percent);
     void setMarginLeft(int point);
+    void setMarginLeftPercent(int percent);
     void setMarginRight(int point);
+    void setMarginRightPercent(int percent);
     void setMarginBottom(int point);
+    void setMarginBottomPercent(int percent);
     /* padding */
+    bool setPaddingTotal(int point);
+    bool setPaddingTotalPercent(int percent);
     void setPaddingTop(int point);
+    void setPaddingTopPercent(int percent);
     void setPaddingLeft(int point);
+    void setPaddingLeftPercent(int percent);
     void setPaddingRight(int point);
+    void setPaddingRightPercent(int percent);
     void setPaddingBottom(int point);
+    void setPaddingBottomPercent(int percent);
     /* calculate */
     int getHeight();
     int getWidth();
