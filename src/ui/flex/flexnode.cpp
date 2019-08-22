@@ -24,6 +24,15 @@ FlexNode::FlexNode(QQuickItem* item, bool fill)
 
 /*---------------------------------------------------------------------------*/
 
+FlexNode::FlexNode(QQuickItem *item, int height, int width)
+  : FlexNode(item) {
+    qDebug() << "FlexNode root ctor";
+    setHeight(height);
+    setWidth(width);
+}
+
+/*---------------------------------------------------------------------------*/
+
 FlexNode::~FlexNode() {
     qDebug() << "FlexNode dtor";
     YGNodeFree(node);
@@ -72,15 +81,19 @@ QString FlexNode::nodeInfo() {
 /*---------------------------------------------------------------------------*/
 
 void FlexNode::buildTree() {
-    std::vector<YGNodeRef> tmp(static_cast<unsigned long>(childCount));
-    QLinkedList<FlexNode*>::iterator iter;
-    int index=0;
-    for (iter=child.begin();iter!=child.end();iter++,index++) {
-        FlexNode* item = *iter;
-        tmp[static_cast<unsigned long>(index)]=item->getNode();
-        item->buildTree();
+    if (childCount>0) {
+        std::vector<YGNodeRef> tmp(static_cast<unsigned long>(childCount));
+        QLinkedList<FlexNode*>::iterator iter;
+        int index=0;
+        for (iter=child.begin();iter!=child.end();iter++,index++) {
+            FlexNode* item = *iter;
+            tmp[static_cast<unsigned long>(index)]=item->getNode();
+            item->buildTree();
+        }
+        YGNodeSetChildren(node,tmp);
+    } else {
+        return;
     }
-    YGNodeSetChildren(node,tmp);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -236,6 +249,9 @@ void FlexNode::parseFlexWrap(QString wrap) {
 
 void FlexNode::parseOtherProps() {
 
+    int height=item->property("height").toInt();
+    int width=item->property("width").toInt();
+
     int minWidth=item->property("minWidth").toInt();
     int minWidthPercent=item->property("minWidthPercent").toInt();
     int maxWidth=item->property("maxWidth").toInt();
@@ -244,9 +260,7 @@ void FlexNode::parseOtherProps() {
     int minHeightPercent=item->property("minHeightPercent").toInt();
     int maxHeight=item->property("maxHeight").toInt();
     int maxHeightPercent=item->property("maxHeightPercent").toInt();
-    int height=item->property("height").toInt();
     int heightPercent=item->property("heightPercent").toInt();
-    int width=item->property("width").toInt();
     int widthPercent=item->property("widthPercent").toInt();
 
     int margin=item->property("margin").toInt();
@@ -289,6 +303,7 @@ void FlexNode::parseOtherProps() {
         setWidth(width);
         setWidthPercent(widthPercent);
     }
+
     setFlexShrink(item->property("flexShrink").toInt());
     setFlexGrow(item->property("flexGrow").toInt());
 

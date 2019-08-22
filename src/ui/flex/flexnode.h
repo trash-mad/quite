@@ -11,6 +11,10 @@
 
 #include "3rdparty/yoga/Yoga.h"
 
+#include "src/ui/components/windowcomponent.h"
+
+using namespace Quite::Ui::Components;
+
 namespace Quite {
 namespace Ui {
 namespace Flex {
@@ -28,6 +32,7 @@ class FlexNode : public QObject {
     int childCount=0;
   public:
     FlexNode(QQuickItem* item, bool fill=false);
+    FlexNode(QQuickItem* item, int height, int width);
     virtual ~FlexNode();
   public:
     void printTree();

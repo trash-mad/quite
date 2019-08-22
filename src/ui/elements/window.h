@@ -24,6 +24,8 @@ namespace Elements {
 
 class Window : public Element {
   Q_OBJECT
+  private:
+    WindowComponent* window;
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;

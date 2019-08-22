@@ -11,10 +11,8 @@ WindowComponent::WindowComponent() {
     window=new WindowComponentPrivate();
     setParentItem(window->contentItem());
     connect(window,SIGNAL(closed()),this,SIGNAL(closed()));
-    connect(window,SIGNAL(resize(int,int)),this,SLOT(resizeHandler(int,int)));
+    connect(window,SIGNAL(resize()),this,SIGNAL(resize()));
     window->show();
-    setProperty("height", window->size().height());
-    setProperty("width", window->size().width());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -26,11 +24,14 @@ WindowComponent::~WindowComponent() {
 
 /*---------------------------------------------------------------------------*/
 
-void WindowComponent::resizeHandler(int height, int width) {
-    qDebug() << "WindowComponent resize";
-    setProperty("height",height);
-    setProperty("width", width);
-    emit resize();
+int WindowComponent::getHeight() const {
+    return window->size().height();
+}
+
+/*---------------------------------------------------------------------------*/
+
+int WindowComponent::getWidth() const {
+    return window->size().width();
 }
 
 /*****************************************************************************/
@@ -46,8 +47,7 @@ bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
     if (ev->type()==QEvent::Close) {
         emit closed();
     } else if (ev->type()==QEvent::Resize) {
-        QSize size = static_cast<QResizeEvent*>(ev)->size();
-        emit resize(size.height(),size.width());
+        emit resize();
     }
     return false;
 }

@@ -9,7 +9,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
+win32-msvc* {
+    MSVC_VER = $$(VisualStudioVersion)
+    lessThan(MSVC_VER, 16.0){
+        error("requires msvc 16.1 and greater (Visual Studio 2019)")
+    }
+}
+
 SOURCES += src/main.cpp \
+    3rdparty/yoga/event/yogaevent.cpp \
+    3rdparty/yoga/yogalog.cpp \
     src/ui/flex/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
@@ -42,6 +51,8 @@ SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h \
+    3rdparty/yoga/event/yogaevent.h \
+    3rdparty/yoga/yogalog.h \
     src/ui/flex/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
