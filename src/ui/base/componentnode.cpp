@@ -64,6 +64,7 @@ void ComponentNode::setState(QJSValue state) {
             scheduleTimer->deleteLater();
             scheduleTimer=new QTimer(this);
             scheduleTimer->setSingleShot(true);
+            scheduleTimer->setTimerType(Qt::TimerType::PreciseTimer);
 
             connect(scheduleTimer, &QTimer::timeout, [this,state]() {
                 qDebug() << "ComponentNode setState exec";

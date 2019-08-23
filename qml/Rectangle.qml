@@ -1,7 +1,11 @@
 import QtQuick 2.0
 
-Rectangle {
+Item {
+    property alias color: rectangle.color
     height: 100
     width: 100
-    color: "green"
+    Rectangle {
+        id: rectangle
+        anchors.fill: parent
+    }
 }

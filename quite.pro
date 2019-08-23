@@ -80,6 +80,7 @@ HEADERS += src/events/importmodule.h
 HEADERS += src/events/throwerror.h
 
 # Yoga layout engine
+# https://github.com/facebook/yoga
 # commit 442d84ccfcfcfe246a29cc394035f3d36e158c2e
 
 SOURCES += 3rdparty/yoga/Utils.cpp
