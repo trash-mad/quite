@@ -1,8 +1,7 @@
 #include "flexnode.h"
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -1070,6 +1069,5 @@ void FlexNode::setJustifySpaceEvenly() {
 
 /*****************************************************************************/
 
+} // namespace Objects
 } // namespace Quite
-} // namespace Ui
-} // namespace Flex

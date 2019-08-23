@@ -12,12 +12,12 @@
 
 #include "src/ui/base/node.h"
 #include "src/objects/invoke.h"
-#include "src/ui/flex/flexnode.h"
+#include "src/objects/flexnode.h"
 #include "src/ui/base/diffcounter.h"
+#include "src/ui/base/componentnode.h"
 
 using namespace Quite::Objects;
 using namespace Quite::Ui::Base;
-using namespace Quite::Ui::Flex;
 
 namespace Quite {
 namespace Ui {
@@ -35,6 +35,10 @@ class Element : public QObject {
     Node* node;
   private:
     QQuickItem* item;
+  protected:
+    FlexNode* layout=nullptr;
+  private:
+    bool layoutUpdateScheduled=false;
   public:
     Element(QUrl uri, Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Element();
@@ -66,6 +70,7 @@ class Element : public QObject {
     QMap<QString, QVariant> getProps() const;
     QLinkedList<Element*> getChild() const;
     virtual QQuickItem* getItem() const;
+    FlexNode* getLayout() const;
     NodeType getType() const;
     Node* getNode() const;
 
@@ -87,10 +92,25 @@ class Element : public QObject {
     void childInsertedAfterHandler(Node* after, Node* child);
     void childDeletedHandler(QObject* child);
     void childAppendedHandler(Node* child);
-
-
     void childDiffDeleteHandler();
     void diffDeleteEmit();
+
+  /*
+   * Метод для построения древа нод флекс-компоновки
+   * переопределяется у окна для передачи актуального размера
+   * в альтернативный конструктор
+   */
+  public:
+    virtual FlexNode* buildFlexTree(bool fill=false);
+
+  /*
+   * Слот, перерисовывающий размеры дочернего древа. Публичный,
+   * его также тригеррит окно при изменении размера
+   * переопределяется у компонента, чтобы передать true в
+   * параметры конструктора FlexNode
+   */
+  public slots:
+    virtual void updateLayout(bool fill=false);
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы
@@ -101,10 +121,9 @@ class Element : public QObject {
     void invoke(Invoke* method);
 
   /*
-   * Сигнал для уведомления о изменении свойств/потомков
+   * Сигнал для уведомления о изменении потомков
    */
   signals:
-    void update();
     void diffDelete();
 };
 

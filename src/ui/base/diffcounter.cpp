@@ -39,6 +39,17 @@ void DiffCounter::decrementCounter() {
     locker.lock();
     if (resolveCounter==0) {
         qCritical() << "DiffCounter decrementCounter < 0";
+    } else if (resolveCounter==1) {
+        resolveCounter--;
+        /*
+         * Нужен асинхронных запуск, чтобы разблокировать
+         * мьютекс
+         */
+        QMetaObject::invokeMethod(
+            this,
+            "diffFree",
+            Qt::QueuedConnection
+        );
     } else {
         resolveCounter--;
     }

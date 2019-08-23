@@ -7,12 +7,10 @@
 
 #include "src/ui/component.h"
 #include "src/ui/base/element.h"
-#include "src/ui/flex/flexnode.h"
 #include "src/ui/base/diffcounter.h"
 #include "src/ui/components/windowcomponent.h"
 
 using namespace Quite::Ui;
-using namespace Quite::Ui::Flex;
 using namespace Quite::Ui::Base;
 using namespace Quite::Ui::Components;
 
@@ -29,15 +27,15 @@ class Window : public Element {
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
-  private:
-    FlexNode* buildFlexTree(Element* current,bool fill=false);
 
   /*
-   * Слот для изменения компоновки флексбокс при обновлении дочерних
-   * элементов
+   * Переопределение метода, строющего древо flex-нод с поправкой
+   * на передачу размера окна
    */
-  private slots:
-    void updateFlexLayout();
+  protected:
+    virtual FlexNode* buildFlexTree(
+        bool fill=false
+    ) override;
 
   signals:
     void closed();

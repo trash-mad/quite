@@ -26,6 +26,9 @@ class Component : public Element {
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
     virtual ~Component() override;
 
+  public slots:
+    virtual void updateLayout(bool fill=true) override;
+
   private slots:
     void renderSubtreeHandler(Node* child);
 

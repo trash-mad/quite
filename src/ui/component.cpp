@@ -29,6 +29,14 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
+void Component::updateLayout(bool fill) {
+    qDebug() << "Component updateLayout";
+    Q_UNUSED(fill);
+    Element::updateLayout(true);
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Component::renderSubtreeHandler(Node *child) {
     if (!diffImposible) {
         diffImposible=true;

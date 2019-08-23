@@ -8,11 +8,11 @@ function SampleComponent(props) {
 
 SampleComponent.prototype.render=function() {
     return Quite.createElement("Rectangle", {color: "white", flexDirection: "column", marginTop: 5, marginLeft: 5},
-        Quite.createElement("Rectangle", {height: 55, color: "whitesmoke", flexDirection: "row", minHight: 50, paddingTop: 5},
+        Quite.createElement("Rectangle", {height: 55, color: "whitesmoke", flexDirection: "row", minHeight: 50, paddingTop: 5},
             Quite.createElement("Button", {text: "Add rect", height: 50, width: 125, marginRight:5, onClick: this.addRect}),
             Quite.createElement("Button", {text: "Remove rect", height: 50, width: 125, onClick: this.removeRect}),
         ), 
-        Quite.createElement("Rectangle", {color: "whitesmoke", flexDirection: "row", paddingTop: 5},
+        Quite.createElement("Rectangle", {color: "cyan", flexDirection: "column", minHeight: 150, minWidth: 150},
             this.state.rects.map((_, index)=>Quite.createElement("Rectangle", {
                         key: index+1,
                         height: 50, 

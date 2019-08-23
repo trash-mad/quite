@@ -16,8 +16,7 @@
 using namespace Quite::Ui::Components;
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -157,8 +156,7 @@ class FlexNode : public QObject {
 
 /*****************************************************************************/
 
-} // namespace Flex
-} // namespace Ui
+} // namespace Objects
 } // namespace Quite
 
 #endif // FLEXNODE_H
