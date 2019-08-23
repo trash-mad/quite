@@ -56,6 +56,7 @@ Element::Element(
     } else {
         FlexNode::initDefaultProps(object);
         item=qobject_cast<QQuickItem*>(object);
+        layout = new FlexNode(this,getItem());
     }
 }
 
@@ -192,6 +193,12 @@ QQuickItem *Element::getItem() const {
 
 /*---------------------------------------------------------------------------*/
 
+FlexNode* Element::getLayout() const {
+    return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
 NodeType Element::getType() const {
     return type;
 }
@@ -277,47 +284,46 @@ void Element::diffDeleteEmit() {
 
 /*---------------------------------------------------------------------------*/
 
-FlexNode* Element::buildFlexTree(bool fill) {
-  if (layout==nullptr) {
-      layout->deleteLater();
-  }
-  layout = new FlexNode(getItem(),fill);
-  QLinkedList<Element*> child=getChild();
-  QLinkedList<Element*>::iterator iter;
-  for (iter=child.begin();iter!=child.end();iter++) {
-      layout->appendChild((*iter)->buildFlexTree(false));
-  }
-  return layout;
+FlexNode* Element::buildFlexTree() {
+      QLinkedList<Element*> child=getChild();
+      QLinkedList<Element*>::iterator iter;
+      layout->clearChild();
+      for (iter=child.begin();iter!=child.end();iter++) {
+          Element* item = *iter;
+          item->getLayout()->initNode();
+          layout->appendChild(item->buildFlexTree());
+      }
+      return layout;
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::updateLayout(bool fill) {
-  qDebug() << "Element updateLayout";
-  DiffCounter* instance = DiffCounter::instance();
-  bool resolved = instance->changesResolved();
-  if (layoutUpdateScheduled&&!resolved) {
-      qDebug() << "Element updateLayout skip";
-      return;
-  } else if (layoutUpdateScheduled&&resolved) {
-      qDebug() << "Element updateLayout exec";
-      disconnect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
-      layoutUpdateScheduled=false;
-      FlexNode* node = buildFlexTree(fill);
-      node->printTree();
-      node->buildTree();
-      node->calculateLayoutLtr();
-  } else if (!resolved) {
-      qDebug() << "Element updateLayout scheduled";
-      connect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
-      layoutUpdateScheduled=true;
-  } else {
-      qDebug() << "Element updateLayout update";
-      FlexNode* node = buildFlexTree(fill);
-      node->printTree();
-      node->buildTree();
-      node->calculateLayoutLtr();
-  }
+void Element::updateLayout() {
+      qDebug() << "Element updateLayout";
+      DiffCounter* instance = DiffCounter::instance();
+      bool resolved = instance->changesResolved();
+      if (layoutUpdateScheduled&&!resolved) {
+          qDebug() << "Element updateLayout skip";
+          return;
+      } else if (layoutUpdateScheduled&&resolved) {
+          qDebug() << "Element updateLayout exec";
+          disconnect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=false;
+          buildFlexTree();
+          layout->printTree();
+          layout->buildTree();
+          layout->calculateLayoutLtr();
+      } else if (!resolved) {
+          qDebug() << "Element updateLayout scheduled";
+          connect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=true;
+      } else {
+          qDebug() << "Element updateLayout update";
+          buildFlexTree();
+          layout->printTree();
+          layout->buildTree();
+          layout->calculateLayoutLtr();
+      }
 }
 
 /*****************************************************************************/

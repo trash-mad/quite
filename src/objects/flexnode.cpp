@@ -5,12 +5,24 @@ namespace Objects {
 
 /*****************************************************************************/
 
-FlexNode::FlexNode(QQuickItem* item, bool fill)
-  : QObject (nullptr) {
+FlexNode::FlexNode(QObject* parent, QQuickItem* item)
+  : QObject (parent) {
     qDebug() << "FlexNode ctor";
-    node = YGNodeNew();
     this->item=item;
-    this->fill=fill;
+    initNode();
+}
+
+/*---------------------------------------------------------------------------*/
+
+FlexNode::~FlexNode() {
+    qDebug() << "FlexNode dtor";
+    YGNodeFree(node);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::initNode() {
+    node = YGNodeNew();
     parseJustifyContent(item->property("justifyContent").toString());
     parseFlexDirection(item->property("flexDirection").toString());
     parseAlignContent(item->property("alignContent").toString());
@@ -23,18 +35,11 @@ FlexNode::FlexNode(QQuickItem* item, bool fill)
 
 /*---------------------------------------------------------------------------*/
 
-FlexNode::FlexNode(QQuickItem *item, int height, int width)
-  : FlexNode(item) {
-    qDebug() << "FlexNode root ctor";
-    setHeight(height);
-    setWidth(width);
-}
-
-/*---------------------------------------------------------------------------*/
-
-FlexNode::~FlexNode() {
-    qDebug() << "FlexNode dtor";
-    YGNodeFree(node);
+void FlexNode::stretchParent() {
+    qDebug() << "FlexNode stretchParent";
+    setHeightPercent(100);
+    setWidthPercent(100);
+    stretch=true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -285,7 +290,7 @@ void FlexNode::parseOtherProps() {
     int paddingBottom=item->property("paddingBottom").toInt();
     int paddingBottomPercent=item->property("paddingBottomPercent").toInt();
 
-    if (fill) {
+    if (stretch) {
         setHeightPercent(100);
         setWidthPercent(100);
     } else {
@@ -970,6 +975,15 @@ void FlexNode::calculateLayoutRtl() {
     for (iter=child.begin();iter!=child.end();iter++) {
         (*iter)->calculateLayoutRtl();
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::clearChild() {
+    qDebug() << "FlexNode cleanChild";
+    YGNodeRemoveAllChildren(node);
+    child.erase(child.begin(),child.end());
+    childCount=0;
 }
 
 /*---------------------------------------------------------------------------*/

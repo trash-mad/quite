@@ -29,10 +29,18 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::updateLayout(bool fill) {
-    qDebug() << "Component updateLayout";
-    Q_UNUSED(fill);
-    Element::updateLayout(true);
+FlexNode *Component::buildFlexTree() {
+    qDebug() << "Component buildFlexTree";
+    QLinkedList<Element*> child=getChild();
+    QLinkedList<Element*>::iterator iter;
+    layout->clearChild();
+    for (iter=child.begin();iter!=child.end();iter++) {
+        Element* item = *iter;
+        item->getLayout()->initNode();
+        item->getLayout()->stretchParent();
+        layout->appendChild(item->buildFlexTree());
+    }
+    return layout;
 }
 
 /*---------------------------------------------------------------------------*/

@@ -36,7 +36,7 @@ class Element : public QObject {
   private:
     QQuickItem* item;
   protected:
-    FlexNode* layout=nullptr;
+    FlexNode* layout;
   private:
     bool layoutUpdateScheduled=false;
   public:
@@ -101,7 +101,7 @@ class Element : public QObject {
    * в альтернативный конструктор
    */
   public:
-    virtual FlexNode* buildFlexTree(bool fill=false);
+    virtual FlexNode* buildFlexTree();
 
   /*
    * Слот, перерисовывающий размеры дочернего древа. Публичный,
@@ -110,7 +110,7 @@ class Element : public QObject {
    * параметры конструктора FlexNode
    */
   public slots:
-    virtual void updateLayout(bool fill=false);
+    virtual void updateLayout();
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы

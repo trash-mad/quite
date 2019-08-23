@@ -26,8 +26,11 @@ class Component : public Element {
     Component(ComponentNode* node, QQmlEngine* engine, Element* parent);
     virtual ~Component() override;
 
-  public slots:
-    virtual void updateLayout(bool fill=true) override;
+  /*
+   * stretch child size
+   */
+  public:
+    virtual FlexNode* buildFlexTree() override;
 
   private slots:
     void renderSubtreeHandler(Node* child);

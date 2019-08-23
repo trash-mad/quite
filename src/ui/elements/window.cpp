@@ -18,6 +18,7 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
         qCritical() << "Window parent must be nullptr";
     } else {
         window = qobject_cast<WindowComponent*>(getItem());
+        layout = new FlexNode(this,getItem());
         connect(
             window,
             SIGNAL(closed()),
@@ -46,24 +47,11 @@ Window::~Window() {
 
 /*---------------------------------------------------------------------------*/
 
-FlexNode* Window::buildFlexTree(bool fill) {
-    Q_UNUSED(fill);
-    if (layout==nullptr) {
-        layout->deleteLater();
-    }
-    layout = new FlexNode(
-        getItem(),
-        window->getHeight(),
-        window->getWidth()
-    );
-    QLinkedList<Element*> child=getChild();
-    QLinkedList<Element*>::iterator iter;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        layout->appendChild((*iter)->buildFlexTree(
-            false
-        ));
-    }
-    return layout;
+void Window::updateLayout() {
+    qDebug() << "Window updateLayout";
+    getLayout()->setHeight(window->getHeight());
+    getLayout()->setWidth(window->getWidth());
+    Element::updateLayout();
 }
 
 /*****************************************************************************/

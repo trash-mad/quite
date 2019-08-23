@@ -24,21 +24,26 @@ class FlexNode : public QObject {
   Q_OBJECT
   private:
     YGNodeRef node;
-    bool fill=false;
   private:
     QQuickItem* item;
     QLinkedList<FlexNode*> child;
     int childCount=0;
+    bool stretch=false;
   public:
-    FlexNode(QQuickItem* item, bool fill=false);
-    FlexNode(QQuickItem* item, int height, int width);
+    FlexNode(QObject* parent, QQuickItem* item);
     virtual ~FlexNode();
+  public:
+    void initNode();
+  public:
+    void stretchParent();
   public:
     void printTree();
     QString nodeInfo();
     void buildTree();
     void calculateLayoutLtr();
     void calculateLayoutRtl();
+  public:
+    void clearChild();
     void appendChild(FlexNode* child);
   public:
     YGNodeRef getNode() const;

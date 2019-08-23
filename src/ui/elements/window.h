@@ -28,14 +28,8 @@ class Window : public Element {
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
 
-  /*
-   * Переопределение метода, строющего древо flex-нод с поправкой
-   * на передачу размера окна
-   */
-  protected:
-    virtual FlexNode* buildFlexTree(
-        bool fill=false
-    ) override;
+  public slots:
+    virtual void updateLayout() override;
 
   signals:
     void closed();
