@@ -108,6 +108,10 @@ HEADERS += 3rdparty/yoga/YGValue.h
 HEADERS += 3rdparty/yoga/Yoga-internal.h
 HEADERS += 3rdparty/yoga/Yoga.h
 
+# diff template library written in C++.
+# https://github.com/cubicdaiya/dtl/
+# commit 9cf6da72798e714307f63f416990dfc753fc94df
+
 HEADERS += 3rdparty/dtl/Diff.hpp
 HEADERS += 3rdparty/dtl/Diff3.hpp
 HEADERS += 3rdparty/dtl/Lcs.hpp
