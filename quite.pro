@@ -9,8 +9,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")
 equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 12) : error("requires Qt > 5.12.*")
 
-SOURCES += src/main.cpp \
-    src/ui/flex/flexnode.cpp
+win32-msvc* {
+    MSVC_VER = $$(VisualStudioVersion)
+    lessThan(MSVC_VER, 16.0){
+        error("requires msvc 16.1 and greater (Visual Studio 2019)")
+    }
+}
+
+SOURCES += src/main.cpp
+SOURCES += src/ui/flex/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
 SOURCES += src/ui/components/windowcomponent.cpp
@@ -41,8 +48,8 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h \
-    src/ui/flex/flexnode.h
+HEADERS += src/base/engine.h
+HEADERS += src/ui/flex/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
 HEADERS += src/ui/components/windowcomponent.h
@@ -72,21 +79,21 @@ HEADERS += src/events/installextension.h
 HEADERS += src/events/importmodule.h
 HEADERS += src/events/throwerror.h
 
+# Yoga layout engine
+# commit 442d84ccfcfcfe246a29cc394035f3d36e158c2e
+
 SOURCES += 3rdparty/yoga/Utils.cpp
 SOURCES += 3rdparty/yoga/YGConfig.cpp
 SOURCES += 3rdparty/yoga/YGEnums.cpp
 SOURCES += 3rdparty/yoga/YGLayout.cpp
-SOURCES += 3rdparty/yoga/YGMarker.cpp
 SOURCES += 3rdparty/yoga/YGNode.cpp
 SOURCES += 3rdparty/yoga/YGNodePrint.cpp
 SOURCES += 3rdparty/yoga/YGStyle.cpp
 SOURCES += 3rdparty/yoga/YGValue.cpp
 SOURCES += 3rdparty/yoga/Yoga.cpp
-SOURCES +=
-SOURCES +=
-SOURCES +=
-SOURCES +=
 
+HEADERS += 3rdparty/yoga/event/yogaevent.h
+HEADERS += 3rdparty/yoga/yogalog.h
 HEADERS += 3rdparty/yoga/CompactValue.h
 HEADERS += 3rdparty/yoga/Utils.h
 HEADERS += 3rdparty/yoga/YGConfig.h
@@ -94,17 +101,13 @@ HEADERS += 3rdparty/yoga/YGEnums.h
 HEADERS += 3rdparty/yoga/YGFloatOptional.h
 HEADERS += 3rdparty/yoga/YGLayout.h
 HEADERS += 3rdparty/yoga/YGMacros.h
-HEADERS += 3rdparty/yoga/YGMarker.h
 HEADERS += 3rdparty/yoga/YGNode.h
 HEADERS += 3rdparty/yoga/YGNodePrint.h
 HEADERS += 3rdparty/yoga/YGStyle.h
 HEADERS += 3rdparty/yoga/YGValue.h
 HEADERS += 3rdparty/yoga/Yoga-internal.h
 HEADERS += 3rdparty/yoga/Yoga.h
-HEADERS +=
-HEADERS += 3rdparty/yoga/instrumentation.h
-HEADERS +=
-HEADERS +=
+
 HEADERS += 3rdparty/dtl/Diff.hpp
 HEADERS += 3rdparty/dtl/Diff3.hpp
 HEADERS += 3rdparty/dtl/Lcs.hpp
@@ -113,5 +116,7 @@ HEADERS += 3rdparty/dtl/Ses.hpp
 HEADERS += 3rdparty/dtl/dtl.hpp
 HEADERS += 3rdparty/dtl/functors.hpp
 HEADERS += 3rdparty/dtl/variables.hpp
+SOURCES += 3rdparty/yoga/event/yogaevent.cpp
+SOURCES += 3rdparty/yoga/yogalog.cpp
 
 RESOURCES += res.qrc

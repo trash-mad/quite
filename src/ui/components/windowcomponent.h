@@ -27,7 +27,7 @@ class WindowComponentPrivate : public QQuickWindow {
     bool eventFilter(QObject *obj, QEvent *ev) override;
   signals:
     void closed();
-    void resize(int height, int width);
+    void resize();
 };
 
 /*****************************************************************************/
@@ -39,8 +39,9 @@ class WindowComponent : public QQuickItem {
   public:
     WindowComponent();
     virtual ~WindowComponent() override;
-  private slots:
-    void resizeHandler(int height, int width);
+  public:
+    int getHeight() const;
+    int getWidth() const;
   signals:
     void closed();
     void resize();
