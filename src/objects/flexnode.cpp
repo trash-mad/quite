@@ -1,8 +1,7 @@
 #include "flexnode.h"
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -333,10 +332,10 @@ void FlexNode::parseOtherProps() {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::commitNewPos() {
-    int top = getLayoutTop();
+void FlexNode::commitNewPos(int T, int L) {
+    int top = getLayoutTop() + T;
     int bottom = getLayoutBottom();
-    int left = getLayoutLeft();
+    int left = getLayoutLeft() + L;
     int right = getLayoutRight();
     int height = getLayoutHeight();
     int width = getLayoutWidth();
@@ -355,11 +354,11 @@ void FlexNode::commitNewPos() {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::commitChildNewPos() {
-    commitNewPos();
+void FlexNode::commitChildNewPos(int T, int L) {
+    commitNewPos(T, L);
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos();
+        (*iter)->commitChildNewPos(T, L);
     }
 }
 
@@ -943,33 +942,42 @@ int FlexNode::getWidth() {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::calculateLayoutLtr() {
+/*
+ * Параметры T, L, H, W обозначают базис компонента, от которого производится
+ * рассчет (отступ сверху, слева, ширина, высота). Используется для запоминания
+ * при инкрементальном пересчете поддрева, когда мы считаем компоновку только
+ * изменившегося компонента.
+ */
+void FlexNode::calculateLayoutLtr(int T,int L,int H,int W) {
     YGNodeCalculateLayout(
         node,
-        static_cast<float>(getWidth()),
-        static_cast<float>(getHeight()),
+        static_cast<float>(W),
+        static_cast<float>(H),
         YGDirectionLTR
     );
-    commitNewPos();
+    /*
+     * Родительский элемент не сдвигается по базису
+     */
+    commitNewPos(0,0);
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos();
+        (*iter)->commitChildNewPos(T,L);
     }
 }
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::calculateLayoutRtl() {
+void FlexNode::calculateLayoutRtl(int T,int L,int H,int W) {
     YGNodeCalculateLayout(
         node,
-        static_cast<float>(getWidth()),
-        static_cast<float>(getHeight()),
+        static_cast<float>(W),
+        static_cast<float>(H),
         YGDirectionRTL
     );
-    commitNewPos();
+    commitNewPos(0,0);
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->calculateLayoutRtl();
+        (*iter)->commitChildNewPos(T,L);
     }
 }
 
@@ -1070,6 +1078,5 @@ void FlexNode::setJustifySpaceEvenly() {
 
 /*****************************************************************************/
 
+} // namespace Objects
 } // namespace Quite
-} // namespace Ui
-} // namespace Flex

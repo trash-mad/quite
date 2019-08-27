@@ -299,6 +299,64 @@ void Element::diffDeleteEmit() {
     emit diffDelete();
 }
 
+/*---------------------------------------------------------------------------*/
+
+FlexNode *Element::buildFlexTree(bool fill) {
+    if (layout==nullptr) {
+        layout->deleteLater();
+    }
+    layout = new FlexNode(getItem(),fill);
+    QLinkedList<Element*> child=getChild();
+    QLinkedList<Element*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        layout->appendChild((*iter)->buildFlexTree(false));
+    }
+    return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::updateLayout() {
+      qDebug() << "Element updateLayout";
+      DiffCounter* instance = DiffCounter::instance();
+      bool resolved = instance->changesResolved();
+      if (layoutUpdateScheduled&&!resolved) {
+          qDebug() << "Element updateLayout skip";
+          return;
+      } else if (layoutUpdateScheduled&&resolved) {
+          qDebug() << "Element updateLayout exec";
+          disconnect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=false;
+          updateLayoutNow();
+      } else if (!resolved) {
+          qDebug() << "Element updateLayout scheduled";
+          connect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=true;
+      } else {
+          qDebug() << "Element updateLayout update";
+          updateLayoutNow();
+      }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::updateLayoutNow() {
+    qDebug() << "Element updateLayoutNow";
+    int H=getItem()->property("height").toInt();
+    int W=getItem()->property("width").toInt();
+    int T=getItem()->property("y").toInt();
+    int L=getItem()->property("x").toInt();
+    if (layout!=nullptr) {
+        layout->deleteLater();
+        layout = buildFlexTree();
+    } else {
+        layout = buildFlexTree();
+    }
+    layout->printTree();
+    layout->buildTree();
+    layout->calculateLayoutLtr(T,L,H,W);
+}
+
 /*****************************************************************************/
 
 } // namespace Base

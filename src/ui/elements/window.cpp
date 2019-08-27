@@ -28,13 +28,13 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
             this,
             SIGNAL(update()),
             this,
-            SLOT(updateFlexLayout())
+            SLOT(updateLayout())
         );
         connect(
             window,
             SIGNAL(resize()),
             this,
-            SLOT(updateFlexLayout())
+            SLOT(updateLayout())
         );
         /*
          * Default props place
@@ -52,48 +52,22 @@ Window::~Window() {
 
 /*---------------------------------------------------------------------------*/
 
-FlexNode *Window::buildFlexTree(Element *current,bool fill) {
-    FlexNode* node = new FlexNode(current->getItem(),fill);
-    QLinkedList<Element*> child=current->getChild();
+FlexNode* Window::buildFlexTree(bool fill) {
+    qDebug() << "Window updateLayout";
+    Q_UNUSED(fill);
+    FlexNode* layout = new FlexNode(
+        getItem(),
+        window->getHeight(),
+        window->getWidth()
+    );
+    QLinkedList<Element*> child=getChild();
     QLinkedList<Element*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        node->appendChild(buildFlexTree(
-            *iter,
-            qobject_cast<Component*>(current)!=nullptr
+        layout->appendChild((*iter)->buildFlexTree(
+            false
         ));
     }
-    return node;
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Window::updateFlexLayout() {
-    qDebug() << "Window updateFlexLayout";
-    if (!DiffCounter::instance()->changesResolved()) {
-        qDebug() << "Window updateFlexLayout not ready";
-    } else {
-        qDebug() << "Window updateFlexLayout ready";
-        FlexNode* windowNode;
-        {
-            windowNode = new FlexNode(
-                getItem(),
-                window->getHeight(),
-                window->getWidth()
-            );
-            QLinkedList<Element*> child=getChild();
-            QLinkedList<Element*>::iterator iter;
-            for (iter=child.begin();iter!=child.end();iter++) {
-                windowNode->appendChild(buildFlexTree(
-                    *iter,
-                    qobject_cast<Component*>(*iter)!=nullptr
-                ));
-            }
-        }
-        windowNode->printTree();
-        windowNode->buildTree();
-        windowNode->calculateLayoutLtr();
-        windowNode->deleteLater();
-    }
+    return layout;
 }
 
 /*****************************************************************************/

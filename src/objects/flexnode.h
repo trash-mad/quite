@@ -16,8 +16,7 @@
 using namespace Quite::Ui::Components;
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -38,8 +37,8 @@ class FlexNode : public QObject {
     void printTree();
     QString nodeInfo();
     void buildTree();
-    void calculateLayoutLtr();
-    void calculateLayoutRtl();
+    void calculateLayoutLtr(int T=0,int L=0,int H=0,int W=0);
+    Q_DECL_DEPRECATED void calculateLayoutRtl(int T=0,int L=0,int H=0,int W=0);
     void appendChild(FlexNode* child);
   public:
     YGNodeRef getNode() const;
@@ -53,8 +52,8 @@ class FlexNode : public QObject {
     void parseFlexWrap(QString wrap);
     void parseOtherProps();
   private:
-    void commitNewPos();
-    void commitChildNewPos();
+    void commitNewPos(int T, int L);
+    void commitChildNewPos(int T, int L);
   public:
     /* flex */
     void setFlexGrow(int v);
@@ -157,8 +156,7 @@ class FlexNode : public QObject {
 
 /*****************************************************************************/
 
-} // namespace Flex
-} // namespace Ui
+} // namespace Objects
 } // namespace Quite
 
 #endif // FLEXNODE_H

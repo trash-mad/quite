@@ -17,7 +17,7 @@ win32-msvc* {
 }
 
 SOURCES += src/main.cpp
-SOURCES += src/ui/flex/flexnode.cpp
+SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
 SOURCES += src/ui/components/windowcomponent.cpp
@@ -49,7 +49,7 @@ SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
 HEADERS += src/base/engine.h
-HEADERS += src/ui/flex/flexnode.h
+HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
 HEADERS += src/ui/components/windowcomponent.h
