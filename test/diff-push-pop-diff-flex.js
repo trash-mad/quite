@@ -13,13 +13,12 @@ SampleComponent.prototype.render=function() {
         ), 
         Quite.createElement("Rectangle", {color: "red", flexDirection: "column", marginTop: 5, flexWrap: "wrap", minHeight: 180, minWidth: 180},
             this.state.rects.map((_, index)=>Quite.createElement("Rectangle", {
-                        key: index,
-                        height: 50, 
-                        width: 50, 
-                        color: "green", 
-                        margin: 5
-            }
-            ))
+                key: index,
+                height: 50, 
+                width: 50, 
+                color: "green", 
+                margin: 5
+            }))
         ),
     );
 }
@@ -27,7 +26,7 @@ SampleComponent.prototype.render=function() {
 SampleComponent.prototype.addRect=function() {
     console.log("addRect")
     this.setState({
-        rects:this.state.rects.concat([1])
+        rects:this.state.rects.concat([1, 1])
     })
 }
 
