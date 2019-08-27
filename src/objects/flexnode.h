@@ -62,8 +62,10 @@ class FlexNode : public QObject {
     void setLastLeft(int left);
     int getHeight() const;
     int getWidth() const;
-    int getLastTop() const;
+    int getMarginLeft() const;
+    int getMarginTop() const;
     int getLastLeft() const;
+    int getLastTop() const;
     /* flex */
     void setFlexGrow(int v);
     void setFlexShrink(int v);

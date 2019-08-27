@@ -329,9 +329,9 @@ void Element::updateLayoutNow() {
     qDebug() << "Element updateLayoutNow";
     int H=layout->getWidth();
     int W=layout->getHeight();
-    int T=layout->getLayoutTop();
+    int T=layout->getLayoutTop()-layout->getMarginTop();
     int LT=layout->getLastTop();
-    int L=layout->getLayoutLeft();
+    int L=layout->getLayoutLeft()-layout->getMarginLeft();
     int LL=layout->getLastLeft();
 
     //layout->deleteLater();

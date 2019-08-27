@@ -396,6 +396,18 @@ int FlexNode::getWidth() const {
 
 /*---------------------------------------------------------------------------*/
 
+int FlexNode::getMarginLeft() const {
+    return static_cast<int>(YGNodeStyleGetMargin(node,YGEdgeLeft).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getMarginTop() const {
+    return static_cast<int>(YGNodeStyleGetMargin(node,YGEdgeTop).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
 int FlexNode::getLastTop() const {
     return lastTop;
 }
