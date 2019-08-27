@@ -34,8 +34,10 @@ class Element : public QObject {
     Node* node;
   private:
     QQuickItem* item;
-  private:
+  protected:
     FlexNode* layout=nullptr;
+  private:
+    bool layoutUpdateStarted=false;
     bool layoutUpdateScheduled=false;
   public:
     Element(QUrl uri, Node* node, QQmlEngine* engine, Element* parent);
@@ -110,12 +112,20 @@ class Element : public QObject {
     void updateLayout();
 
   /*
+   * Вызывается окном и позволяет элементу начать считать diff flexbox
+   */
+  public:
+    void startLayoutUpdate();
+
+  /*
    * Подразумевается, что updateLayout() может пропустить перерисовку,
    * так как не все изменения diff древа применены. Этот метод
    * гарантированно выполнит перерасчет.
+   *
+   * Переопределяется у окна для инициализации просчета дерева
    */
   protected:
-    void updateLayoutNow();
+    virtual void updateLayoutNow();
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы
@@ -129,7 +139,6 @@ class Element : public QObject {
    * Сигнал для уведомления о изменении свойств/потомков
    */
   signals:
-    void update();
     void diffDelete();
 };
 

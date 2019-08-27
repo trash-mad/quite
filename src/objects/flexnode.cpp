@@ -362,6 +362,54 @@ void FlexNode::commitChildNewPos(int T, int L) {
     }
 }
 
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setLastLeft(int left) {
+    lastLeft=left;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setLastTop(int top) {
+    lastTop=top;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getHeight() const{
+    return static_cast<int>(YGNodeStyleGetHeight(node).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getWidth() const {
+    return static_cast<int>(YGNodeStyleGetWidth(node).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getLastTop() const {
+    return lastTop;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getLastLeft() const {
+    return lastLeft;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getPaddingTop() const {
+    return static_cast<int>(YGNodeStyleGetPadding(node,YGEdgeTop).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getPaddingLeft() const {
+    return static_cast<int>(YGNodeStyleGetPadding(node,YGEdgeLeft).value);
+}
+
 /*****************************************************************************/
 
 void FlexNode::setFlexGrow(int v) {
@@ -948,7 +996,7 @@ int FlexNode::getWidth() {
  * при инкрементальном пересчете поддрева, когда мы считаем компоновку только
  * изменившегося компонента.
  */
-void FlexNode::calculateLayoutLtr(int T,int L,int H,int W) {
+void FlexNode::calculateLayoutLtr(int T,int L, int PT, int PL, int H,int W) {
     YGNodeCalculateLayout(
         node,
         static_cast<float>(W),
@@ -958,26 +1006,10 @@ void FlexNode::calculateLayoutLtr(int T,int L,int H,int W) {
     /*
      * Родительский элемент не сдвигается по базису
      */
-    commitNewPos(0,0);
+    commitNewPos(T,L);
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos(T,L);
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
-void FlexNode::calculateLayoutRtl(int T,int L,int H,int W) {
-    YGNodeCalculateLayout(
-        node,
-        static_cast<float>(W),
-        static_cast<float>(H),
-        YGDirectionRTL
-    );
-    commitNewPos(0,0);
-    QLinkedList<FlexNode*>::iterator iter;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos(T,L);
+        (*iter)->commitChildNewPos(T+PT,L+PL);
     }
 }
 

@@ -25,6 +25,8 @@ class FlexNode : public QObject {
   private:
     YGNodeRef node;
     bool fill=false;
+    int lastTop=-1;
+    int lastLeft=-1;
   private:
     QQuickItem* item;
     QLinkedList<FlexNode*> child;
@@ -37,8 +39,7 @@ class FlexNode : public QObject {
     void printTree();
     QString nodeInfo();
     void buildTree();
-    void calculateLayoutLtr(int T=0,int L=0,int H=0,int W=0);
-    Q_DECL_DEPRECATED void calculateLayoutRtl(int T=0,int L=0,int H=0,int W=0);
+    void calculateLayoutLtr(int T,int L, int PT, int PL, int H,int W);
     void appendChild(FlexNode* child);
   public:
     YGNodeRef getNode() const;
@@ -55,6 +56,15 @@ class FlexNode : public QObject {
     void commitNewPos(int T, int L);
     void commitChildNewPos(int T, int L);
   public:
+    /* diff update getters */
+    void setLastTop(int top);
+    void setLastLeft(int left);
+    int getHeight() const;
+    int getWidth() const;
+    int getLastTop() const;
+    int getLastLeft() const;
+    int getPaddingTop() const;
+    int getPaddingLeft() const;
     /* flex */
     void setFlexGrow(int v);
     void setFlexShrink(int v);

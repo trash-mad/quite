@@ -24,6 +24,7 @@ class Window : public Element {
   Q_OBJECT
   private:
     WindowComponent* window;
+    bool initialRenderComplete=false;
   public:
     Window(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Window() override;
@@ -32,7 +33,14 @@ class Window : public Element {
    * Переопределение перерисовки с передачей размера окна
    */
   public slots:
-    virtual FlexNode* buildFlexTree(bool fill) override;
+    virtual FlexNode* buildFlexTree(bool fill=false) override;
+
+  /*
+   * Переопределение для создания инициализирующего древа
+   * компоновки
+   */
+  protected:
+    virtual void updateLayoutNow() override;
 
   signals:
     void closed();

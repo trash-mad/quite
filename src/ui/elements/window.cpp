@@ -36,6 +36,7 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
             this,
             SLOT(updateLayout())
         );
+        startLayoutUpdate();
         /*
          * Default props place
          */
@@ -66,8 +67,28 @@ FlexNode* Window::buildFlexTree(bool fill) {
         layout->appendChild((*iter)->buildFlexTree(
             false
         ));
+        (*iter)->startLayoutUpdate();
     }
     return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Window::updateLayoutNow() {
+    qDebug() << "Window updateLayoutNow";
+    if (!initialRenderComplete) {
+        layout=buildFlexTree();
+        layout->printTree();
+        layout->buildTree();
+        layout->calculateLayoutLtr(
+            0,0,0,0,
+            window->getHeight(),
+            window->getWidth()
+        );
+        initialRenderComplete=true;
+    } else {
+        Element::updateLayoutNow();
+    }
 }
 
 /*****************************************************************************/
