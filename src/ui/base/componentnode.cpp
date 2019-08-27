@@ -223,11 +223,11 @@ bool ComponentNode::tryInsertAfterChild(
     int lastIndex
 ) {
     qDebug() << "ComponentNode tryInsertAfterChild";
-    auto afterIndex = static_cast<unsigned long long>(lastIndex)-1;
-    if (merged[afterIndex].parent==child.parent) {
+    auto index = static_cast<unsigned long long>(lastIndex)-1;
+    if ((!merged[index].newTree)&&merged[index].parent==child.parent){
         incrementResolveCounter();
-        merged[afterIndex].parent->node->insertAfterChild(
-            merged[afterIndex].node,
+        merged[index].parent->node->insertAfterChild(
+            merged[index].node,
             child.node
         );
         return true;

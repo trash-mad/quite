@@ -16,8 +16,7 @@
 using namespace Quite::Ui::Components;
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -26,6 +25,8 @@ class FlexNode : public QObject {
   private:
     YGNodeRef node;
     bool fill=false;
+    int lastTop=-1;
+    int lastLeft=-1;
   private:
     QQuickItem* item;
     QLinkedList<FlexNode*> child;
@@ -38,8 +39,8 @@ class FlexNode : public QObject {
     void printTree();
     QString nodeInfo();
     void buildTree();
-    void calculateLayoutLtr();
-    void calculateLayoutRtl();
+    void calculateLayoutLtr(int T,int L, int H,int W);
+    void calculateLayoutLtr(int H,int W);
     void appendChild(FlexNode* child);
   public:
     YGNodeRef getNode() const;
@@ -56,6 +57,15 @@ class FlexNode : public QObject {
     void commitNewPos();
     void commitChildNewPos();
   public:
+    /* diff update getters */
+    void setLastTop(int top);
+    void setLastLeft(int left);
+    int getHeight() const;
+    int getWidth() const;
+    int getMarginLeft() const;
+    int getMarginTop() const;
+    int getLastLeft() const;
+    int getLastTop() const;
     /* flex */
     void setFlexGrow(int v);
     void setFlexShrink(int v);
@@ -157,8 +167,7 @@ class FlexNode : public QObject {
 
 /*****************************************************************************/
 
-} // namespace Flex
-} // namespace Ui
+} // namespace Objects
 } // namespace Quite
 
 #endif // FLEXNODE_H

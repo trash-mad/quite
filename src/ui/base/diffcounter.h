@@ -28,6 +28,8 @@ class DiffCounter : public QObject {
     bool changesResolved();
   public:
     static DiffCounter* instance();
+  signals:
+    void diffFree();
 };
 
 /*****************************************************************************/

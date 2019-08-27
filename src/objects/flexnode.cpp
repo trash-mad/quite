@@ -1,8 +1,7 @@
 #include "flexnode.h"
 
 namespace Quite {
-namespace Ui {
-namespace Flex {
+namespace Objects {
 
 /*****************************************************************************/
 
@@ -94,6 +93,14 @@ void FlexNode::buildTree() {
     } else {
         return;
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::calculateLayoutLtr(int T, int L, int H, int W) {
+    YGNodeStyleSetPosition(node,YGEdgeTop,static_cast<int>(T));
+    YGNodeStyleSetPosition(node,YGEdgeLeft,static_cast<int>(L));
+    calculateLayoutLtr(H,W);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -361,6 +368,54 @@ void FlexNode::commitChildNewPos() {
     for (iter=child.begin();iter!=child.end();iter++) {
         (*iter)->commitChildNewPos();
     }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setLastLeft(int left) {
+    lastLeft=left;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void FlexNode::setLastTop(int top) {
+    lastTop=top;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getHeight() const{
+    return static_cast<int>(YGNodeStyleGetHeight(node).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getWidth() const {
+    return static_cast<int>(YGNodeStyleGetWidth(node).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getMarginLeft() const {
+    return static_cast<int>(YGNodeStyleGetMargin(node,YGEdgeLeft).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getMarginTop() const {
+    return static_cast<int>(YGNodeStyleGetMargin(node,YGEdgeTop).value);
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getLastTop() const {
+    return lastTop;
+}
+
+/*---------------------------------------------------------------------------*/
+
+int FlexNode::getLastLeft() const {
+    return lastLeft;
 }
 
 /*****************************************************************************/
@@ -943,33 +998,26 @@ int FlexNode::getWidth() {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::calculateLayoutLtr() {
+/*
+ * Параметры T, L, H, W обозначают базис компонента, от которого производится
+ * рассчет (отступ сверху, слева, ширина, высота). Используется для запоминания
+ * при инкрементальном пересчете поддрева, когда мы считаем компоновку только
+ * изменившегося компонента.
+ */
+void FlexNode::calculateLayoutLtr(int H,int W) {
     YGNodeCalculateLayout(
         node,
-        static_cast<float>(getWidth()),
-        static_cast<float>(getHeight()),
+        static_cast<float>(W),
+        static_cast<float>(H),
         YGDirectionLTR
     );
+    /*
+     * Родительский элемент не сдвигается по базису
+     */
     commitNewPos();
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
         (*iter)->commitChildNewPos();
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
-void FlexNode::calculateLayoutRtl() {
-    YGNodeCalculateLayout(
-        node,
-        static_cast<float>(getWidth()),
-        static_cast<float>(getHeight()),
-        YGDirectionRTL
-    );
-    commitNewPos();
-    QLinkedList<FlexNode*>::iterator iter;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->calculateLayoutRtl();
     }
 }
 
@@ -1070,6 +1118,5 @@ void FlexNode::setJustifySpaceEvenly() {
 
 /*****************************************************************************/
 
+} // namespace Objects
 } // namespace Quite
-} // namespace Ui
-} // namespace Flex

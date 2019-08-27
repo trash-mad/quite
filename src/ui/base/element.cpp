@@ -97,13 +97,7 @@ void Element::childInsertAfter(Node *after, Element *child) {
                 this,
                 SLOT(childDiffDeleteHandler())
             );
-            connect(
-                child,
-                SIGNAL(update()),
-                this,
-                SIGNAL(update())
-            );
-            emit update();
+            updateLayout();
             return;
         } else {
             elemIter++;
@@ -131,13 +125,7 @@ void Element::childAppend(Element *child) {
         this,
         SLOT(childDiffDeleteHandler())
     );
-    connect(
-        child,
-        SIGNAL(update()),
-        this,
-        SIGNAL(update())
-    );
-    emit update();
+    updateLayout();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -145,13 +133,7 @@ void Element::childAppend(Element *child) {
 void Element::childDeleted(Element *child) {
     qDebug() << "Element default childDeleted";
     this->child.removeOne(child);
-    disconnect(
-        child,
-        SIGNAL(update()),
-        this,
-        SIGNAL(update())
-    );
-    emit update();
+    updateLayout();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -174,14 +156,8 @@ void Element::childChanged() {
             this,
             SLOT(childDiffDeleteHandler())
         );
-        connect(
-            element,
-            SIGNAL(update()),
-            this,
-            SIGNAL(update())
-        );
     }
-    emit update();
+    updateLayout();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -245,7 +221,7 @@ void Element::propsChangedHandler(
     if (merge) {
         propsChanged();
         DiffCounter::instance()->decrementCounter();
-        emit update();
+        updateLayout();
     } else {
         propsChanged();
     }
@@ -289,7 +265,7 @@ void Element::childDiffDeleteHandler() {
     );
     childDeletedHandler(sender);
     DiffCounter::instance()->decrementCounter();
-    emit update();
+    updateLayout();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -297,6 +273,83 @@ void Element::childDiffDeleteHandler() {
 void Element::diffDeleteEmit() {
     qDebug() << "Element diffDeleteEmit";
     emit diffDelete();
+}
+
+/*---------------------------------------------------------------------------*/
+
+FlexNode *Element::buildFlexTree(bool fill) {
+    layout = new FlexNode(getItem(),fill);
+    QLinkedList<Element*> child=getChild();
+    QLinkedList<Element*>::iterator iter;
+    for (iter=child.begin();iter!=child.end();iter++) {
+        layout->appendChild((*iter)->buildFlexTree(false));
+        /* layout инициализирован, позволяем рисовать */
+        (*iter)->startLayoutUpdate();
+    }
+    return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::updateLayout() {
+      qDebug() << "Element updateLayout";
+      DiffCounter* instance = DiffCounter::instance();
+      bool resolved = instance->changesResolved();
+      if (!layoutUpdateStarted) {
+          qDebug() << "Element updateLayout not started";
+          return;
+      } else if (layoutUpdateScheduled&&!resolved) {
+          qDebug() << "Element updateLayout skip";
+          return;
+      } else if (layoutUpdateScheduled&&resolved) {
+          qDebug() << "Element updateLayout exec";
+          disconnect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=false;
+          updateLayoutNow();
+      } else if (!resolved) {
+          qDebug() << "Element updateLayout scheduled";
+          connect(instance,SIGNAL(diffFree()),this,SLOT(updateLayout()));
+          layoutUpdateScheduled=true;
+      } else {
+          qDebug() << "Element updateLayout update";
+          updateLayoutNow();
+      }
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::startLayoutUpdate() {
+    qDebug() << "Element startLayoutUpdate";
+    layoutUpdateStarted=true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::updateLayoutNow() {
+    qDebug() << "Element updateLayoutNow";
+    int H=layout->getWidth();
+    int W=layout->getHeight();
+    int T=layout->getLayoutTop()-layout->getMarginTop();
+    int LT=layout->getLastTop();
+    int L=layout->getLayoutLeft()-layout->getMarginLeft();
+    int LL=layout->getLastLeft();
+
+    //layout->deleteLater();
+    layout=buildFlexTree();
+
+    if (LL==-1&&LT==-1) {
+        layout->setLastTop(T);
+        layout->setLastLeft(L);
+    } else {
+        Q_ASSERT(LL!=-1);
+        Q_ASSERT(LT!=-1);
+        T=LT;
+        L=LL;
+    }
+
+    layout->printTree();
+    layout->buildTree();
+    layout->calculateLayoutLtr(T,L,H,W);
 }
 
 /*****************************************************************************/
