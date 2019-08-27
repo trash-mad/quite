@@ -331,10 +331,8 @@ void Element::updateLayoutNow() {
     int W=layout->getHeight();
     int T=layout->getLayoutTop();
     int LT=layout->getLastTop();
-    int PT=layout->getPaddingTop();
     int L=layout->getLayoutLeft();
     int LL=layout->getLastLeft();
-    int PL=layout->getPaddingLeft();
 
     //layout->deleteLater();
     layout=buildFlexTree();
@@ -351,7 +349,7 @@ void Element::updateLayoutNow() {
 
     layout->printTree();
     layout->buildTree();
-    layout->calculateLayoutLtr(T,L,PT,PL,H,W);
+    layout->calculateLayoutLtr(T,L,H,W);
 }
 
 /*****************************************************************************/

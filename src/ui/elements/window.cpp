@@ -81,7 +81,6 @@ void Window::updateLayoutNow() {
         layout->printTree();
         layout->buildTree();
         layout->calculateLayoutLtr(
-            0,0,0,0,
             window->getHeight(),
             window->getWidth()
         );

@@ -97,6 +97,14 @@ void FlexNode::buildTree() {
 
 /*---------------------------------------------------------------------------*/
 
+void FlexNode::calculateLayoutLtr(int T, int L, int H, int W) {
+    YGNodeStyleSetPosition(node,YGEdgeTop,static_cast<int>(T));
+    YGNodeStyleSetPosition(node,YGEdgeLeft,static_cast<int>(L));
+    calculateLayoutLtr(H,W);
+}
+
+/*---------------------------------------------------------------------------*/
+
 void FlexNode::appendChild(FlexNode *child) {
     qDebug() << "FlexNode appendChild";
     childCount++;
@@ -332,10 +340,10 @@ void FlexNode::parseOtherProps() {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::commitNewPos(int T, int L) {
-    int top = getLayoutTop() + T;
+void FlexNode::commitNewPos() {
+    int top = getLayoutTop();
     int bottom = getLayoutBottom();
-    int left = getLayoutLeft() + L;
+    int left = getLayoutLeft();
     int right = getLayoutRight();
     int height = getLayoutHeight();
     int width = getLayoutWidth();
@@ -354,11 +362,11 @@ void FlexNode::commitNewPos(int T, int L) {
 
 /*---------------------------------------------------------------------------*/
 
-void FlexNode::commitChildNewPos(int T, int L) {
-    commitNewPos(T, L);
+void FlexNode::commitChildNewPos() {
+    commitNewPos();
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos(T, L);
+        (*iter)->commitChildNewPos();
     }
 }
 
@@ -396,18 +404,6 @@ int FlexNode::getLastTop() const {
 
 int FlexNode::getLastLeft() const {
     return lastLeft;
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getPaddingTop() const {
-    return static_cast<int>(YGNodeStyleGetPadding(node,YGEdgeTop).value);
-}
-
-/*---------------------------------------------------------------------------*/
-
-int FlexNode::getPaddingLeft() const {
-    return static_cast<int>(YGNodeStyleGetPadding(node,YGEdgeLeft).value);
 }
 
 /*****************************************************************************/
@@ -996,7 +992,7 @@ int FlexNode::getWidth() {
  * при инкрементальном пересчете поддрева, когда мы считаем компоновку только
  * изменившегося компонента.
  */
-void FlexNode::calculateLayoutLtr(int T,int L, int PT, int PL, int H,int W) {
+void FlexNode::calculateLayoutLtr(int H,int W) {
     YGNodeCalculateLayout(
         node,
         static_cast<float>(W),
@@ -1006,10 +1002,10 @@ void FlexNode::calculateLayoutLtr(int T,int L, int PT, int PL, int H,int W) {
     /*
      * Родительский элемент не сдвигается по базису
      */
-    commitNewPos(T,L);
+    commitNewPos();
     QLinkedList<FlexNode*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
-        (*iter)->commitChildNewPos(T+PT,L+PL);
+        (*iter)->commitChildNewPos();
     }
 }
 
