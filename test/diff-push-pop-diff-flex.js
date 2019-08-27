@@ -11,22 +11,14 @@ SampleComponent.prototype.render=function() {
             Quite.createElement("Button", {text: "Add rect", height: 50, width: 125, marginRight:5, onClick: this.addRect}),
             Quite.createElement("Button", {text: "Remove rect", height: 50, width: 125, onClick: this.removeRect}),
         ), 
-        Quite.createElement("Rectangle", {color: "red", flexDirection: "column", minHeight: 150, minWidth: 150},
+        Quite.createElement("Rectangle", {color: "red", flexDirection: "column", marginTop: 5, flexWrap: "wrap", minHeight: 180, minWidth: 180},
             this.state.rects.map((_, index)=>Quite.createElement("Rectangle", {
-                        key: index+1,
+                        key: index,
                         height: 50, 
                         width: 50, 
                         color: "green", 
-                        marginRight: 5
-            }/*,
-                Quite.createElement("Rectangle", {key:59,minHeight:15, minWidth:15, color:"red"},
-                    Quite.createElement("Rectangle", {key:60,minHeight:15, minWidth:15, color:"red"}),
-                    Quite.createElement("Rectangle", {key:61,minHeight:15, minWidth:15, color:"red"}),
-                    Quite.createElement("Rectangle", {key:62,minHeight:15, minWidth:15, color:"red"},
-                        Quite.createElement("Rectangle", {key:63,minHeight:15, minWidth:15, color:"red"})
-                    )
-                ),
-                Quite.createElement("Rectangle", {key: 88, minHeight:63, minWidth:15, color:"red"})*/
+                        margin: 5
+            }
             ))
         ),
     );
