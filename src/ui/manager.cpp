@@ -47,9 +47,9 @@ Element *Manager::renderElement(Node *node, Element *parent) {
     );
     connect(
         element,
-        SIGNAL(insertAfterChild(Node*,Node*)),
+        SIGNAL(insertAfterChildIndex(int,Node*)),
         this,
-        SLOT(insertAfterChildHandler(Node*,Node*))
+        SLOT(insertAfterChildIndexHandler(int,Node*))
     );
     connect(
         element,
@@ -123,10 +123,10 @@ void Manager::renderSubtreeHandler(Node *child) {
 
 /*---------------------------------------------------------------------------*/
 
-void Manager::insertAfterChildHandler(Node *after, Node *child) {
-    qDebug() << "Manager insertAfterChildHandler";
+void Manager::insertAfterChildIndexHandler(int index, Node *child) {
+    qDebug() << "Manager insertAfterChildIndexHandler";
     Element* sender = qobject_cast<Element*>(QObject::sender());
-    sender->childInsertAfter(after, renderElementTree(child, sender));
+    sender->childInsertAfterIndex(index, renderElementTree(child, sender));
     DiffCounter::instance()->decrementCounter();
 }
 

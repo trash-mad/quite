@@ -28,9 +28,9 @@ Element::Element(
     );
     connect(
         node,
-        SIGNAL(childInsertedAfter(Node*, Node*)),
+        SIGNAL(childInsertedAfterIndex(int, Node*)),
         this,
-        SLOT(childInsertedAfterHandler(Node*, Node*))
+        SLOT(childInsertedAfterIndexHandler(int, Node*))
     );
     connect(
         node,
@@ -74,37 +74,30 @@ void Element::onClick() {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::childInsertAfter(Node *after, Element *child) {
+void Element::childInsertAfterIndex(int index, Element *elem) {
     qDebug() << "Element default childInsertAfter";
-    QList<QQuickItem*>::iterator itemIter=this->item->childItems().begin();
-    QLinkedList<Element*>::iterator elemIter=this->child.begin();
-    while (elemIter!=this->child.end()) {
-        Element* item = (*elemIter);
-        if (item->getNode()==after) {
-            elemIter++;
-            itemIter++;
-            this->child.insert(elemIter,child);
-            this->getItem()->childItems().insert(itemIter,child->getItem());
-            connect(
-                child,
-                SIGNAL(destroyed(QObject*)),
-                this,
-                SLOT(childDeletedHandler(QObject*))
-            );
-            connect(
-                child,
-                SIGNAL(diffDelete()),
-                this,
-                SLOT(childDiffDeleteHandler())
-            );
-            updateLayout();
-            return;
-        } else {
-            elemIter++;
-            itemIter++;
-        }
+    if (index>this->child.count()) {
+        qCritical() << "Element default childInsertAfter index out of range";
+    } else {
+        QLinkedList<Element*>::iterator iter=this->child.begin();
+        iter+=index;
+        this->child.insert(iter,elem);
+        elem->getItem()->setParentItem(this->getItem());
+        connect(
+            elem,
+            SIGNAL(destroyed(QObject*)),
+            this,
+            SLOT(childDeletedHandler(QObject*))
+        );
+        connect(
+            elem,
+            SIGNAL(diffDelete()),
+            this,
+            SLOT(childDiffDeleteHandler())
+        );
+        QMetaObject::invokeMethod(this,"updateLayout",Qt::QueuedConnection);
+        //updateLayout();
     }
-    qCritical() << "Element default childInsertAfter child not found";
 }
 
 /*---------------------------------------------------------------------------*/
@@ -229,9 +222,9 @@ void Element::propsChangedHandler(
 
 /*---------------------------------------------------------------------------*/
 
-void Element::childInsertedAfterHandler(Node *after, Node *child) {
+void Element::childInsertedAfterIndexHandler(int index, Node *child) {
     qDebug() << "Element childInsertedAfterHandler";
-    emit insertAfterChild(after, child);
+    emit insertAfterChildIndex(index, child);
 }
 
 /*---------------------------------------------------------------------------*/
