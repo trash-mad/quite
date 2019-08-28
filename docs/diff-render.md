@@ -296,18 +296,6 @@ C#-like sometimes [REPL](https://ru.wikipedia.org/wiki/REPL)
 
 Simplified js-like code
 ```
-
-    void processChild(megred, itemToAdd, index);
-
-    //
-    //         a
-    //       /   \
-    //      b     c
-    //
-    //  После перевода в строковое представление c может быть как
-    //  потомком b, так и a. Метод **processChild()** решает эту проблему.
-    //
-    //  a -> b -> d -> c
     //
     //  Метод **apply()** пропускает дочерние элементы у новых в списке - родительский элемент b21
     //  будет срендерин вместе с потомками b22, b23, b24
@@ -329,30 +317,31 @@ Simplified js-like code
     void apply(ses, merged) {
         list<Element> parents;
         ses::iterator iter;
+        bool found=false;
         for (iter=ses.begin();iter!=ses.end();iter++) {
             pair=iter.item;
             if (pair.type==COMMON) {
                 // Передаем новые свойства в элемент на сопоставление
                 pair.current.commitProps(parrent.new.props) 
-            } else if (pair.type==ADD) {
+            } else if (pair.type==DELETE) {
                 pair.current.deleteLater()
             } else if (pair.type==NEW) {
                 //
                 // Самый сложный к пониманию сегмент кода. В этом блоке мы обрабатываем
                 // потомков текущего элемента, пропуская 
                 //
-                if (parent.length()==0) {
+                if (parents.length()==0) {
                     // Первый элемент на добавление. Заносим в список предполагаемых родителей.
-                    parents.append(pair.current);
+                    parents.append(pair.new);
                     // Обрабатываем только от сюда
                     processChild(merged, pair.new, pair.newIndex);
                 } else {
-                    if (*current->parent!=*parent.last()) {
+                    if (pair.new.parent()!=parents.last()) {
                         // Родитель не совпал, идем выше по списку родителей
                         found=false;
-                        while (parent.length()!=1) {
-                            parent.removeLast();
-                            if (*current->parent==*parent.last()) {
+                        while (parents.length()!=1) {
+                            parents.removeLast();
+                            if (pair.new.parent()==parents.last()) {
                                 // Родитель найден, выходим из цикла
                                 found=true;
                                 break;
@@ -363,14 +352,14 @@ Simplified js-like code
                         if (!found) {
                             // Родитель не найден. Откатываем итератор на одну позицию назад
                             // чтобы выполнился блок кода if (parent.length()==0) ...
-                            parent.removeLast();
+                            parents.removeLast();
                             iter--;
                             continue;
                         }
                     } else {
                         // Родители совпали. Всёравно заносим как потенциально способную быть
                         // родителем в список родителей.
-                        parent.append(current);
+                        parents.append(current);
                         continue;
                     }
                 }
@@ -381,4 +370,64 @@ Simplified js-like code
     }
 ```
 
-И так, перейдем к функции **processChild()**. Если функция **apply()** находит потенциального родителя и движется направо, пока не закончатся его потомки, то эта функция движется по списку изменений налево в поисках родителя элемента, переданного ей в параметры.
+И так, перейдем к функции **processChild()**. Если функция **apply()** находит потенциального родителя и движется направо, пока не закончатся его потомки, то эта функция движется по списку изменений налево в поисках родителя элемента, переданного ей в параметры. Пусть класс Element средствами стандартной библиотеки псевдокода реализует метод isNewTree(), который возвращает true, если это новое дерево (В реальной жизни это реализовано через пометку новых элементов после первого вызова render компонента). 
+
+```
+    //         a
+    //       /   \
+    //      b     c
+    //
+    //  После перевода в строковое представление c может быть как
+    //  потомком b, так и a. Метод **processChild()** решает эту проблему.
+    //
+    //  a -> b -> d -> c
+    //
+    //  Так же, потомков может быть несколько. Или они могут быть вложенными.
+    //  Потомок может быть первым ребенком родителя.
+    //
+
+    void processChildprocessChild(megred, itemToAdd, index); {
+        // Прошли влево и попытались найти соседний элемент
+        if (tryInsertAfterChild(merged,itemToAdd,index)) {
+            return;
+        // Сосед не найден. Идем влево на один элемент и проверяем, первый ли мы потомок
+        } else if (tryAppendChild(merged,itemToAdd,index)) {
+            return;
+        // Это корневая нода. Добавляем в потомки напрямую компоненту
+        } else {
+            this->appendChild(itemToAdd);
+        }
+    }
+
+    void tryInsertAfterChild(megred, itemToAdd, index) {
+        // берем элемент слева
+        index--;
+
+        // TODO должен быть цикл
+
+        if ((!merged[index].newTree)&&merged[index].parent==child.parent){
+            incrementResolveCounter();
+            merged[index].parent->node->insertAfterChild(
+                merged[index].node,
+                child.node
+            );
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    void tryAppendChild(megred, itemToAdd, index) {
+        for (int i=index;i>=0;i--) {
+            if (itemToAdd.parent()==merged[i]) {
+                // Это родитель. Добавляем.
+                merged[i]->appendChild(itemToAdd);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+```
