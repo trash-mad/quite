@@ -85,7 +85,7 @@ Quite.render(Quite.createElement("Window", null,
   1. Новые главенствующие потомки (обозначим как **appendChild**)
     Первый потомок в списке, нет указателя на элемент, перед которой вставляем.
   2. Новые втростепенные потомки  (обозначим как **insertAfterChild**)
-    Потомок вставляется перед каким-либо элементом, имея общий с родитель.
+    Потомок вставляется перед каким-либо элементом (соседом), имея общий с родитель.
   3. Новый корневой элемент компонента (ничтожно редко)
     По факту полностью заменяет всё дочернее древо компонента ~~Прикладной программист не был трезв в процессе написания компонента.~~
 
@@ -296,138 +296,240 @@ C#-like sometimes [REPL](https://ru.wikipedia.org/wiki/REPL)
 
 Simplified js-like code
 ```
-    //
-    //  Метод **apply()** пропускает дочерние элементы у новых в списке - родительский элемент b21
-    //  будет срендерин вместе с потомками b22, b23, b24
-    //
-    //          a1
-    //        /   \
-    //      b1     c1
-    //                    
-    //              a2
-    //            /   \
-    //          b2     c2
-    //         /
-    //       b21 
-    //     /  |  \
-    //   b22 b23 b24
-    //
+//
+//  Метод **apply()** пропускает дочерние элементы у новых в списке - родительский элемент b21
+//  будет срендерин вместе с потомками b22, b23, b24
+//
+//          a1
+//        /   \
+//      b1     c1
+//                    
+//
+//              a2
+//            /   \
+//          b2     c2
+//         /
+//       b21 
+//     /  |  \
+//   b22 b23 b24
+//
 
 
-    void apply(ses, merged) {
-        list<Element> parents;
-        ses::iterator iter;
-        bool found=false;
-        for (iter=ses.begin();iter!=ses.end();iter++) {
-            pair=iter.item;
-            if (pair.type==COMMON) {
-                // Передаем новые свойства в элемент на сопоставление
-                pair.current.commitProps(parrent.new.props) 
-            } else if (pair.type==DELETE) {
-                pair.current.deleteLater()
-            } else if (pair.type==NEW) {
-                //
-                // Самый сложный к пониманию сегмент кода. В этом блоке мы обрабатываем
-                // потомков текущего элемента, пропуская 
-                //
-                if (parents.length()==0) {
-                    // Первый элемент на добавление. Заносим в список предполагаемых родителей.
-                    parents.append(pair.new);
-                    // Обрабатываем только от сюда
-                    processChild(merged, pair.new, pair.newIndex);
-                } else {
-                    if (pair.new.parent()!=parents.last()) {
-                        // Родитель не совпал, идем выше по списку родителей
-                        found=false;
-                        while (parents.length()!=1) {
-                            parents.removeLast();
-                            if (pair.new.parent()==parents.last()) {
-                                // Родитель найден, выходим из цикла
-                                found=true;
-                                break;
-                            }
-                            // Это не родитель. Идем дальше пока не переберем всех.
+void apply(ses, merged) {
+    list<Element> parents;
+    ses::iterator iter;
+    bool found=false;
+    for (iter=ses.begin();iter!=ses.end();iter++) {
+        pair=iter.item;
+        if (pair.type==COMMON) {
+            // Передаем новые свойства в элемент на сопоставление
+            pair.current.commitProps(parrent.new.props) 
+        } else if (pair.type==DELETE) {
+            pair.current.deleteLater()
+        } else if (pair.type==NEW) {
+            //
+            // Самый сложный к пониманию сегмент кода. В этом блоке мы обрабатываем
+            // потомков текущего элемента, пропуская 
+            //
+            if (parents.length()==0) {
+                // Первый элемент на добавление. Заносим в список предполагаемых родителей.
+                parents.append(pair.new);
+                // Обрабатываем только от сюда
+                processChild(merged, pair.new, pair.newIndex);
+            } else {
+                if (pair.new.parent()!=parents.last()) {
+                    // Родитель не совпал, идем выше по списку родителей
+                    found=false;
+                    while (parents.length()!=1) {
+                        parents.removeLast();
+                        if (pair.new.parent()==parents.last()) {
+                            // Родитель найден, выходим из цикла
+                            found=true;
+                            break;
                         }
-                        // Сюда мы попадаем как с родителем, так и без. Делаем проверку
-                        if (!found) {
-                            // Родитель не найден. Откатываем итератор на одну позицию назад
-                            // чтобы выполнился блок кода if (parent.length()==0) ...
-                            parents.removeLast();
-                            iter--;
-                            continue;
-                        }
-                    } else {
-                        // Родители совпали. Всёравно заносим как потенциально способную быть
-                        // родителем в список родителей.
-                        parents.append(current);
+                        // Это не родитель. Идем дальше пока не переберем всех.
+                    }
+                    // Сюда мы попадаем как с родителем, так и без. Делаем проверку
+                    if (!found) {
+                        // Родитель не найден. Откатываем итератор на одну позицию назад
+                        // чтобы выполнился блок кода if (parent.length()==0) ...
+                        parents.removeLast();
+                        iter--;
                         continue;
                     }
+                } else {
+                    // Родители совпали. Всёравно заносим как потенциально способную быть
+                    // родителем в список родителей.
+                    parents.append(current);
+                    continue;
                 }
-            } else {
-                abort() // на случай обновления с новым типом изменения
             }
+        } else {
+            abort() // на случай обновления с новым типом изменения
         }
     }
+}
 ```
 
-И так, перейдем к функции **processChild()**. Если функция **apply()** находит потенциального родителя и движется направо, пока не закончатся его потомки, то эта функция движется по списку изменений налево в поисках родителя элемента, переданного ей в параметры. Пусть класс Element средствами стандартной библиотеки псевдокода реализует метод isNewTree(), который возвращает true, если это новое дерево (В реальной жизни это реализовано через пометку новых элементов после первого вызова render компонента). 
+И так, перейдем к функции **processChild()**. Если функция **apply()** находит потенциального родителя и движется направо, пока не закончатся его потомки (с поправкой на вложенность), то эта функция движется по списку изменений налево в поисках родителя или соседа элемента, переданного ей в параметры. 
 
+Simplified js-like code
 ```
-    //         a
-    //       /   \
-    //      b     c
-    //
-    //  После перевода в строковое представление c может быть как
-    //  потомком b, так и a. Метод **processChild()** решает эту проблему.
-    //
-    //  a -> b -> d -> c
-    //
-    //  Так же, потомков может быть несколько. Или они могут быть вложенными.
-    //  Потомок может быть первым ребенком родителя.
-    //
+//
+//         a
+//       /   \
+//      b     c
+//
+//  После перевода в строковое представление c может быть как
+//  потомком b, так и a. Метод **processChild()** решает эту проблему.
+//
+//  a -> b -> d -> c
+//
+//  Так же, потомков может быть несколько. Или они могут быть вложенными.
+//  Потомок может быть первым ребенком родителя.
+//
 
-    void processChildprocessChild(megred, itemToAdd, index); {
-        // Прошли влево и попытались найти соседний элемент
-        if (tryInsertAfterChild(merged,itemToAdd,index)) {
-            return;
-        // Сосед не найден. Идем влево на один элемент и проверяем, первый ли мы потомок
-        } else if (tryAppendChild(merged,itemToAdd,index)) {
-            return;
-        // Это корневая нода. Добавляем в потомки напрямую компоненту
-        } else {
-            this->appendChild(itemToAdd);
-        }
+void processChildprocessChild(megred, itemToAdd, index); {
+    // Прошли влево на один элемент и проверяем, является ли он соседствующим
+    if (tryInsertAfterChild(merged,itemToAdd,index)) {
+        return;
+    // Сосед не найден. Идем влево до края и проверяем, первый ли мы потомок
+    } else if (tryAppendChild(merged,itemToAdd,index)) {
+        return;
+    // Это корневая нода. Добавляем в потомки напрямую компоненту
+    } else {
+        this->appendChild(itemToAdd);
     }
+}
 
-    void tryInsertAfterChild(megred, itemToAdd, index) {
-        // берем элемент слева
-        index--;
+//
+//     a
+//   / | \
+//  b  c  d
+//
+//  Элементы b, c, d - соседи, так как оба дети a. 
+//
+//   - Если c это новый элемент, то, чтобы привести древо 
+//     к каноничному виду, нам нужно вставить его **перед** b
+//
+//   - Если b это новый элемент, то, чтобы привести древо,
+//     на нужно добавить его к a
+//
 
-        // TODO должен быть цикл
-
-        if ((!merged[index].newTree)&&merged[index].parent==child.parent){
-            incrementResolveCounter();
-            merged[index].parent->node->insertAfterChild(
-                merged[index].node,
-                child.node
-            );
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    void tryAppendChild(megred, itemToAdd, index) {
-        for (int i=index;i>=0;i--) {
-            if (itemToAdd.parent()==merged[i]) {
-                // Это родитель. Добавляем.
-                merged[i]->appendChild(itemToAdd);
-                return true;
-            }
-        }
+void tryInsertAfterChild(megred, itemToAdd, index) {
+    // берем элемент слева
+    index--;
+    if (merged[index].parent==itemToAdd.parent) {
+        // родители совпали - это сосед. Добавляем сразу после по указателю
+        merged[index].parent->insertAfterChild(
+            merged[index].node,
+            itemToAdd
+        );
+        return true;
+    } else {
         return false;
     }
+}
 
 
+void tryAppendChild(megred, itemToAdd, index) {
+    // идем налево и ищем родителя
+    for (int i=index;i>=0;i--) {
+        if (itemToAdd.parent()==merged[i]) {
+            // Это родитель. Добавляем.
+            merged[i]->appendChild(itemToAdd);
+            return true;
+        }
+    }
+    // родитель не найден.
+    return false;
+}
 ```
+
+### Потокобезопасность
+Цикл событий JavaScript интерпретатора запускается в потоке, отличном от основного потока приложения. Это сделано для разделения задач по просчету изменений древа (описано выше) и компоновки элеметов (см flex layout). Однако, библиотека Qt не умеет рисовать пользовательский интерфейс в [потоке](https://doc.qt.io/qt-5/thread-basics.html#gui-thread-and-worker-thread) отличном от базового потока приложения. 
+
+Объект приобретает поток по месту создания оператором new. Поэтому, было решено промаппить **элементы** пользовательского интерфейса в **ноды** JavaScript через сигналы и слоты для передачи функциональности insert, append, delete, new в одну сторону через механизм [сигналов и слотов](https://doc.qt.io/archives/qt-4.8/threads-qobject.html#signals-and-slots-across-threads).
+
+Simplified js-like code
+```
+// |                           |                                |
+// |         JS thread         |         QML gui thread         |
+// |           (Node)          |            (Element)           |
+// |                           |                                |
+// |  SIGNAL insertAfterChild---->SLOT insertAfterChildHandler  |
+// |                           |                                |
+// |    SIGNAL appendChild--------->SLOT appendChildHandler     |
+// |                           |                                |
+// |    SIGNAL deleteLater---------->SLOT diffDeleteHandler     |
+// |                           |                                |
+```
+
+Некоторые сигналы и слоты ноды и элемента промаплены "в обе стороны". Например, если удаление ноды приведет к удалению элемента (diff обновление древа), то удаление элемента приведет к удалению ноды (очистка мусора при закрытии окна).
+
+### Контекст исполнения функций в свойствах элемента.
+Мы не можем запустить JavaScript функцию из QML потока. Кроме того, у функций, переданных в props элементу, разнится контекст исполнения зависимо от родительского компонента. Для исполнения функции мы поставляем её в цикл событий JS интерпретатора через механизм сигналов и слотов. Контекст исполнения функции задается компонентом с использованием Node::updateContext(). При этом, при рассмотрении компонента как элемента, он обновляет контекст исполнения функций в своих параметрах на вышестоящий компонент, но ставит свой контекст дочерним элементам.
+
+Simplified js-like code
+```
+//
+//                component1
+//               /          \
+//          element1       component2
+//         context: c1     context: c1
+//           /                  \
+//      element2                element3
+//    context: c1            context: **c2**
+//
+```
+
+### Ожидание окончания рендеринга
+
+~~Я хочу сыграть с твоим фреймворком в инкрементальную игру~~
+
+Чтобы просчитать diff изменения, нам нужно получить полностью сформированное как древо нод, так и элементов. Для этого у фреймворка есть специальный [синглет](http://cpp-reference.ru/patterns/creational-patterns/singleton/) DiffCounter, реализующий методы bool DiffCounter::tryIncrementCounter(), void DiffCounter::decrementCounter, bool DiffCounter::changesResolved(). Счетчик увеличивыется в insert, append, delete на стороне ноды и уменьшается на стороне элемента. Метод changesResolved() возвращает true, если счетчик равен нулю. Методы этого синглета потокобезопасные. Ниже в псевдокоде представлен сегмент реализации setState у ноды компонента
+
+
+C#-like sometimes (out, array declaration syntax) code
+```
+// state - аргумент  функции this.setState() 
+// scheduleTimer - поле компонента, хранящее таймер, реализующий
+// отложенное обновление
+
+void setState(JSValue state) {
+    if (!DiffCounter::instance()->changesResolved()) {
+        // старый таймер отменяется, даже если не сработал
+        scheduleTimer.stop();
+        scheduleTimer.free();    
+        // создаем новый таймер. в лямбда-выражение на срабатывание передаем state
+        scheduleTimer=new Timer();
+        connect(scheduleTimer, &QTimer::timeout, [this,state]() {
+            setState(state);
+        });
+        // срабатывает один раз
+        timer.singleShot(50);
+    } else {
+        // применение нового state (diff рендеринг)
+        ...
+    }
+}
+```
+
+Таким образом, если фреймворк не успел применить старое изменение, но получил запрос на применение ещё нескольких, применено будет только последнее. Это очень полезно, если прикладной программист решил создать [инкрементальную игру](https://ru.wikipedia.org/wiki/Инкрементальная_игра). Результат работы будет примерно такой:
+
+Simplified js-like code
+```
+// |                      |                       |
+// | Очередь на рендеринг | Применение рендеринга |
+// |                      |                       |
+// |        state1        |        state1         |
+// |        state2        |         занят         |
+// |        state3        |    не прошло 50 мс    |
+// |        state4        |    не прошло 50 мс    |
+// |        state5        |    не прошло 50 мс    |
+// |        state6        |        state6         |
+// |                      |                       |
+```
+
+### Создание элемента(qml thread) из ноды(js thread)
+Созданием элементов из нод занимается класс Manager. В своей реализации он содержит рекурсивную функцию, создающую элементы используя свойство ноды type. Именно поэтому мы пропускаем дочерние элементы новых нод при diff рендеринге - при создании своего родителя они уже промаплены в gui поток. Manager выбрасывает сигнал closed() при закрытии окна, снимая блокировку на выход из цикла событий JavaScript интерпретатора. Если нет блокировки и цикл событий пуст (нет таймеров, выполняемых функций и тд.), то приложение завершается.
