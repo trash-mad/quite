@@ -10,6 +10,13 @@ Application::Application()
     connect(&engine, SIGNAL(renderUi(Node*)), &manager, SLOT(renderUi(Node*)));
     connect(&manager, SIGNAL(closed()), &engine, SLOT(windowClosed()));
     connect(
+        &engine,
+        SIGNAL(renderDialog(IDialog*)),
+        &manager,
+        SLOT(renderDialog(IDialog*)),
+        Qt::ConnectionType::QueuedConnection
+    );
+    connect(
         &manager,
         SIGNAL(invoke(Invoke*)),
         &engine,
@@ -62,7 +69,7 @@ void Application::logHandler(
 /*---------------------------------------------------------------------------*/
 
 int Application::exec(int argc, char *argv[]) {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
@@ -73,6 +80,7 @@ int Application::exec(int argc, char *argv[]) {
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);
     a.installExtension(Extension::ConsoleExtension);
+    a.installExtension(Extension::DialogExtension);
     a.importModule("main.js");
     return app.exec();
 }

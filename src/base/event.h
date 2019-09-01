@@ -14,6 +14,7 @@ namespace Base {
 
 enum EventResult {
     AwaiterRethrow,
+    EmitRenderDialog,
     EmitRenderUi,
     Bad,
     Ok,

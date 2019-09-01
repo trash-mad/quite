@@ -86,6 +86,9 @@ bool Engine::event(QEvent* e) {
                 uiexec = true;
                 emit renderUi(static_cast<RenderUi*>(e)->getRootNode());
                 return true;
+            case EventResult::EmitRenderDialog:
+                emit renderDialog(static_cast<RenderDialog*>(e)->getDialog());
+                return true;
             default:
                 return true;
         }

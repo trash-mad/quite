@@ -1,8 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <QCoreApplication>
-#include <QGuiApplication>
+#include <QApplication>
 #include <QDateTime>
 #include <QObject>
 #include <QVector>
@@ -15,6 +14,7 @@
 #include "src/ui/manager.h"
 #include "src/base/engine.h"
 #include "src/ui/base/node.h"
+#include "src/ui/base/dialog.h"
 #include "src/objects/invoke.h"
 #include "src/ui/base/element.h"
 #include "src/objects/nodestruct.h"

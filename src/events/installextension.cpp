@@ -37,6 +37,9 @@ EventResult InstallExtension::process(
         case Quite::Extension::QuiteExtension:
             ext = new Quite::Extensions::QuiteExtension(engine);
             break;
+        case Quite::Extension::DialogExtension:
+            ext = new Quite::Extensions::DialogExtension(engine);
+            break;
     }
 
     ext->install(

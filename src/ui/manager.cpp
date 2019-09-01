@@ -170,6 +170,13 @@ void Manager::renderUi(Node *root) {
     }
 }
 
+/*---------------------------------------------------------------------------*/
+
+void Manager::renderDialog(IDialog *dialog) {
+    qDebug() << "Maganer renderDialog";
+    dialog->show();
+}
+
 /*****************************************************************************/
 
 } // namespace Ui

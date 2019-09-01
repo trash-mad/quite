@@ -17,8 +17,10 @@
 #include "src/base/monitor.h"
 #include "src/events/await.h"
 #include "src/ui/base/node.h"
+#include "src/ui/base/dialog.h"
 #include "src/objects/invoke.h"
 #include "src/events/renderui.h"
+#include "src/events/renderdialog.h"
 
 using namespace Quite::Ui::Base;
 using namespace Quite::Objects;
@@ -48,6 +50,7 @@ class Engine : public QThread {
   signals:
     void done();
     void renderUi(Node* rootNode);
+    void renderDialog(IDialog* dialog);
 };
 
 /*****************************************************************************/

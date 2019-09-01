@@ -1,4 +1,4 @@
-QT += core qml quick gui quickcontrols2 quickwidgets
+QT += core qml quick gui widgets quickcontrols2 quickwidgets
 TARGET = quite
 TEMPLATE = app
 CONFIG += c++17
@@ -16,7 +16,12 @@ win32-msvc* {
     }
 }
 
-SOURCES += src/main.cpp
+SOURCES += src/main.cpp \
+    src/events/renderdialog.cpp \
+    src/extensions/dialogextension.cpp \
+    src/ui/base/dialog.cpp \
+    src/ui/dialogs/alert.cpp \
+    src/ui/dialogs/prompt.cpp
 SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
@@ -48,7 +53,12 @@ SOURCES += src/events/installextension.cpp
 SOURCES += src/events/importmodule.cpp
 SOURCES += src/events/throwerror.cpp
 
-HEADERS += src/base/engine.h
+HEADERS += src/base/engine.h \
+    src/events/renderdialog.h \
+    src/extensions/dialogextension.h \
+    src/ui/base/dialog.h \
+    src/ui/dialogs/alert.h \
+    src/ui/dialogs/prompt.h
 HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
