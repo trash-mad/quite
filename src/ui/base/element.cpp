@@ -56,6 +56,7 @@ Element::Element(
     } else {
         FlexNode::initDefaultProps(object);
         item=qobject_cast<QQuickItem*>(object);
+        item->setVisible(false);
     }
 }
 
@@ -96,7 +97,6 @@ void Element::childInsertAfterIndex(int index, Element *elem) {
             SLOT(childDiffDeleteHandler())
         );
         QMetaObject::invokeMethod(this,"updateLayout",Qt::QueuedConnection);
-        //updateLayout();
     }
 }
 
@@ -314,6 +314,9 @@ void Element::updateLayout() {
 void Element::startLayoutUpdate() {
     qDebug() << "Element startLayoutUpdate";
     layoutUpdateStarted=true;
+    if (!getItem()->isVisible()) {
+        getItem()->setVisible(true);
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -327,7 +330,7 @@ void Element::updateLayoutNow() {
     int L=layout->getLayoutLeft()-layout->getMarginLeft();
     int LL=layout->getLastLeft();
 
-    //layout->deleteLater();
+    layout->deleteLater();
     layout=buildFlexTree();
 
     if (LL==-1&&LT==-1) {
