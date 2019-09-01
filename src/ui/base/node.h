@@ -59,7 +59,7 @@ class Node : public QObject{
    */
   public slots:
     void appendChild(Node* child, bool slient=false);
-    void insertAfterChild(Node* after, Node* child);
+    void insertAfterChildIndex(int index, Node* child);
   private slots:
     void childDeletedHandler(QObject* child);
 
@@ -96,7 +96,7 @@ class Node : public QObject{
    */
   signals:
     void propsChanged(QMap<QString, QVariant> commitProps, bool merge);
-    void childInsertedAfter(Node* after, Node* child);
+    void childInsertedAfterIndex(int index, Node* child);
     void childAppended(Node* child);
 
   /*

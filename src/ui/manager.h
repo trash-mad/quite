@@ -50,7 +50,7 @@ class Manager : public QObject {
    */
   private slots:
     void renderSubtreeHandler(Node* child);
-    void insertAfterChildHandler(Node* after, Node* child);
+    void insertAfterChildIndexHandler(int index, Node* child);
     void appendChildHandler(Node* child);
 
   signals:

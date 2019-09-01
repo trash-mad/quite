@@ -76,31 +76,22 @@ void Node::appendChild(Node *child, bool slient) {
 
 /*---------------------------------------------------------------------------*/
 
-void Node::insertAfterChild(Node *after, Node *child) {
+void Node::insertAfterChildIndex(int index, Node *node) {
     qDebug() << "Node insertChild";
-    QLinkedList<Node*>::iterator iter;
-    for (iter=this->child.begin();iter!=this->child.end();iter++) {
-        Node* item = (*iter);
-        if (after==item) {
-            iter++;
-            if (iter==this->child.end()) {
-                this->child.append(child);
-            } else {
-                this->child.insert(iter,child);
-            }
-            connect(
-                child,
-                SIGNAL(destroyed(QObject*)),
-                this,
-                SLOT(childDeletedHandler(QObject*))
-            );
-            emit childInsertedAfter(after, child);
-            return;
-        } else {
-            continue;
-        }
+    if (index>child.count()) {
+        qCritical() << "Node insertChild index out of range";
+    } else {
+        QLinkedList<Node*>::iterator iter=child.begin();
+        iter+=index;
+        child.insert(iter,node);
+        connect(
+            node,
+            SIGNAL(destroyed(QObject*)),
+            this,
+            SLOT(childDeletedHandler(QObject*))
+        );
+        emit childInsertedAfterIndex(index, node);
     }
-    qCritical() << "Node insertChild before node not found";
 }
 
 /*---------------------------------------------------------------------------*/

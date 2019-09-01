@@ -223,15 +223,28 @@ bool ComponentNode::tryInsertAfterChild(
     int lastIndex
 ) {
     qDebug() << "ComponentNode tryInsertAfterChild";
-    auto index = static_cast<unsigned long long>(lastIndex)-1;
-    if ((!merged[index].newTree)&&merged[index].parent==child.parent){
-        incrementResolveCounter();
-        merged[index].parent->node->insertAfterChild(
-            merged[index].node,
-            child.node
-        );
-        return true;
+    auto index = static_cast<unsigned long long>(lastIndex-1);
+    if (*merged[index].parent!=*child.parent) {
+        /*
+         * Элемент перед текущим имеет другого родителя.
+         * нет смысла искать общего родителя.
+         */
+        return false;
     } else {
+        int current=0;
+        for (auto i=index;i!=0;i--,current++){
+            if (merged[i]==*child.parent) {
+                incrementResolveCounter();
+                merged[i].node->insertAfterChildIndex(
+                    current-1, // перед текущим
+                    child.node
+                );
+                return true;
+            } else {
+                continue;
+            }
+        }
+        qCritical() << "ComponentNode tryInsertAfterChild parent not found";
         return false;
     }
 }

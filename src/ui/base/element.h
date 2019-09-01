@@ -56,7 +56,7 @@ class Element : public QObject {
    * перед стандартным действием (логгирование и тд)
    */
   public:
-    virtual void childInsertAfter(Node* after, Element* child);
+    virtual void childInsertAfterIndex(int index, Element* child);
     virtual void childAppend(Element* child);
   protected:
     virtual void childDeleted(Element* child);
@@ -88,7 +88,7 @@ class Element : public QObject {
    */
   private slots:
     void propsChangedHandler(QMap<QString, QVariant> commitProps, bool merge);
-    void childInsertedAfterHandler(Node* after, Node* child);
+    void childInsertedAfterIndexHandler(int index, Node* child);
     void childDeletedHandler(QObject* child);
     void childAppendedHandler(Node* child);
     void childDiffDeleteHandler();
@@ -131,7 +131,7 @@ class Element : public QObject {
    * Сигналы для Manager, чтобы рендерить элементы
    */
   signals:
-    void insertAfterChild(Node* after, Node* child);
+    void insertAfterChildIndex(int index, Node* child);
     void appendChild(Node* child);
     void invoke(Invoke* method);
 
