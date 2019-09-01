@@ -25,12 +25,6 @@ Window::Window(Node *node, QQmlEngine *engine, Element *parent)
             SIGNAL(closed())
         );
         connect(
-            this,
-            SIGNAL(update()),
-            this,
-            SLOT(updateLayout())
-        );
-        connect(
             window,
             SIGNAL(resize()),
             this,
