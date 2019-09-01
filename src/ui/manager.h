@@ -12,6 +12,7 @@
 #include "src/ui/base/componentnode.h"
 
 #include "src/ui/component.h"
+#include "src/ui/base/dialog.h"
 #include "src/ui/elements/window.h"
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/rectangle.h"
@@ -38,6 +39,7 @@ class Manager : public QObject {
     virtual ~Manager();
   public slots:
     void renderUi(Node* rootNode);
+    void renderDialog(IDialog* dialog);
   private:
     Component* renderComponent(Node* node, Element* parent);
     Window* renderWindow(Node* node, Element* parent);

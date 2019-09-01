@@ -13,6 +13,7 @@
 
 #include "src/extensions/timerextension.h"
 #include "src/extensions/quiteextension.h"
+#include "src/extensions/dialogextension.h"
 #include "src/extensions/consoleextension.h"
 
 using namespace Quite::Base;
@@ -24,7 +25,8 @@ namespace Quite {
 enum Extension {
     TimerExtension,
     QuiteExtension,
-    ConsoleExtension
+    ConsoleExtension,
+    DialogExtension
 };
 
 /*****************************************************************************/
