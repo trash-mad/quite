@@ -6,7 +6,7 @@ namespace Base {
 
 /*****************************************************************************/
 
-template class Dialog<QString>;
+IDialog::~IDialog(){}
 
 /*****************************************************************************/
 
@@ -53,18 +53,9 @@ Dialog<ReturnValue>::~Dialog() {
 
 template<typename ReturnValue>
 QJSValue Dialog<ReturnValue>::exec(
-    QJSEngine* engine,
-    QJSValue callBack
+    QJSEngine* engine
 ) {
     qDebug() << "Dialog exec";
-    /*
-     * Асинхронные диалоги переопределяют метод exec
-     * реализуя интерфейс IDialog повторно с использованием
-     * параметра callBack.
-     *
-     * Emitter перенаправит вызов и всё нормально отработает (должно)
-     */
-    Q_UNUSED(callBack);
     QEventLoop loop;
     QObject::connect(&resolver,SIGNAL(resolved()),&loop,SLOT(quit()));
     loop.exec();
@@ -88,7 +79,7 @@ void Dialog<ReturnValue>::resolve(ReturnValue result) {
 
 /*****************************************************************************/
 
-IDialog::~IDialog(){}
+template class Dialog<QString>;
 
 /*****************************************************************************/
 

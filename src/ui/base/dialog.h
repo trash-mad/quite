@@ -34,8 +34,7 @@ struct IDialog {
   public:
     virtual ~IDialog();
     virtual QJSValue exec(
-        QJSEngine* engine,
-        QJSValue callBack=QJSValue()
+        QJSEngine* engine
     ) = 0;
     virtual void show() = 0;
 };
@@ -52,8 +51,7 @@ class Dialog : public virtual IDialog {
     virtual ~Dialog() override;
   public:
     virtual QJSValue exec(
-        QJSEngine* engine,
-        QJSValue callBack=QJSValue()
+        QJSEngine* engine
     ) override;
     void resolve(ReturnValue result);
 };
