@@ -40,48 +40,98 @@ Application::~Application() {
 
 /*---------------------------------------------------------------------------*/
 
-void Application::logHandler(
-    QtMsgType type,
-    const QMessageLogContext &context,
-    const QString &msg) {
-    Q_UNUSED(context);
-    static QMutex mutex;
-    mutex.lock();
-    if(type == QtMsgType::QtInfoMsg) {
-        std::cout << msg.toStdString() << "\n";
-    } else if(type == QtMsgType::QtCriticalMsg) {
-        std::cout << msg.toStdString() << "\n";
-        mutex.unlock();
-        abort();
-    } else {
-        QFile f(QDir::current().filePath("debug.txt"));
-        if (f.open(QIODevice::WriteOnly | QIODevice::Append)) {
-            QTextStream(&f) << msg << "\n";
-        } else {
-            std::cout << "Can't append to debug.txt";
+QtMessageHandler Application::createLogHandler(bool verbose, QDir d) {
+    static QDir dir = d;
+    if (verbose) {
+        return [](QtMsgType t, const QMLC &ctx, const QString &msg) {
+            Q_UNUSED(ctx)
+            static QMutex mutex;
+            mutex.lock();
+            if(t == QtMsgType::QtInfoMsg) {
+                std::cout << msg.toStdString() << "\n";
+            } else if (t == QtMsgType::QtCriticalMsg) {
+                std::cout << msg.toStdString() << "\n";
+                mutex.unlock();
+                abort();
+            } else {
+                QFile f(dir.filePath("debug.txt"));
+                if (f.open(QIODevice::WriteOnly | QIODevice::Append)) {
+                    QTextStream(&f) << msg << "\n";
+                } else {
+                    std::cout << "Can't append to debug.txt";
+                    mutex.unlock();
+                    abort();
+                }
+            }
             mutex.unlock();
-            abort();
-        }
+        };
+    } else {
+        return [](QtMsgType t, const QMLC &ctx, const QString &msg) {
+            Q_UNUSED(ctx)
+            if (t == QtMsgType::QtCriticalMsg) {
+                std::cout << msg.toStdString() << "\n";
+                abort();
+            }
+        };
     }
-    mutex.unlock();
 }
 
 /*---------------------------------------------------------------------------*/
 
 int Application::exec(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    QDir dir=QDir::current();
+
     app.setQuitOnLastWindowClosed(false);
-    qInstallMessageHandler(logHandler);
     qRegisterMetaType<QJSValueList>("QJSValueList");
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
     qRegisterMetaType<QVector<NodeStruct>>("QVector<NodeStruct>");
     qmlRegisterType<WindowComponent>("WindowComponent",1,0,"WindowComponent");
+
+    QCommandLineParser parser;
+
+    QCommandLineOption verbose({"v","verbose"},"print runtime information");
+    QCommandLineOption debug({"d","debug"},"open debug console");
+
+    parser.addPositionalArgument("path","main.js entry path");
+
+    parser.addOptions({debug,verbose});
+    parser.parse(QCoreApplication::arguments());
+
+    /*
+     * Parse app working dir from console arguments
+     */
+    const QStringList positionalArguments = parser.positionalArguments();
+    if (positionalArguments.isEmpty()) {
+        dir=QDir::current();
+    } else {
+        QFile file(positionalArguments.first());
+        QFileInfo info(file);
+        if (!info.exists()) {
+            std::cout << "invalid path parameter" << std::endl;
+        } else if (info.isDir()) {
+            dir=QDir(info.absoluteFilePath());
+        } else if (info.isFile()) {
+            dir=info.dir();
+        }
+    }
+
+    qInstallMessageHandler(createLogHandler(
+        parser.isSet(verbose),
+        dir
+    ));
+
+    /*todo: if (parser.isSet(debug)) {
+        qInfo() << "debug";
+    }*/
+
     Application a;
     a.installExtension(Extension::TimerExtension);
     a.installExtension(Extension::QuiteExtension);
     a.installExtension(Extension::ConsoleExtension);
     a.installExtension(Extension::DialogExtension);
-    a.importModule("main.js");
+    a.importModule(dir.filePath("main.js"));
+
     return app.exec();
 }
 

@@ -1,6 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#include <QCommandLineParser>
 #include <QApplication>
 #include <QDateTime>
 #include <QObject>
@@ -22,6 +23,8 @@
 #include "src/events/installextension.h"
 #include "src/ui/components/windowcomponent.h"
 
+#define QMLC QMessageLogContext
+
 using namespace Quite::Ui::Components;
 using namespace Quite::Ui::Base;
 using namespace Quite::Monitors;
@@ -42,10 +45,9 @@ class Application : public QObject {
     explicit Application();
     virtual ~Application();
   private:
-    static void logHandler(
-        QtMsgType type,
-        const QMessageLogContext &context,
-        const QString &msg
+    static QtMessageHandler createLogHandler(
+        bool verbose,
+        QDir dir=QDir::current()
     );
   public:
     static int exec(int argc, char *argv[]);
