@@ -26,15 +26,16 @@ void QuiteExtension::install(
     qDebug() << "QuiteExtension install";
     QJSValue createElementRestWrapper=eval->evaluate(
         "(function (instance) {"\
-        "   function flatten(arr) { "\
-        "       return arr.reduce(function (flat, toFlatten) { "\
-        "           return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);"\
-        "       }, []);" \
-        "   };"\
-        "   instance.createElement=function(type,props,...child){" \
-        "       return instance.createElementInternal(type,props,flatten(child));" \
-        "   }; " \
-        "   return instance;" \
+        " function flatten(arr) { "\
+        "  return arr.reduce(function (flat, toFlatten) { "\
+        "   return flat.concat(Array.isArray(toFlatten) "\
+        "    ? flatten(toFlatten) : toFlatten);"\
+        "  }, []);"\
+        " };"\
+        " instance.createElement=function(type,props,...child){" \
+        "  return instance.createElementInternal(type,props,flatten(child));"\
+        " }; "\
+        " return instance;"\
         "})"
     );
     global.setProperty("Quite",createElementRestWrapper.call({current}));
