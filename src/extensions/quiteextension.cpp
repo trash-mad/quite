@@ -24,7 +24,20 @@ void QuiteExtension::install(
     QJSEngine* eval
 ) {
     qDebug() << "QuiteExtension install";
-    global.setProperty("Quite", current);
+    QJSValue createElementRestWrapper=eval->evaluate(
+        "(function (instance) {"\
+        "   function flatten(arr) { "\
+        "       return arr.reduce(function (flat, toFlatten) { "\
+        "           return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);"\
+        "       }, []);" \
+        "   };"\
+        "   instance.createElement=function(type,props,...child){" \
+        "       return instance.createElementInternal(type,props,flatten(child));" \
+        "   }; " \
+        "   return instance;" \
+        "})"
+    );
+    global.setProperty("Quite",createElementRestWrapper.call({current}));
     this->eval = eval;
 }
 
@@ -41,70 +54,6 @@ QJSValue QuiteExtension::render(QJSValue root) {
         QCoreApplication::postEvent(parent(), new RenderUi(node));
     }
     return QJSValue();
-}
-
-/*---------------------------------------------------------------------------*/
-
-void QuiteExtension::parseChildElement(QJSValue child, QJSValueList& arr) {
-    qDebug() << "QuiteExtension parseChildElement";
-    Node* node=nullptr;
-    if (child.isUndefined()) {
-        return;
-    } else if (child.isArray()) {
-        const int length = child.property("length").toInt();
-        for (int i=0;i!=length;i++) {
-            arr.append(child.property(static_cast<uint>(i)));
-        }
-    } else {
-        if (Node::tryCastNode(child,node)) {
-            if (node->getType()==NodeType::FragmentType) {
-                QLinkedList<Node*>::iterator iter;
-                QLinkedList<Node*> nodes = node->getChild();
-                for (iter=nodes.begin();iter!=nodes.end();iter++) {
-                    arr.append(eval->newQObject(*iter));
-                }
-                return;
-            } else {
-                arr.append(child);
-            }
-        } else {
-            qCritical() << "QuiteExtension parseChildElement invalid child";
-        }
-    }
-}
-
-/*---------------------------------------------------------------------------*/
-
-QJSValue QuiteExtension::createElement(
-    QJSValue type,
-    QJSValue props,
-    QJSValue child1,
-    QJSValue child2,
-    QJSValue child3,
-    QJSValue child4,
-    QJSValue child5,
-    QJSValue child6,
-    QJSValue child7,
-    QJSValue child8
-) {
-    qDebug() << "QuiteExtension createElement";
-    QJSValueList child;
-    parseChildElement(child1, child);
-    parseChildElement(child2, child);
-    parseChildElement(child3, child);
-    parseChildElement(child4, child);
-    parseChildElement(child5, child);
-    parseChildElement(child6, child);
-    parseChildElement(child7, child);
-    parseChildElement(child8, child);
-    QJSValue arr = eval->newArray(static_cast<uint>(child.length()));
-    QJSValueList::iterator iter;
-    uint i=0;
-    for (iter=child.begin();iter!=child.end();iter++) {
-        arr.setProperty(i,*iter);
-        i++;
-    }
-    return createElementInternal(type, props, arr);
 }
 
 /*---------------------------------------------------------------------------*/
