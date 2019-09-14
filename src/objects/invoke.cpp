@@ -24,7 +24,7 @@ Eval *Invoke::createEval() {
     qDebug() << "Invoke createEval";
     QJSValueList args;
     QList<QVariant>::iterator iter;
-    for(int i=0;i!=args.length();i++) {
+    for(int i=0;i!=this->args.length();i++) {
         QVariant value = this->args.at(i);
         if (value.canConvert<int>()) {
             args.append(QJSValue(value.toInt()));

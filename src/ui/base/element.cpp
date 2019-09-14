@@ -75,6 +75,13 @@ void Element::onClick() {
 
 /*---------------------------------------------------------------------------*/
 
+void Element::onCheck(bool enabled) {
+    Q_UNUSED(enabled)
+    qCritical() << "Element default check handler";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Element::childInsertAfterIndex(int index, Element *elem) {
     qDebug() << "Element default childInsertAfter";
     if (index>this->child.count()) {

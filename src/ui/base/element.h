@@ -49,6 +49,7 @@ class Element : public QObject {
    */
   public slots:
     virtual void onClick();
+    virtual void onCheck(bool enabled);
 
   /*
    * Действия, выполняемые для синхронизации элемента и item. Доступны к
