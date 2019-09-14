@@ -33,6 +33,45 @@ Quite.render(
 
 Корневым компонентом обязательно должно быть окно (type: "Window"). Последний передается в функцию render() для пометки на игнорирование сборщиком мусора и непосредственно открытие оного. Подробнее о рендеринге элементов будет написано ниже.
 
+## JSX вложенные списки
+
+Часто при разработке пользовательского интерфейса с применением ReactJS встает вопрос о выводе списка элементов. Официальное [руководство](https://reactjs.org/docs/lists-and-keys.html) от FaceBook описывает вывод списка с ипользованием функции `Array.prototype.map()`. Последняя возвращает измененный список, где каждый элемент подвергся моддификации функцией из аргументов.
+
+```
+function NumberList() {
+    this.state={numbers:[1,2,3]};
+}
+
+NumberList.prototype.render=function(props) {
+  const numbers = this.state.numbers;
+  return (
+    <ul>
+      <p value="Header"/>
+      {numbers.map((number) =>
+        <li key={number} value={number} />
+      )}
+    </ul>
+  );
+}
+```
+
+После транспиляции и исполнения рендеринга компонента поддрево будет эквивалентно следующему представлению:
+
+```
+render(
+    Quite.createElement("ul",null,
+        Quite.createElement("p",{value:"Header"}), [
+            Quite.createElement("li",{key:1,value:1}),
+            Quite.createElement("li",{key:2,value:2}),
+            Quite.createElement("li",{key:3,value:3})
+        ]
+    )
+);
+```
+
+Примечательно, что ul имеет два физических потомка в аргументах, один из которых выражен массивом. Кроме того, подобные массивы могут быть вложенными (map() внутри map()). Для решения проблемы JSX factory данного фреймворка осуществляет приведение массива к [плоскому](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array/flat) виду, используя код эквивалентный по логике работы для `Array.prototype.flat(Infinity)`.
+
+
 ## Компонент
 
 Компонент это объект, прототип которого содержит функцию render. Последняя исполняется фреймворком при вызове this.setState компонента для получения нового древа для отображения.
