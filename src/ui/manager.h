@@ -16,6 +16,7 @@
 #include "src/ui/elements/window.h"
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/rectangle.h"
+#include "src/ui/elements/scrollviewer.h"
 
 #include "src/ui/base/diffcounter.h"
 

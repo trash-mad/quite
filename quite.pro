@@ -21,7 +21,8 @@ SOURCES += src/main.cpp \
     src/extensions/dialogextension.cpp \
     src/ui/base/dialog.cpp \
     src/ui/dialogs/alert.cpp \
-    src/ui/dialogs/prompt.cpp
+    src/ui/dialogs/prompt.cpp \
+    src/ui/elements/scrollviewer.cpp
 SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
@@ -58,7 +59,8 @@ HEADERS += src/base/engine.h \
     src/extensions/dialogextension.h \
     src/ui/base/dialog.h \
     src/ui/dialogs/alert.h \
-    src/ui/dialogs/prompt.h
+    src/ui/dialogs/prompt.h \
+    src/ui/elements/scrollviewer.h
 HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h

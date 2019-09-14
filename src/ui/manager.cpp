@@ -25,6 +25,9 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             case NodeType::ButtonType:
                 element = new Button(node, &engine, parent);
                 break;
+            case NodeType::ScrollViewerType:
+                element = new ScrollViewer(node,&engine,parent);
+                break;
             default:
                 qCritical() << "Manager can't render node" << type;
         }

@@ -308,7 +308,9 @@ NodeType Node::castNodeType(QString type) {
         return NodeType::ButtonType;
     } else if (type == "Window") {
         return NodeType::WindowType;
-     } else {
+    } else if (type == "ScrollViewer") {
+        return NodeType::ScrollViewerType;
+    } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;
     }

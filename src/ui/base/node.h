@@ -27,7 +27,8 @@ enum NodeType : int {
     FragmentType = 1,
     ButtonType = 2,
     WindowType = 3,
-    RectangleType = 4
+    RectangleType = 4,
+    ScrollViewerType = 5
 };
 
 /*****************************************************************************/
