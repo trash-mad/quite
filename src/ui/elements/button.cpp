@@ -14,6 +14,8 @@ Button::Button(Node *node, QQmlEngine *engine, Element *parent)
         parent
     ){
     qDebug() << "Button ctor";
+    getItem()->setHeight(45);
+    getItem()->setWidth(125);
 }
 
 /*---------------------------------------------------------------------------*/
