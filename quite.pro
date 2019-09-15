@@ -23,6 +23,7 @@ SOURCES += src/main.cpp \
     src/ui/dialogs/alert.cpp \
     src/ui/dialogs/prompt.cpp \
     src/ui/elements/checkbox.cpp \
+    src/ui/elements/entry.cpp \
     src/ui/elements/scrollviewer.cpp
 SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
@@ -62,6 +63,7 @@ HEADERS += src/base/engine.h \
     src/ui/dialogs/alert.h \
     src/ui/dialogs/prompt.h \
     src/ui/elements/checkbox.h \
+    src/ui/elements/entry.h \
     src/ui/elements/scrollviewer.h
 HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h

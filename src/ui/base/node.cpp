@@ -312,6 +312,8 @@ NodeType Node::castNodeType(QString type) {
         return NodeType::ScrollViewerType;
     } else if (type == "CheckBox") {
         return NodeType::CheckBoxType;
+    } else if (type == "Entry") {
+        return NodeType::EntryType;
     } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;

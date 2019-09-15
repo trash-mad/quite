@@ -29,7 +29,8 @@ enum NodeType : int {
     WindowType = 3,
     RectangleType = 4,
     ScrollViewerType = 5,
-    CheckBoxType = 6
+    CheckBoxType = 6,
+    EntryType = 7,
 };
 
 /*****************************************************************************/

@@ -13,6 +13,7 @@
 
 #include "src/ui/component.h"
 #include "src/ui/base/dialog.h"
+#include "src/ui/elements/entry.h"
 #include "src/ui/elements/window.h"
 #include "src/ui/elements/button.h"
 #include "src/ui/elements/checkbox.h"

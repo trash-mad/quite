@@ -31,6 +31,9 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             case NodeType::CheckBoxType:
                 element = new CheckBox(node,&engine,parent);
                 break;
+            case NodeType::EntryType:
+                element = new Entry(node, &engine, parent);
+                break;
             default:
                 qCritical() << "Manager can't render node" << type;
         }

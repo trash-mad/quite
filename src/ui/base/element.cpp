@@ -82,6 +82,13 @@ void Element::onCheck(bool enabled) {
 
 /*---------------------------------------------------------------------------*/
 
+void Element::textChanged(QString text) {
+    Q_UNUSED(text)
+    qCritical() << "Element default textChanged handler";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Element::childInsertAfterIndex(int index, Element *elem) {
     qDebug() << "Element default childInsertAfter";
     if (index>this->child.count()) {
