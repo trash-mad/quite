@@ -316,6 +316,8 @@ NodeType Node::castNodeType(QString type) {
         return NodeType::EntryType;
     } else if (type == "Label") {
         return NodeType::LabelType;
+    } else if (type == "Slider") {
+        return NodeType::SliderType;
     } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;

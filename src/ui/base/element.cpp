@@ -82,6 +82,13 @@ void Element::onCheck(bool enabled) {
 
 /*---------------------------------------------------------------------------*/
 
+void Element::valueChanged(int value) {
+    Q_UNUSED(value)
+    qCritical() << "Element default valueChanged handler";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Element::textChanged(QString text) {
     Q_UNUSED(text)
     qCritical() << "Element default textChanged handler";

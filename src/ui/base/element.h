@@ -50,6 +50,7 @@ class Element : public QObject {
   public slots:
     virtual void onClick();
     virtual void onCheck(bool enabled);
+    virtual void valueChanged(int value);
     virtual void textChanged(QString text);
 
   /*

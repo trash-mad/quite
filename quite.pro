@@ -25,7 +25,8 @@ SOURCES += src/main.cpp \
     src/ui/elements/checkbox.cpp \
     src/ui/elements/entry.cpp \
     src/ui/elements/label.cpp \
-    src/ui/elements/scrollviewer.cpp
+    src/ui/elements/scrollviewer.cpp \
+    src/ui/elements/slider.cpp
 SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
@@ -66,7 +67,8 @@ HEADERS += src/base/engine.h \
     src/ui/elements/checkbox.h \
     src/ui/elements/entry.h \
     src/ui/elements/label.h \
-    src/ui/elements/scrollviewer.h
+    src/ui/elements/scrollviewer.h \
+    src/ui/elements/slider.h
 HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h

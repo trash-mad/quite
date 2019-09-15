@@ -8,8 +8,9 @@ Item {
     TextField {
         id: field
         anchors.fill: parent
-        onTextEdited: {
-            textChanged(text)
+        onTextChanged: {
+            console.log("!!!here"+text)
+            textChanged(text.toString())
         }
     }
 }

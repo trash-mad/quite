@@ -8,5 +8,6 @@
         <file>qml/CheckBox.qml</file>
         <file>qml/Entry.qml</file>
         <file>qml/Label.qml</file>
+        <file>qml/Slider.qml</file>
     </qresource>
 </RCC>
