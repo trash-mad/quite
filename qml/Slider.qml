@@ -11,8 +11,21 @@ Item {
 
     Slider {
         id: slider
+        property int _value: -1
+        property bool _initial: true
         onValueChanged: {
-            onElementValueChanged(slider.value.toString())
+            if (_value===value) {
+                return;
+            } else if (_value===-1) {
+                _value=value;
+                return;
+            } else if (_initial) {
+                _initial=false;
+                return;
+            } else {
+                _value=value;
+                onElementValueChanged(slider.value.toString())
+            }
         }
     }
 }
