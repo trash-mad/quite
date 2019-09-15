@@ -11,7 +11,6 @@ Item {
 
     Slider {
         id: slider
-        live: false
         onValueChanged: {
             onElementValueChanged(slider.value.toString())
         }

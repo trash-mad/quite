@@ -1,11 +1,14 @@
 import QtQuick.Controls 2.5
-import QtQuick 2.0
+import QtQuick 2.12
+
 
 Item {
     id: item
     property alias text: label.text
-    Label {
+    Text {
         id: label
+        verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 16
         anchors.fill: parent
     }
 }
