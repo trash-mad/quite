@@ -26,7 +26,7 @@ Slider::~Slider() {
 
 /*---------------------------------------------------------------------------*/
 
-void Slider::valueChanged(int value) {
+void Slider::onElementValueChanged(QVariant value) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("valueChanged")) {
@@ -34,7 +34,7 @@ void Slider::valueChanged(int value) {
     } else {
         QVariant callBack = props["valueChanged"];
         if (Invoke::tryCast(callBack, obj)) {
-            qDebug() << "Slider valueChanged" << value;
+            qDebug() << "Slider valueChanged" << value.toString();
             obj->addArgs({value});
             emit invoke(obj);
         } else {

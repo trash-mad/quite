@@ -9,8 +9,7 @@ Item {
         id: field
         anchors.fill: parent
         onTextChanged: {
-            console.log("!!!here"+text)
-            textChanged(text.toString())
+            onElementValueChanged(text.toString())
         }
     }
 }

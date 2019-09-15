@@ -26,7 +26,7 @@ Button::~Button() {
 
 /*---------------------------------------------------------------------------*/
 
-void Button::onClick() {
+void Button::onElementClick() {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("onClick")) {

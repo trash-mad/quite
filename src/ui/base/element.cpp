@@ -69,29 +69,22 @@ Element::~Element() {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onClick() {
+void Element::onElementClick() {
     qCritical() << "Element default click handler";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onCheck(bool enabled) {
+void Element::onElementCheck(bool enabled) {
     Q_UNUSED(enabled)
     qCritical() << "Element default check handler";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::valueChanged(int value) {
+void Element::onElementValueChanged(QVariant value) {
     Q_UNUSED(value)
     qCritical() << "Element default valueChanged handler";
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::textChanged(QString text) {
-    Q_UNUSED(text)
-    qCritical() << "Element default textChanged handler";
 }
 
 /*---------------------------------------------------------------------------*/

@@ -20,7 +20,7 @@ class CheckBox: public Element {
     CheckBox(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~CheckBox() override;
   public slots:
-    virtual void onCheck(bool enabled) override;
+    virtual void onElementCheck(bool enabled) override;
 };
 
 /*****************************************************************************/

@@ -20,7 +20,7 @@ class Entry: public Element {
     Entry(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Entry() override;
   public slots:
-    virtual void textChanged(QString text) override;
+    virtual void onElementValueChanged(QVariant value) override;
 };
 
 /*****************************************************************************/

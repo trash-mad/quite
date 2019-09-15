@@ -48,10 +48,9 @@ class Element : public QObject {
    * Они виртуальные - переопределяем в наследнике элемента
    */
   public slots:
-    virtual void onClick();
-    virtual void onCheck(bool enabled);
-    virtual void valueChanged(int value);
-    virtual void textChanged(QString text);
+    virtual void onElementClick();
+    virtual void onElementCheck(bool enabled);
+    virtual void onElementValueChanged(QVariant value);
 
   /*
    * Действия, выполняемые для синхронизации элемента и item. Доступны к

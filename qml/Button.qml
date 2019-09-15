@@ -6,6 +6,6 @@ Item {
     Button {
         id: button
         anchors.fill: parent
-        onClicked: onClick()
+        onClicked: onElementClick()
     }
 }

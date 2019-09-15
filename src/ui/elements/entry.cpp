@@ -26,7 +26,7 @@ Entry::~Entry() {
 
 /*---------------------------------------------------------------------------*/
 
-void Entry::textChanged(QString text) {
+void Entry::onElementValueChanged(QVariant value) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("textChanged")) {
@@ -34,8 +34,8 @@ void Entry::textChanged(QString text) {
     } else {
         QVariant callBack = props["textChanged"];
         if (Invoke::tryCast(callBack, obj)) {
-            qDebug() << "Entry textChanged" << text;
-            obj->addArgs({text});
+            qDebug() << "Entry textChanged" << value.toString();
+            obj->addArgs({value});
             emit invoke(obj);
         } else {
             qCritical() << "Entry textChanged not callable";
