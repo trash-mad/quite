@@ -7,5 +7,6 @@
         <file>qml/ScrollViewer.qml</file>
         <file>qml/CheckBox.qml</file>
         <file>qml/Entry.qml</file>
+        <file>qml/Label.qml</file>
     </qresource>
 </RCC>

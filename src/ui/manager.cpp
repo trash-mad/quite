@@ -34,6 +34,9 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             case NodeType::EntryType:
                 element = new Entry(node, &engine, parent);
                 break;
+            case NodeType::LabelType:
+                element = new Label(node, &engine, parent);
+                break;
             default:
                 qCritical() << "Manager can't render node" << type;
         }

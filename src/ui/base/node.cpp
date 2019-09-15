@@ -314,6 +314,8 @@ NodeType Node::castNodeType(QString type) {
         return NodeType::CheckBoxType;
     } else if (type == "Entry") {
         return NodeType::EntryType;
+    } else if (type == "Label") {
+        return NodeType::LabelType;
     } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;

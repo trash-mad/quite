@@ -7,8 +7,9 @@ Item {
     property string text: field.text
     TextField {
         id: field
+        anchors.fill: parent
         onTextEdited: {
-
+            textChanged(text)
         }
     }
 }
