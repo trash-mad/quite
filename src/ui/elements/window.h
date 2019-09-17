@@ -30,6 +30,12 @@ class Window : public Element {
     virtual ~Window() override;
 
   /*
+   * Проброс свойств окна
+   */
+  public slots:
+    virtual void propsChanged() override;
+
+  /*
    * Переопределение перерисовки с передачей размера окна
    */
   public slots:

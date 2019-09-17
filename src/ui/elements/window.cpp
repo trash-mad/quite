@@ -47,9 +47,17 @@ Window::~Window() {
 
 /*---------------------------------------------------------------------------*/
 
+void Window::propsChanged() {
+    qDebug() << "Window propsChanged";
+    window->commitWindowProps(getProps());
+    Element::propsChanged();
+}
+
+/*---------------------------------------------------------------------------*/
+
 FlexNode* Window::buildFlexTree(bool fill) {
     qDebug() << "Window updateLayout";
-    Q_UNUSED(fill);
+    Q_UNUSED(fill)
     FlexNode* layout = new FlexNode(
         getItem(),
         window->getHeight(),

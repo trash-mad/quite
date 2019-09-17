@@ -24,6 +24,24 @@ WindowComponent::~WindowComponent() {
 
 /*---------------------------------------------------------------------------*/
 
+void WindowComponent::commitWindowProps(QMap<QString, QVariant> props) {
+    qDebug() << "WindowComponent commitWindowProps";
+    QMap<QString,QVariant>::iterator iter;
+    for(iter = props.begin(); iter!= props.end(); iter++) {
+        QString name = iter.key();
+        QVariant value = iter.value();
+        if (name=="height") {
+            window->setHeight(value.toInt());
+        } else if (name=="width") {
+            window->setWidth(value.toInt());
+        } else {
+            qCritical() << "WindowComponent commitWindowProps invalid prop";
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------*/
+
 int WindowComponent::getHeight() const {
     return window->size().height();
 }

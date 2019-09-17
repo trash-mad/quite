@@ -105,6 +105,11 @@ Window* Manager::renderWindow(Node *node, Element *parent) {
         this,
         SIGNAL(closed())
     );
+    QMetaObject::invokeMethod(
+        node,
+        "commitProps",
+        Qt::BlockingQueuedConnection
+    );
     return window;
 }
 

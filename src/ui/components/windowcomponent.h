@@ -40,6 +40,8 @@ class WindowComponent : public QQuickItem {
     WindowComponent();
     virtual ~WindowComponent() override;
   public:
+    void commitWindowProps(QMap<QString,QVariant> props);
+  public:
     int getHeight() const;
     int getWidth() const;
   signals:
