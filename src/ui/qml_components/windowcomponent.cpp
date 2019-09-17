@@ -2,7 +2,7 @@
 
 namespace Quite {
 namespace Ui {
-namespace Components {
+namespace QmlComponents {
 
 /*****************************************************************************/
 
@@ -61,7 +61,7 @@ WindowComponentPrivate::WindowComponentPrivate() {
 /*---------------------------------------------------------------------------*/
 
 bool WindowComponentPrivate::eventFilter(QObject *obj, QEvent *ev) {
-    Q_UNUSED(obj);
+    Q_UNUSED(obj)
     if (ev->type()==QEvent::Close) {
         emit closed();
     } else if (ev->type()==QEvent::Resize) {

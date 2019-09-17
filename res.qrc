@@ -10,5 +10,7 @@
         <file>qml/Label.qml</file>
         <file>qml/Slider.qml</file>
         <file>qml/ComboBox.qml</file>
+        <file>qml/ToolBar.qml</file>
+        <file>qml/base/ElementItem.qml</file>
     </qresource>
 </RCC>

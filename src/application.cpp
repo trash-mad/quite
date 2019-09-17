@@ -87,6 +87,12 @@ int Application::exec(int argc, char *argv[]) {
     qRegisterMetaType<QLinkedList<Node*>>("QLinkedList<Node*>");
     qRegisterMetaType<QVector<NodeStruct>>("QVector<NodeStruct>");
     qmlRegisterType<WindowComponent>("WindowComponent",1,0,"WindowComponent");
+    qmlRegisterSingletonType(
+        "ConsoleProvider",
+        1, 0,
+        "Console",
+        ConsoleProvider::initSingletonType
+    );
 
     QCommandLineParser parser;
 

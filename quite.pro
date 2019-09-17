@@ -27,11 +27,12 @@ SOURCES += src/main.cpp \
     src/ui/elements/entry.cpp \
     src/ui/elements/label.cpp \
     src/ui/elements/scrollviewer.cpp \
-    src/ui/elements/slider.cpp
+    src/ui/elements/slider.cpp \
+    src/ui/qml_providers/consoleprovider.cpp
 SOURCES += src/objects/flexnode.cpp
 SOURCES += src/objects/invoke.cpp
 SOURCES += src/ui/base/diffcounter.cpp
-SOURCES += src/ui/components/windowcomponent.cpp
+SOURCES += src/ui/qml_components/windowcomponent.cpp
 SOURCES += src/events/renderui.cpp
 SOURCES += src/objects/nodestruct.cpp
 SOURCES += src/ui/base/componentnode.cpp
@@ -70,11 +71,12 @@ HEADERS += src/base/engine.h \
     src/ui/elements/entry.h \
     src/ui/elements/label.h \
     src/ui/elements/scrollviewer.h \
-    src/ui/elements/slider.h
+    src/ui/elements/slider.h \
+    src/ui/qml_providers/consoleprovider.h
 HEADERS += src/objects/flexnode.h
 HEADERS += src/objects/invoke.h
 HEADERS += src/ui/base/diffcounter.h
-HEADERS += src/ui/components/windowcomponent.h
+HEADERS += src/ui/qml_components/windowcomponent.h
 HEADERS += src/ui/elements/button.h
 HEADERS += src/ui/elements/rectangle.h
 HEADERS += src/ui/elements/window.h

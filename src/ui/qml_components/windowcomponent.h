@@ -15,7 +15,7 @@ using namespace Quite::Ui::Base;
 
 namespace Quite {
 namespace Ui {
-namespace Components {
+namespace QmlComponents {
 
 /*****************************************************************************/
 
