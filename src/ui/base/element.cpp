@@ -82,6 +82,13 @@ void Element::onElementCheck(bool enabled) {
 
 /*---------------------------------------------------------------------------*/
 
+void Element::onElementSelectionChanged(int index) {
+    Q_UNUSED(index)
+    qCritical() << "Element default selectionChanged handler";
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Element::onElementValueChanged(QVariant value) {
     Q_UNUSED(value)
     qCritical() << "Element default valueChanged handler";

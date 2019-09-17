@@ -1,4 +1,4 @@
-#include "entry.h"
+#include "combobox.h"
 
 namespace Quite {
 namespace Ui {
@@ -6,39 +6,39 @@ namespace Elements {
 
 /*****************************************************************************/
 
-Entry::Entry(Node *node, QQmlEngine *engine, Element *parent)
+ComboBox::ComboBox(Node* node, QQmlEngine* engine, Element* parent)
   : Element(
-        QUrl(QStringLiteral("qrc:/qml/Entry.qml")),
+        QUrl(QStringLiteral("qrc:/qml/ComboBox.qml")),
         node,
         engine,
         parent
-    ){
-    qDebug() << "Entry ctor";
+    ) {
+    qDebug() << "ComboBox ctor";
     getItem()->setHeight(45);
     getItem()->setWidth(125);
 }
 
 /*---------------------------------------------------------------------------*/
 
-Entry::~Entry() {
-    qDebug() << "Entry dtor";
+ComboBox::~ComboBox() {
+    qDebug() << "ComboBox dtor";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Entry::onElementValueChanged(QVariant value) {
+void ComboBox::onElementSelectionChanged(int index) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
-    if (!props.contains("onTextChanged")) {
+    if (!props.contains("onSelectionChanged")) {
         return;
     } else {
-        QVariant callBack = props["onTextChanged"];
+        QVariant callBack = props["onSelectionChanged"];
         if (Invoke::tryCast(callBack, obj)) {
-            qDebug() << "Entry textChanged" << value.toString();
-            obj->addArgs({value});
+            qDebug() << "ComboBox selectionChanged" << index;
+            obj->addArgs({index});
             emit invoke(obj);
         } else {
-            qCritical() << "Entry textChanged not callable";
+            qCritical() << "ComboBox selectionChanged not callable";
         }
     }
 }

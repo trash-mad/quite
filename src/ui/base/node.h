@@ -32,7 +32,8 @@ enum NodeType : int {
     CheckBoxType = 6,
     EntryType = 7,
     LabelType = 8,
-    SliderType = 9
+    SliderType = 9,
+    ComboBoxType = 10
 };
 
 /*****************************************************************************/

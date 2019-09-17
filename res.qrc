@@ -9,5 +9,6 @@
         <file>qml/Entry.qml</file>
         <file>qml/Label.qml</file>
         <file>qml/Slider.qml</file>
+        <file>qml/ComboBox.qml</file>
     </qresource>
 </RCC>

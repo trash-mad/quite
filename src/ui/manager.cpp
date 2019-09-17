@@ -40,6 +40,9 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             case NodeType::SliderType:
                 element = new Slider(node, &engine, parent);
                 break;
+            case NodeType::ComboBoxType:
+                element = new ComboBox(node, &engine, parent);
+                break;
             default:
                 qCritical() << "Manager can't render node" << type;
         }

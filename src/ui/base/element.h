@@ -50,6 +50,7 @@ class Element : public QObject {
   public slots:
     virtual void onElementClick();
     virtual void onElementCheck(bool enabled);
+    virtual void onElementSelectionChanged(int index);
     virtual void onElementValueChanged(QVariant value);
 
   /*

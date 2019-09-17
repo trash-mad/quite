@@ -318,6 +318,8 @@ NodeType Node::castNodeType(QString type) {
         return NodeType::LabelType;
     } else if (type == "Slider") {
         return NodeType::SliderType;
+    } else if (type == "ComboBox") {
+        return NodeType::ComboBoxType;
     } else {
         qCritical() << "getNodeType invalid node type" << type;
         return NodeType::NeverType;

@@ -29,10 +29,10 @@ Slider::~Slider() {
 void Slider::onElementValueChanged(QVariant value) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
-    if (!props.contains("valueChanged")) {
+    if (!props.contains("onValueChanged")) {
         return;
     } else {
-        QVariant callBack = props["valueChanged"];
+        QVariant callBack = props["onValueChanged"];
         if (Invoke::tryCast(callBack, obj)) {
             qDebug() << "Slider valueChanged" << value.toString();
             obj->addArgs({value});

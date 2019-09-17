@@ -23,6 +23,7 @@ SOURCES += src/main.cpp \
     src/ui/dialogs/alert.cpp \
     src/ui/dialogs/prompt.cpp \
     src/ui/elements/checkbox.cpp \
+    src/ui/elements/combobox.cpp \
     src/ui/elements/entry.cpp \
     src/ui/elements/label.cpp \
     src/ui/elements/scrollviewer.cpp \
@@ -65,6 +66,7 @@ HEADERS += src/base/engine.h \
     src/ui/dialogs/alert.h \
     src/ui/dialogs/prompt.h \
     src/ui/elements/checkbox.h \
+    src/ui/elements/combobox.h \
     src/ui/elements/entry.h \
     src/ui/elements/label.h \
     src/ui/elements/scrollviewer.h \
