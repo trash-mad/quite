@@ -35,8 +35,9 @@ Item {
         if (item.height!=view.oldHeight) {
             view.oldHeight=item.height;
             content.dy=0;
+            return true;
         } else {
-            return;
+            return false;
         }
     }
 
@@ -44,27 +45,32 @@ Item {
         if (item.width!=view.oldWidth) {
             view.oldWidth=item.width;
             content.dx=0;
+            return true;
         } else {
-            return;
+            return false;
         }
     }
 
     function applyBasisFix() {
         const length=content.children.length;
-        checkHeightChanged();
-        checkWidthChanged();
+        let dyChanged=!checkHeightChanged();
+        let dxChanged=!checkWidthChanged();
         for (let i=0;i!==length;i++) {
             const child=content.children[i];
             if (child.x<content.dx) {
                 content.x=Math.abs(child.x);
                 content.dx=child.x;
+                dxChanged=true;
             }
             if (child.y<content.dy) {
                 content.y=Math.abs(child.y);
                 content.dy=child.y;
+                dyChanged=true;
             }
         }
-        Console.debug("ScrollViewer ","dx:",content.dx," dy:",content.dy)
+        content.x=dxChanged?content.x:0;
+        content.y=dyChanged?content.y:0;
+        Console.debug("ScrollViewer x:",content.x," y:",content.y);
     }
 
     onChildrenChanged: {
