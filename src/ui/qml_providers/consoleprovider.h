@@ -21,6 +21,7 @@ class ConsoleProvider: public QObject {
   public slots:
     void logInternal(QStringList msg);
     void warnInternal(QStringList msg);
+    void infoInternal(QStringList msg);
     void criticalInternal(QStringList msg);
   public:
     static QJSValue initSingletonType(QQmlEngine *qml, QJSEngine *js);

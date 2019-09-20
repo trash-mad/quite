@@ -31,6 +31,12 @@ void ConsoleProvider::warnInternal(QStringList msg) {
 
 /*---------------------------------------------------------------------------*/
 
+void ConsoleProvider::infoInternal(QStringList msg) {
+    qInfo() << msg.join("");
+}
+
+/*---------------------------------------------------------------------------*/
+
 void ConsoleProvider::criticalInternal(QStringList msg) {
     qCritical() << msg.join("");
 }
@@ -53,6 +59,9 @@ QJSValue ConsoleProvider::initSingletonType(
         "   }; " \
         "   instance.critical=function(...log){" \
         "       return instance.criticalInternal(log);" \
+        "   }; " \
+        "   instance.info=function(...log){" \
+        "       return instance.infoInternal(log);" \
         "   }; " \
         "   return instance;" \
         "})"

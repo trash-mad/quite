@@ -1,8 +1,17 @@
 import QtQuick.Controls 2.5
 import QtQuick 2.0
 
+import ConsoleProvider 1.0
+
 Item {
     id: item
+
+    /*
+     * INFO: при центровке элементов yoga может выставлять отрицательные
+     * координаты x и y. ScrollViewer не умеет работать с такими,
+     * поэтому мы сдвигаем точку отсчета системы до (0,0)
+     */
+
     ScrollView {
         id: view
         anchors.fill: parent
@@ -10,9 +19,33 @@ Item {
         contentHeight: content.childrenRect.height
         ScrollBar.horizontal.policy: ScrollBar.AsNeeded
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
+        property int oldHeight: -1
+        property int oldWidth: -1
         clip: true
-        Item { id: content }
+        Item {
+            id: content
+            property int dx: 0
+            property int dy: 0
+            onChildrenRectChanged: { applyBasisFix(); }
+        }
     }
+
+    function applyBasisFix() {
+        const length=content.children.length;
+        for (let i=0;i!==length;i++) {
+            const child=content.children[i];
+            if (child.x<content.dx) {
+                content.x=Math.abs(child.x);
+                content.dx=child.x;
+            }
+            if (child.y<content.dy) {
+                content.y=Math.abs(child.y);
+                content.dy=child.y;
+            }
+        }
+        Console.debug("ScrollViewer ","dx:",content.dx," dy:",content.dy)
+    }
+
     onChildrenChanged: {
         const length=item.children.length;
         if (length===1) {
@@ -20,6 +53,14 @@ Item {
         } else {
             item.children[length-1].parent=content;
         }
+    }
+
+    onHeightChanged: {
+        content.dx=0;
+    }
+
+    onWidthChanged: {
+        content.dy=0;
     }
 }
 
