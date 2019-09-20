@@ -14,8 +14,8 @@ Slider::Slider(Node *node, QQmlEngine *engine, Element *parent)
         parent
     ){
     qDebug() << "Slider ctor";
-    getItem()->setHeight(45);
-    getItem()->setWidth(125);
+    getItem()->setProperty("preferredHeight",45);
+    getItem()->setProperty("preferredWidth",125);
 }
 
 /*---------------------------------------------------------------------------*/

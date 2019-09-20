@@ -14,8 +14,8 @@ CheckBox::CheckBox(Node *node, QQmlEngine *engine, Element *parent)
         parent
     ){
     qDebug() << "CheckBox ctor";
-    getItem()->setHeight(45);
-    getItem()->setWidth(45);
+    getItem()->setProperty("preferredHeight",45);
+    getItem()->setProperty("preferredWidth",45);
 }
 
 /*---------------------------------------------------------------------------*/

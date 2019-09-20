@@ -256,8 +256,8 @@ void FlexNode::parseFlexWrap(QString wrap) {
 
 void FlexNode::parseOtherProps() {
 
-    int height=item->property("height").toInt();
-    int width=item->property("width").toInt();
+    int height=item->property("preferredHeight").toInt();
+    int width=item->property("preferredWidth").toInt();
 
     int minWidth=item->property("minWidth").toInt();
     int minWidthPercent=item->property("minWidthPercent").toInt();
