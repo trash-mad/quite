@@ -35,7 +35,7 @@ void WindowComponent::commitWindowProps(QMap<QString, QVariant> props) {
         } else if (name=="width") {
             window->setWidth(value.toInt());
         } else {
-            qCritical() << "WindowComponent commitWindowProps invalid prop";
+            continue;
         }
     }
 }
