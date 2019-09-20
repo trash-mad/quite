@@ -10,6 +10,7 @@ Item {
      * INFO: при центровке элементов yoga может выставлять отрицательные
      * координаты x и y. ScrollViewer не умеет работать с такими,
      * поэтому мы сдвигаем точку отсчета системы до (0,0)
+     * applyBasisFix
      */
 
     ScrollView {
@@ -30,8 +31,28 @@ Item {
         }
     }
 
+    function checkHeightChanged() {
+        if (item.height!=view.oldHeight) {
+            view.oldHeight=item.height;
+            content.dy=0;
+        } else {
+            return;
+        }
+    }
+
+    function checkWidthChanged() {
+        if (item.width!=view.oldWidth) {
+            view.oldWidth=item.width;
+            content.dx=0;
+        } else {
+            return;
+        }
+    }
+
     function applyBasisFix() {
         const length=content.children.length;
+        checkHeightChanged();
+        checkWidthChanged();
         for (let i=0;i!==length;i++) {
             const child=content.children[i];
             if (child.x<content.dx) {
@@ -53,14 +74,6 @@ Item {
         } else {
             item.children[length-1].parent=content;
         }
-    }
-
-    onHeightChanged: {
-        content.dx=0;
-    }
-
-    onWidthChanged: {
-        content.dy=0;
     }
 }
 
