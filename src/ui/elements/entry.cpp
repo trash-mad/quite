@@ -26,7 +26,7 @@ Entry::~Entry() {
 
 /*---------------------------------------------------------------------------*/
 
-void Entry::onElementValueChanged(QVariant value) {
+void Entry::onValueChanged(QVariant value) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("onTextChanged")) {

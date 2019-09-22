@@ -26,7 +26,7 @@ Slider::~Slider() {
 
 /*---------------------------------------------------------------------------*/
 
-void Slider::onElementValueChanged(QVariant value) {
+void Slider::onValueChanged(QVariant value) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("onValueChanged")) {

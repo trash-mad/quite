@@ -9,6 +9,6 @@ Item {
         id: checkbox
         anchors.fill: parent
         checkState: item.checked?Qt.Checked:Qt.Unchecked;
-        onCheckStateChanged: onElementCheck(checkState===Qt.Checked)
+        onCheckStateChanged: Context.onCheck(checkState===Qt.Checked)
     }
 }

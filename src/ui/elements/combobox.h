@@ -20,7 +20,7 @@ class ComboBox: public Element {
     ComboBox(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~ComboBox() override;
   public slots:
-    virtual void onElementSelectionChanged(int index) override;
+    virtual void onSelectionChanged(int index) override;
 };
 
 /*****************************************************************************/

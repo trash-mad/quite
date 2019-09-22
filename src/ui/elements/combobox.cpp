@@ -26,7 +26,7 @@ ComboBox::~ComboBox() {
 
 /*---------------------------------------------------------------------------*/
 
-void ComboBox::onElementSelectionChanged(int index) {
+void ComboBox::onSelectionChanged(int index) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("onSelectionChanged")) {

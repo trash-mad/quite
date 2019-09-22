@@ -24,7 +24,7 @@ Item {
                 return;
             } else {
                 _value=value;
-                onElementValueChanged(slider.value.toString())
+                Context.onValueChanged(slider.value.toString())
             }
         }
     }

@@ -9,7 +9,7 @@ Item {
         id: field
         anchors.fill: parent
         onTextChanged: {
-            onElementValueChanged(text.toString())
+            Context.onValueChanged(text.toString())
         }
     }
 }

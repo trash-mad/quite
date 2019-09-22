@@ -20,7 +20,7 @@ class Slider: public Element {
     Slider(Node* node, QQmlEngine* engine, Element* parent);
     virtual ~Slider() override;
   public slots:
-    virtual void onElementValueChanged(QVariant value) override;
+    virtual void onValueChanged(QVariant value) override;
 };
 
 /*****************************************************************************/

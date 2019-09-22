@@ -23,7 +23,7 @@ class Button : public Element {
    * Слот привязывается к контесту выполнения QML компонента в Element
    */
   public slots:
-    virtual void onElementClick() override;
+    virtual void onClick() override;
 };
 
 /*****************************************************************************/

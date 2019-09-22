@@ -10,7 +10,7 @@ Item {
         anchors.fill: parent
         onClicked: {
             Console.log("qml button clicked")
-            onElementClick()
+            Context.onClick()
         }
     }
 }

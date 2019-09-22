@@ -46,7 +46,7 @@ Element::Element(
     );
 
     context=new QQmlContext(engine->rootContext(),this);
-    context->setContextObject(this);
+    context->setContextProperty("Context",this);
 
     QQmlComponent component(engine, uri);
     QObject* object=component.create(context);
@@ -69,27 +69,27 @@ Element::~Element() {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onElementClick() {
+void Element::onClick() {
     qCritical() << "Element default click handler";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onElementCheck(bool enabled) {
+void Element::onCheck(bool enabled) {
     Q_UNUSED(enabled)
     qCritical() << "Element default check handler";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onElementSelectionChanged(int index) {
+void Element::onSelectionChanged(int index) {
     Q_UNUSED(index)
     qCritical() << "Element default selectionChanged handler";
 }
 
 /*---------------------------------------------------------------------------*/
 
-void Element::onElementValueChanged(QVariant value) {
+void Element::onValueChanged(QVariant value) {
     Q_UNUSED(value)
     qCritical() << "Element default valueChanged handler";
 }

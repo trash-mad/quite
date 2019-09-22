@@ -16,7 +16,7 @@ Item {
             if (box.currentIndex===-1) {
                 return;
             } else {
-                onElementSelectionChanged(index);
+                Context.onSelectionChanged(index);
             }
         }
     }

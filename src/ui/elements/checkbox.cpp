@@ -26,7 +26,7 @@ CheckBox::~CheckBox() {
 
 /*---------------------------------------------------------------------------*/
 
-void CheckBox::onElementCheck(bool enabled) {
+void CheckBox::onCheck(bool enabled) {
     QMap<QString, QVariant> props = getProps();
     Invoke* obj = nullptr;
     if (!props.contains("onCheck")) {
