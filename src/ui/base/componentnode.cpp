@@ -98,7 +98,7 @@ void ComponentNode::updateContext(
     QJSValue context,
     bool recursive
 ) {
-    Q_UNUSED(recursive);
+    Q_UNUSED(recursive)
     Node::updateContext(context, false);
     Node::updateChildContext(instance);
 }
@@ -206,12 +206,15 @@ void ComponentNode::processDiffChild(
 ) {
     qDebug() << "ComponentNode processDiffChild";
     if (tryInsertAfterChild(merged,item,index)) {
+        emit renderDiff();
         return;
     } else if (tryAppendChild(merged,item,index)) {
+        emit renderDiff();
         return;
     } else {
         incrementResolveCounter();
         this->appendChild(item.node);
+        emit renderDiff();
     }
 }
 
@@ -225,26 +228,28 @@ bool ComponentNode::tryInsertAfterChild(
     qDebug() << "ComponentNode tryInsertAfterChild";
     auto index = static_cast<unsigned long long>(lastIndex-1);
     if (*merged[index].parent!=*child.parent) {
-        /*
-         * Элемент перед текущим имеет другого родителя.
-         * нет смысла искать общего родителя.
-         */
+        /* can't find upper child */
         return false;
     } else {
         int current=0;
-        for (auto i=index;i!=0;i--,current++){
-            if (merged[i]==*child.parent) {
+        while (true) {
+            qInfo() << "iter";
+            if (merged[index]==(*child.parent)) {
                 incrementResolveCounter();
-                merged[i].node->insertAfterChildIndex(
-                    current-1, // перед текущим
+                merged[index].node->insertAfterChildIndex(
+                    current,
                     child.node
                 );
                 return true;
+            } else if (index==0) {
+                break;
             } else {
+                index--;
+                current++;
                 continue;
             }
         }
-        qCritical() << "ComponentNode tryInsertAfterChild parent not found";
+        qCritical() << "ComponentNode tryInsertAfterChild cant't find index";
         return false;
     }
 }

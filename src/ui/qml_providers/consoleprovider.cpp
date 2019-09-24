@@ -54,6 +54,9 @@ QJSValue ConsoleProvider::initSingletonType(
         "   instance.log=function(...log){" \
         "       return instance.logInternal(log);" \
         "   }; " \
+        "   instance.debug=function(...log){" \
+        "       return instance.logInternal(log);" \
+        "   }; " \
         "   instance.warn=function(...log){" \
         "       return instance.warnInternal(log);" \
         "   }; " \

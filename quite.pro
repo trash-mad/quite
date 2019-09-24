@@ -4,6 +4,7 @@ TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 CONFIG += rtti
+CONFIG += app_bundle
 DEFINES += QT_DEPRECATED_WARNINGS
 
 lessThan(QT_MAJOR_VERSION, 5) : error("requires Qt > 5.12.*")

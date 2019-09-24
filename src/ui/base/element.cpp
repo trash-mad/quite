@@ -343,9 +343,15 @@ void Element::startLayoutUpdate() {
 /*---------------------------------------------------------------------------*/
 
 void Element::updateLayoutNow() {
-    qDebug() << "Element updateLayoutNow";
     int H=layout->getWidth();
     int W=layout->getHeight();
+    updateLayoutNow(H,W);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Element::updateLayoutNow(int H, int W) {
+    qDebug() << "Element updateLayoutNow";
     int T=layout->getLayoutTop()-layout->getMarginTop();
     int LT=layout->getLastTop();
     int L=layout->getLayoutLeft()-layout->getMarginLeft();

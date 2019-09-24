@@ -126,8 +126,10 @@ class Element : public QObject {
    * гарантированно выполнит перерасчет.
    *
    * Переопределяется у окна для инициализации просчета дерева
+   * Переопределяется в компоненте, чтобы передать физический размер (не %)
    */
   protected:
+    virtual void updateLayoutNow(int H, int W);
     virtual void updateLayoutNow();
 
   /*

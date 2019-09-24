@@ -19,12 +19,28 @@ Component::Component(ComponentNode* node, QQmlEngine* engine, Element* parent)
         this,
         SLOT(renderSubtreeHandler(Node*))
     );
+    connect(
+        node,
+        SIGNAL(renderDiff()),
+        this,
+        SLOT(updateLayout())
+    );
 }
 
 /*---------------------------------------------------------------------------*/
 
 Component::~Component() {
     qDebug() << "Component dtor";
+}
+
+/*---------------------------------------------------------------------------*/
+
+void Component::updateLayoutNow() {
+    qDebug() << "Component updateLayoutNow";
+    Element::updateLayoutNow(
+        static_cast<int>(getItem()->height()),
+        static_cast<int>(getItem()->width())
+    );
 }
 
 /*---------------------------------------------------------------------------*/
