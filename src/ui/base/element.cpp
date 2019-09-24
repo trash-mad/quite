@@ -297,7 +297,6 @@ FlexNode *Element::buildFlexTree(bool fill) {
     QLinkedList<Element*>::iterator iter;
     for (iter=child.begin();iter!=child.end();iter++) {
         layout->appendChild((*iter)->buildFlexTree(false));
-        /* layout инициализирован, позволяем рисовать */
         (*iter)->startLayoutUpdate();
     }
     return layout;

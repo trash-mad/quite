@@ -35,11 +35,30 @@ Component::~Component() {
 
 /*---------------------------------------------------------------------------*/
 
+FlexNode *Component::buildFlexTree(bool fill) {
+    Q_UNUSED(fill)
+    layout = new FlexNode(getItem());
+    QLinkedList<Element*> child=getChild();
+    QLinkedList<Element*>::iterator iter;
+    if (child.count()==1) {
+        iter=iter=child.begin();
+        layout->appendChild((*iter)->buildFlexTree(true));
+        (*iter)->startLayoutUpdate();
+    } else {
+        qCritical() << "Component buildFlexTree not one child";
+    }
+    return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
 void Component::updateLayoutNow() {
     qDebug() << "Component updateLayoutNow";
+    auto h=getItem()->height();
+    auto w=getItem()->width();
     Element::updateLayoutNow(
-        static_cast<int>(getItem()->height()),
-        static_cast<int>(getItem()->width())
+        static_cast<int>(h),
+        static_cast<int>(w)
     );
 }
 
