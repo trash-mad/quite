@@ -30,7 +30,7 @@ class Component : public Element {
     virtual FlexNode* buildFlexTree(bool fill=false) override;
 
   protected:
-    virtual void updateLayoutNow() override;
+    virtual void updateLayoutNow(int H, int W) override;
 
   private slots:
     void renderSubtreeHandler(Node* child);

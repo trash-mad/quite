@@ -52,14 +52,18 @@ FlexNode *Component::buildFlexTree(bool fill) {
 
 /*---------------------------------------------------------------------------*/
 
-void Component::updateLayoutNow() {
+void Component::updateLayoutNow(int h, int w) {
+    Q_UNUSED(h)
+    Q_UNUSED(w)
     qDebug() << "Component updateLayoutNow";
-    auto h=getItem()->height();
-    auto w=getItem()->width();
-    Element::updateLayoutNow(
-        static_cast<int>(h),
-        static_cast<int>(w)
+    Element* child=getChild().first();
+    auto H=getItem()->height();
+    auto W=getItem()->width();
+    child->updateLayoutNow(
+        static_cast<int>(H),
+        static_cast<int>(W)
     );
+    qInfo() << "h" << child->getItem()->childrenRect().height();
 }
 
 /*---------------------------------------------------------------------------*/

@@ -206,6 +206,12 @@ QQuickItem *Element::getItem() const {
 
 /*---------------------------------------------------------------------------*/
 
+FlexNode *Element::getLayout() const {
+    return layout;
+}
+
+/*---------------------------------------------------------------------------*/
+
 NodeType Element::getType() const {
     return type;
 }
@@ -341,16 +347,10 @@ void Element::startLayoutUpdate() {
 
 /*---------------------------------------------------------------------------*/
 
-void Element::updateLayoutNow() {
-    int H=layout->getWidth();
-    int W=layout->getHeight();
-    updateLayoutNow(H,W);
-}
-
-/*---------------------------------------------------------------------------*/
-
-void Element::updateLayoutNow(int H, int W) {
+void Element::updateLayoutNow(int h, int w) {
     qDebug() << "Element updateLayoutNow";
+    int H=h==-1?layout->getLayoutWidth():h;
+    int W=w==-1?layout->getLayoutHeight():w;
     int T=layout->getLayoutTop()-layout->getMarginTop();
     int LT=layout->getLastTop();
     int L=layout->getLayoutLeft()-layout->getMarginLeft();
@@ -367,6 +367,14 @@ void Element::updateLayoutNow(int H, int W) {
         Q_ASSERT(LT!=-1);
         T=LT;
         L=LL;
+    }
+
+    if (h!=-1&&w!=-1) {
+        layout->setHeight(H);
+        layout->setWidth(W);
+    } else {
+        Q_ASSERT(h==-1);
+        Q_ASSERT(w==-1);
     }
 
     layout->printTree();

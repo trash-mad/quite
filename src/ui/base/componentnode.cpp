@@ -233,7 +233,6 @@ bool ComponentNode::tryInsertAfterChild(
     } else {
         int current=0;
         while (true) {
-            qInfo() << "iter";
             if (merged[index]==(*child.parent)) {
                 incrementResolveCounter();
                 merged[index].node->insertAfterChildIndex(

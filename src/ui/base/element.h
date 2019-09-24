@@ -128,9 +128,8 @@ class Element : public QObject {
    * Переопределяется у окна для инициализации просчета дерева
    * Переопределяется в компоненте, чтобы передать физический размер (не %)
    */
-  protected:
-    virtual void updateLayoutNow(int H, int W);
-    virtual void updateLayoutNow();
+  public:
+    virtual void updateLayoutNow(int H=-1, int W=-1);
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы

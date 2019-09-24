@@ -46,7 +46,7 @@ class Window : public Element {
    * компоновки
    */
   protected:
-    virtual void updateLayoutNow() override;
+    virtual void updateLayoutNow(int H, int W) override;
 
   signals:
     void closed();

@@ -76,7 +76,9 @@ FlexNode* Window::buildFlexTree(bool fill) {
 
 /*---------------------------------------------------------------------------*/
 
-void Window::updateLayoutNow() {
+void Window::updateLayoutNow(int h, int w) {
+    Q_UNUSED(h)
+    Q_UNUSED(w)
     qDebug() << "Window updateLayoutNow";
     if (!initialRenderComplete) {
         layout=buildFlexTree();
