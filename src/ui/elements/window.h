@@ -8,11 +8,11 @@
 #include "src/ui/component.h"
 #include "src/ui/base/element.h"
 #include "src/ui/base/diffcounter.h"
-#include "src/ui/components/windowcomponent.h"
+#include "src/ui/qml_components/windowcomponent.h"
 
 using namespace Quite::Ui;
 using namespace Quite::Ui::Base;
-using namespace Quite::Ui::Components;
+using namespace Quite::Ui::QmlComponents;
 
 namespace Quite {
 namespace Ui {
@@ -30,6 +30,12 @@ class Window : public Element {
     virtual ~Window() override;
 
   /*
+   * Проброс свойств окна
+   */
+  public slots:
+    virtual void propsChanged() override;
+
+  /*
    * Переопределение перерисовки с передачей размера окна
    */
   public slots:
@@ -40,7 +46,7 @@ class Window : public Element {
    * компоновки
    */
   protected:
-    virtual void updateLayoutNow() override;
+    virtual void updateLayoutNow(int H, int W) override;
 
   signals:
     void closed();

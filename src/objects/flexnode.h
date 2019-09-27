@@ -11,9 +11,9 @@
 
 #include "3rdparty/yoga/Yoga.h"
 
-#include "src/ui/components/windowcomponent.h"
+#include "src/ui/qml_components/windowcomponent.h"
 
-using namespace Quite::Ui::Components;
+using namespace Quite::Ui::QmlComponents;
 
 namespace Quite {
 namespace Objects {

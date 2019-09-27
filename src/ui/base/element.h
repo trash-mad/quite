@@ -49,6 +49,9 @@ class Element : public QObject {
    */
   public slots:
     virtual void onClick();
+    virtual void onCheck(bool enabled);
+    virtual void onSelectionChanged(int index);
+    virtual void onValueChanged(QVariant value);
 
   /*
    * Действия, выполняемые для синхронизации элемента и item. Доступны к
@@ -123,9 +126,10 @@ class Element : public QObject {
    * гарантированно выполнит перерасчет.
    *
    * Переопределяется у окна для инициализации просчета дерева
+   * Переопределяется в компоненте, чтобы передать физический размер (не %)
    */
-  protected:
-    virtual void updateLayoutNow();
+  public:
+    virtual void updateLayoutNow(int H=-1, int W=-1);
 
   /*
    * Сигналы для Manager, чтобы рендерить элементы

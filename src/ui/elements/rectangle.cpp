@@ -14,6 +14,8 @@ Rectangle::Rectangle(Node *node, QQmlEngine *engine, Element *parent)
         parent
     ) {
     qDebug() << "Rectangle ctor";
+    getItem()->setProperty("preferredHeight",50);
+    getItem()->setProperty("preferredWidth",50);
 }
 
 /*---------------------------------------------------------------------------*/

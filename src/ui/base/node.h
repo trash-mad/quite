@@ -27,7 +27,13 @@ enum NodeType : int {
     FragmentType = 1,
     ButtonType = 2,
     WindowType = 3,
-    RectangleType = 4
+    RectangleType = 4,
+    ScrollViewerType = 5,
+    CheckBoxType = 6,
+    EntryType = 7,
+    LabelType = 8,
+    SliderType = 9,
+    ComboBoxType = 10
 };
 
 /*****************************************************************************/

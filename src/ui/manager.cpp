@@ -25,6 +25,24 @@ Element *Manager::renderElement(Node *node, Element *parent) {
             case NodeType::ButtonType:
                 element = new Button(node, &engine, parent);
                 break;
+            case NodeType::ScrollViewerType:
+                element = new ScrollViewer(node,&engine,parent);
+                break;
+            case NodeType::CheckBoxType:
+                element = new CheckBox(node,&engine,parent);
+                break;
+            case NodeType::EntryType:
+                element = new Entry(node, &engine, parent);
+                break;
+            case NodeType::LabelType:
+                element = new Label(node, &engine, parent);
+                break;
+            case NodeType::SliderType:
+                element = new Slider(node, &engine, parent);
+                break;
+            case NodeType::ComboBoxType:
+                element = new ComboBox(node, &engine, parent);
+                break;
             default:
                 qCritical() << "Manager can't render node" << type;
         }
@@ -86,6 +104,11 @@ Window* Manager::renderWindow(Node *node, Element *parent) {
         SIGNAL(closed()),
         this,
         SIGNAL(closed())
+    );
+    QMetaObject::invokeMethod(
+        node,
+        "commitProps",
+        Qt::BlockingQueuedConnection
     );
     return window;
 }

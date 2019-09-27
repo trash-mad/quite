@@ -30,7 +30,7 @@ void ConsoleExtension::install(
 /*---------------------------------------------------------------------------*/
 
 QJSValue ConsoleExtension::log(QJSValue msg) {
-    //qInfo() << msg.toString();
+    qDebug() << "ConsoleExtension log" << msg.toString();
     std::cout << msg.toString().toStdString() << "\n";
     return QJSValue();
 }

@@ -109,6 +109,7 @@ class ComponentNode : public Node {
    */
   signals:
     void renderSubtree(Node* child);
+    void renderDiff();
 };
 
 /*****************************************************************************/

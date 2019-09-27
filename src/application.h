@@ -21,11 +21,15 @@
 #include "src/objects/nodestruct.h"
 #include "src/events/importmodule.h"
 #include "src/events/installextension.h"
-#include "src/ui/components/windowcomponent.h"
+
+#include "src/ui/qml_providers/consoleprovider.h"
+#include "src/ui/qml_components/windowcomponent.h"
 
 #define QMLC QMessageLogContext
 
-using namespace Quite::Ui::Components;
+using namespace Quite::Ui::QmlComponents;
+using namespace Quite::Ui::QmlProviders;
+
 using namespace Quite::Ui::Base;
 using namespace Quite::Monitors;
 using namespace Quite::Objects;

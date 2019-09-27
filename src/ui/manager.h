@@ -13,9 +13,15 @@
 
 #include "src/ui/component.h"
 #include "src/ui/base/dialog.h"
+#include "src/ui/elements/label.h"
+#include "src/ui/elements/entry.h"
 #include "src/ui/elements/window.h"
 #include "src/ui/elements/button.h"
+#include "src/ui/elements/slider.h"
+#include "src/ui/elements/checkbox.h"
+#include "src/ui/elements/combobox.h"
 #include "src/ui/elements/rectangle.h"
+#include "src/ui/elements/scrollviewer.h"
 
 #include "src/ui/base/diffcounter.h"
 

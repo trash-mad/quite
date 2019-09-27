@@ -24,13 +24,14 @@ Eval *Invoke::createEval() {
     qDebug() << "Invoke createEval";
     QJSValueList args;
     QList<QVariant>::iterator iter;
-    for(int i=0;i!=args.length();i++) {
+    for(int i=0;i!=this->args.length();i++) {
         QVariant value = this->args.at(i);
-        if (value.canConvert<int>()) {
+        QVariant::Type type = value.type();
+        if (type==QVariant::Type::Int) {
             args.append(QJSValue(value.toInt()));
-        } else if (value.canConvert<bool>()) {
+        } else if (type==QVariant::Type::Bool) {
             args.append(QJSValue(value.toBool()));
-        } else if (value.canConvert<QString>()) {
+        } else if (type==QVariant::Type::String) {
             args.append(QJSValue(value.toString()));
         } else {
             qCritical() << "Invoke setArgs QVariant invalid type"

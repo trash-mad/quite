@@ -14,6 +14,8 @@ Button::Button(Node *node, QQmlEngine *engine, Element *parent)
         parent
     ){
     qDebug() << "Button ctor";
+    getItem()->setProperty("preferredHeight",45);
+    getItem()->setProperty("preferredWidth",125);
 }
 
 /*---------------------------------------------------------------------------*/
