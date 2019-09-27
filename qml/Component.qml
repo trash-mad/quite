@@ -1,2 +1,2 @@
 import QtQuick 2.0
-Rectangle { color: "yellow" }
+Rectangle { color: "transparent" }
